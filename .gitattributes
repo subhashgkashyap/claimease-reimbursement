@@ -1,0 +1,8 @@
+# The exported XML carries script bodies copied verbatim from the instance.
+# Let Git rewrite line endings on checkout and those bodies change, which
+# defeats the point of exporting them faithfully. Keep everything LF.
+* text eol=lf
+
+# Treat the update sets as opaque: large, generated, and not worth diffing.
+update-sets/*.xml -diff linguist-generated
+export/*.xml      -diff linguist-generated
