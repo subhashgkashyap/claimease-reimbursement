@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_hub_flow_snapshot>
+<access>public</access>
+<acls/>
+<active>true</active>
+<allow_high_security_roles>false</allow_high_security_roles>
+<annotation/>
+<attributes>timeFromCreateToActivate=29000</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category>ClaimEase Approvals</category>
+<copied_from/>
+<copied_from_name/>
+<description>Reads one finished ClaimEase approval stage from sysapproval_approver and records the decision on the claim: the stage approval field, approver comments, approver, decision timestamp, the new approval_status and rejection_reason. Any outcome that is not a clean approval or rejection leaves the claim pending and sets exception_reason - it never approves.</description>
+<flow_priority>MEDIUM</flow_priority>
+<internal_name>claimease__record_approval_decision</internal_name>
+<label_cache>[{"name":"subflow.claim","label":"Input➛Claim","type":"reference","base_type":"reference","usedInstances":{"eb7ca1b4-d3fe-4298-aba3-b25bfd653202":["claim"],"79dcef54-005f-4123-a3f5-3bfa8c7390ec":["claim"],"a080e8f3-a968-4164-a834-0428e156dd6b":["claim"],"5bed3d45-7d88-483f-8722-7fd51eb64b2e":["claim"]},"attributes":{}},{"name":"subflow.stage","label":"Input➛Approval stage","type":"string","base_type":"string","usedInstances":{"eb7ca1b4-d3fe-4298-aba3-b25bfd653202":["stage"],"79dcef54-005f-4123-a3f5-3bfa8c7390ec":["stage"],"a080e8f3-a968-4164-a834-0428e156dd6b":["stage"]},"attributes":{}},{"name":"subflow.approverUsers","label":"Input➛Candidate approver user sys_ids","type":"string","base_type":"string","usedInstances":{"eb7ca1b4-d3fe-4298-aba3-b25bfd653202":["approverUsers"]},"attributes":{}},{"name":"subflow.approverGroup","label":"Input➛Approver group sys_id","type":"string","base_type":"string","usedInstances":{"eb7ca1b4-d3fe-4298-aba3-b25bfd653202":["approverGroup"]},"attributes":{}},{"name":"eb7ca1b4-d3fe-4298-aba3-b25bfd653202.decision","label":"eb7ca1b4-d3fe-4298-aba3-b25bfd653202➛decision","type":"string","base_type":"string","usedInstances":{"aedf8fd6-049d-4543-b69f-66391fb0c8e6":["condition"],"db147a6a-7d6c-4cef-ab81-a5ceedeee786":["condition"]},"attributes":{}},{"name":"subflow.approvedStatus","label":"Input➛approval_status to set when this stage approves","type":"string","base_type":"string","usedInstances":{"79dcef54-005f-4123-a3f5-3bfa8c7390ec":["approvalStatus"]},"attributes":{}},{"name":"eb7ca1b4-d3fe-4298-aba3-b25bfd653202.comments","label":"eb7ca1b4-d3fe-4298-aba3-b25bfd653202➛comments","type":"string","base_type":"string","usedInstances":{"79dcef54-005f-4123-a3f5-3bfa8c7390ec":["comments"],"ab6a55c6-4842-4b87-aaff-228aa3ea110d":["comments"],"a080e8f3-a968-4164-a834-0428e156dd6b":["comments"],"9a678424-b1a6-42fa-aa9c-746d7070edf4":["comments"]},"attributes":{}},{"name":"eb7ca1b4-d3fe-4298-aba3-b25bfd653202.approver","label":"eb7ca1b4-d3fe-4298-aba3-b25bfd653202➛approver","type":"string","base_type":"string","usedInstances":{"79dcef54-005f-4123-a3f5-3bfa8c7390ec":["approver"],"ab6a55c6-4842-4b87-aaff-228aa3ea110d":["approver"],"a080e8f3-a968-4164-a834-0428e156dd6b":["approver"],"9a678424-b1a6-42fa-aa9c-746d7070edf4":["approver"]},"attributes":{}},{"name":"eb7ca1b4-d3fe-4298-aba3-b25bfd653202.decidedOn","label":"eb7ca1b4-d3fe-4298-aba3-b25bfd653202➛decidedOn","type":"glide_date_time","base_type":"glide_date_time","usedInstances":{"79dcef54-005f-4123-a3f5-3bfa8c7390ec":["decisionOn"],"a080e8f3-a968-4164-a834-0428e156dd6b":["decisionOn"]},"attributes":{}},{"name":"subflow.stageLabel","label":"Input➛Stage label","type":"string","base_type":"string","usedInstances":{"79dcef54-005f-4123-a3f5-3bfa8c7390ec":["stageLabel"],"a080e8f3-a968-4164-a834-0428e156dd6b":["stageLabel"]},"attributes":{}},{"name":"subflow.rejectedStatus","label":"Input➛approval_status to set when this stage rejects","type":"string","base_type":"string","usedInstances":{"a080e8f3-a968-4164-a834-0428e156dd6b":["approvalStatus"]},"attributes":{}},{"name":"subflow.pendingExceptionReason","label":"Input➛exception_reason for an inconclusive outcome","type":"string","base_type":"string","usedInstances":{"5bed3d45-7d88-483f-8722-7fd51eb64b2e":["exceptionReason"]},"attributes":{}}]</label_cache>
+<master>true</master>
+<name>ClaimEase - Record Approval Decision</name>
+<natlang/>
+<outputs/>
+<parent_flow>5837766f10e64275bb77177cbafd5d4f</parent_flow>
+<remote_trigger_id/>
+<run_as>system</run_as>
+<run_with_roles/>
+<sc_callable>false</sc_callable>
+<status>published</status>
+<sys_class_name>sys_hub_flow_snapshot</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:24</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>f8664e6ac30417100d60f8ddd4013165</sys_id>
+<sys_mod_count>1</sys_mod_count>
+<sys_name/>
+<sys_overrides/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 14:03:46</sys_updated_on>
+<type>subflow</type>
+<version>2</version>
+</sys_hub_flow_snapshot>
+<sys_hub_flow_snapshot>
+<access>public</access>
+<acls/>
+<active>true</active>
+<allow_high_security_roles>false</allow_high_security_roles>
+<annotation/>
+<attributes>timeFromCreateToActivate=29000</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category>ClaimEase Approvals</category>
+<copied_from/>
+<copied_from_name/>
+<description>Requests Finance approval for a ClaimEase claim from the configured Finance approver group using the native Ask For Approval action. Honours the finance_group_policy property: anyone (one member suffices) or everyone (all members must approve).</description>
+<flow_priority>MEDIUM</flow_priority>
+<internal_name>claimease__request_finance_group_approval</internal_name>
+<label_cache>[{"name":"subflow.financePolicy","label":"Input➛Finance group policy","type":"string","base_type":"string","usedInstances":{"582b98a2-4ed3-435f-bace-f897168fa26e":["condition"]},"attributes":{}},{"name":"subflow.financeGroup","label":"Input➛Finance approver group sys_id","type":"string","base_type":"string","usedInstances":{"91034a5e-8e31-428f-a99d-a7c268bc3b98":["approval_conditions"],"90f1a069-3425-4302-a4b6-e7c9cbda01b3":["approval_conditions"]},"attributes":{}},{"name":"subflow.claim","label":"Input➛Claim","type":"reference","base_type":"reference","usedInstances":{"91034a5e-8e31-428f-a99d-a7c268bc3b98":["record"],"90f1a069-3425-4302-a4b6-e7c9cbda01b3":["record"]},"attributes":{}},{"name":"91034a5e-8e31-428f-a99d-a7c268bc3b98.approval_state","label":"91034a5e-8e31-428f-a99d-a7c268bc3b98➛approval_state","type":"choice","base_type":"choice","usedInstances":{"24ff07ef-0e52-4606-8685-e411abb03056":["approvalState"]},"attributes":{}},{"name":"90f1a069-3425-4302-a4b6-e7c9cbda01b3.approval_state","label":"90f1a069-3425-4302-a4b6-e7c9cbda01b3➛approval_state","type":"choice","base_type":"choice","usedInstances":{"0ad2f413-1698-4d0b-9c6c-128510f32276":["approvalState"]},"attributes":{}}]</label_cache>
+<master>true</master>
+<name>ClaimEase - Request Finance Group Approval</name>
+<natlang/>
+<outputs/>
+<parent_flow>10f5ccdea273454e8b7ae81b8ebf005a</parent_flow>
+<remote_trigger_id/>
+<run_as>system</run_as>
+<run_with_roles/>
+<sc_callable>false</sc_callable>
+<status>published</status>
+<sys_class_name>sys_hub_flow_snapshot</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:29</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>466602aac30417100d60f8ddd4013136</sys_id>
+<sys_mod_count>1</sys_mod_count>
+<sys_name/>
+<sys_overrides/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 14:03:50</sys_updated_on>
+<type>subflow</type>
+<version>2</version>
+</sys_hub_flow_snapshot>
+<sys_hub_flow_snapshot>
+<access>public</access>
+<acls/>
+<active>true</active>
+<allow_high_security_roles>false</allow_high_security_roles>
+<annotation/>
+<attributes>timeFromCreateToActivate=29000</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category>ClaimEase Approvals</category>
+<copied_from/>
+<copied_from_name/>
+<description>Requests Manager approval for a ClaimEase claim using the native Ask For Approval action. The approver list is the recorded manager, or the active members of the fallback approver group when the employee has no usable manager - approval is never skipped.</description>
+<flow_priority>MEDIUM</flow_priority>
+<internal_name>claimease__request_manager_approval</internal_name>
+<label_cache>[{"name":"subflow.managerApproverUsers","label":"Input➛Manager approver user sys_ids","type":"string","base_type":"string","usedInstances":{"71c5c9d0-9c30-474e-81a5-35ccb25aa53f":["approval_conditions"]},"attributes":{}},{"name":"subflow.claim","label":"Input➛Claim","type":"reference","base_type":"reference","usedInstances":{"71c5c9d0-9c30-474e-81a5-35ccb25aa53f":["record"]},"attributes":{}},{"name":"71c5c9d0-9c30-474e-81a5-35ccb25aa53f.approval_state","label":"71c5c9d0-9c30-474e-81a5-35ccb25aa53f➛approval_state","type":"choice","base_type":"choice","usedInstances":{"5a80c7b8-b65e-4275-b7c0-d694f691bf1a":["approvalState"]},"attributes":{}}]</label_cache>
+<master>true</master>
+<name>ClaimEase - Request Manager Approval</name>
+<natlang/>
+<outputs/>
+<parent_flow>950c89f5265e4619b8bcfe72ef586c91</parent_flow>
+<remote_trigger_id/>
+<run_as>system</run_as>
+<run_with_roles/>
+<sc_callable>false</sc_callable>
+<status>published</status>
+<sys_class_name>sys_hub_flow_snapshot</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:32</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>326642aac30417100d60f8ddd40131fe</sys_id>
+<sys_mod_count>1</sys_mod_count>
+<sys_name/>
+<sys_overrides/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 14:03:53</sys_updated_on>
+<type>subflow</type>
+<version>2</version>
+</sys_hub_flow_snapshot>
+<sys_hub_flow_snapshot>
+<access>public</access>
+<acls/>
+<active>true</active>
+<allow_high_security_roles>false</allow_high_security_roles>
+<annotation/>
+<attributes>timeFromCreateToActivate=29000</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category>ClaimEase Approvals</category>
+<copied_from/>
+<copied_from_name/>
+<description>Requests the Manager approval and the Finance group approval simultaneously for a small ClaimEase claim, using one native Ask For Approval action whose rule set ANDs the Manager rule with the Finance rule. Resolves to approved only when both sides approve, and to rejected as soon as either side rejects. Honours the finance_group_policy property.</description>
+<flow_priority>MEDIUM</flow_priority>
+<internal_name>claimease__request_parallel_approval</internal_name>
+<label_cache>[{"name":"subflow.financePolicy","label":"Input➛Finance group policy","type":"string","base_type":"string","usedInstances":{"0b1a9926-24aa-41e2-8e1b-45b698468ebe":["condition"]},"attributes":{}},{"name":"subflow.managerApproverUsers","label":"Input➛Manager approver user sys_ids","type":"string","base_type":"string","usedInstances":{"a624bd75-42b7-4b71-99a6-3362f0429d15":["approval_conditions"],"f3a3900d-de0e-4b52-a87e-b06a0c3b7a8b":["approval_conditions"]},"attributes":{}},{"name":"subflow.financeGroup","label":"Input➛Finance approver group sys_id","type":"string","base_type":"string","usedInstances":{"a624bd75-42b7-4b71-99a6-3362f0429d15":["approval_conditions"],"f3a3900d-de0e-4b52-a87e-b06a0c3b7a8b":["approval_conditions"]},"attributes":{}},{"name":"subflow.claim","label":"Input➛Claim","type":"reference","base_type":"reference","usedInstances":{"a624bd75-42b7-4b71-99a6-3362f0429d15":["record"],"f3a3900d-de0e-4b52-a87e-b06a0c3b7a8b":["record"]},"attributes":{}},{"name":"a624bd75-42b7-4b71-99a6-3362f0429d15.approval_state","label":"a624bd75-42b7-4b71-99a6-3362f0429d15➛approval_state","type":"choice","base_type":"choice","usedInstances":{"0f612174-dd71-4437-ab33-808542a81280":["approvalState"]},"attributes":{}},{"name":"f3a3900d-de0e-4b52-a87e-b06a0c3b7a8b.approval_state","label":"f3a3900d-de0e-4b52-a87e-b06a0c3b7a8b➛approval_state","type":"choice","base_type":"choice","usedInstances":{"0def8ae5-c0ca-485f-b010-2064a4446ecc":["approvalState"]},"attributes":{}}]</label_cache>
+<master>true</master>
+<name>ClaimEase - Request Parallel Approval</name>
+<natlang/>
+<outputs/>
+<parent_flow>37c4a8add8b2439095c006e036dd7321</parent_flow>
+<remote_trigger_id/>
+<run_as>system</run_as>
+<run_with_roles/>
+<sc_callable>false</sc_callable>
+<status>published</status>
+<sys_class_name>sys_hub_flow_snapshot</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:34</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>d36606aac30417100d60f8ddd4013141</sys_id>
+<sys_mod_count>1</sys_mod_count>
+<sys_name/>
+<sys_overrides/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 14:03:56</sys_updated_on>
+<type>subflow</type>
+<version>2</version>
+</sys_hub_flow_snapshot>
+<sys_hub_flow_snapshot>
+<access>public</access>
+<acls/>
+<active>true</active>
+<allow_high_security_roles>false</allow_high_security_roles>
+<annotation/>
+<attributes>timeFromCreateToActivate=29000</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category/>
+<copied_from/>
+<copied_from_name/>
+<description>ClaimEase reimbursement approval automation. Triggered when flow_started changes to true on a submitted claim. Re-checks eligibility and the duplicate rule server-side, resolves the Manager (with fallback approver group) and Finance approvers, then routes to the parallel path for small claims or the sequential path at or above the configured threshold using native Flow Designer approvals. Captures the full audit trail and never auto-approves an unknown outcome.</description>
+<flow_priority>MEDIUM</flow_priority>
+<internal_name>claimease_reimbursement_approval_flow</internal_name>
+<label_cache>[{"name":"Created or Updated_1.current","label":"Trigger - Record Created or Updated➛x_2180676_claime_0_claim Record","type":"reference","base_type":"reference","usedInstances":{"8e44aaf5-6620-4aa2-a755-5d46455a37da":["claim"],"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["claim"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["claim"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["record"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["claim"],"42337fda-7cab-4326-b931-55813186d859":["record"],"830ba694-555a-482e-962c-59f7aa9ace83":["claim"],"239263bf-a4a2-4705-b70f-db5b7624153f":["record"],"5fe58d25-e7df-45bd-8a72-4daa1ecb2eca":["claim"],"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["record"],"23c99d60-6f64-47a7-8c42-82e7a192c50a":["record"],"c252e821-3880-4891-aedf-a90494d9efa8":["claim"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["claim"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["claim"],"ee739611-43ae-462b-88f2-913028fbf72f":["claim"],"34c99034-28b1-447d-8bd1-ae9f5053b1b9":["claim"],"3e477f2f-cafd-4ea5-aa3d-11ebba99fe4f":["claim"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["record"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["claim"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["claim"],"74c147c9-fe22-4882-a004-013b0c9bdfb7":["claim"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["record"],"b1662134-0788-4169-aee1-8de0fabef683":["claim"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["claim"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.routing","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛routing","type":"string","base_type":"string","usedInstances":{"fcc8d0bc-851f-4596-b715-e736e6c53699":["condition"],"c9681ec7-0143-44a9-9264-97dcbb8218b0":["condition"],"fb1e4b89-0309-4467-b2bd-425978508c61":["condition"],"64912e26-fe6a-438e-986e-67fb67e91b41":["condition"],"bf44afc6-4498-4dca-8a1f-36abcc1fe32a":["condition"],"e8da5bd0-c859-4d17-8ebd-c78c5aad87ab":["condition"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.claimNumber","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛claimNumber","type":"string","base_type":"string","usedInstances":{"641e6c91-fd6b-4ded-a52b-f87f3502cfb1":["log_message"],"fee23af6-9da0-4e3e-83b0-0ffe03825e7e":["log_message"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateMessage","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛duplicateMessage","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["rejectionReason"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.exceptionReason","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛exceptionReason","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["exceptionReason"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["exceptionReason"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm2"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["exceptionReason"],"42337fda-7cab-4326-b931-55813186d859":["parm2"],"830ba694-555a-482e-962c-59f7aa9ace83":["exceptionReason"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm2"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateOf","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛duplicateOf","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["duplicateOf"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.supportRecipients","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛supportRecipients","type":"string","base_type":"string","usedInstances":{"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm1"],"42337fda-7cab-4326-b931-55813186d859":["parm1"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm1"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.usedFallback","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛usedFallback","type":"boolean","base_type":"boolean","usedInstances":{"8ddf5cf9-5271-41b8-9b05-6fdb4e968d4d":["condition"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerRecipients","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛managerRecipients","type":"string","base_type":"string","usedInstances":{"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["parm1"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["parm1"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeRecipients","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛financeRecipients","type":"string","base_type":"string","usedInstances":{"23c99d60-6f64-47a7-8c42-82e7a192c50a":["parm1"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["parm1"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerApproverUsers","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛managerApproverUsers","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["managerApproverUsers"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["approverUsers"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["managerApproverUsers"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["approverUsers"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeGroup","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛financeGroup","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financeGroup"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["approverGroup"],"b1662134-0788-4169-aee1-8de0fabef683":["financeGroup"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["approverGroup"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financePolicy","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛financePolicy","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financePolicy"],"b1662134-0788-4169-aee1-8de0fabef683":["financePolicy"]},"attributes":{}},{"name":"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b.outcome","label":"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b➛outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{}},{"name":"eb3a7d54-f080-4b5a-b361-fba2b1662f21.outcome","label":"eb3a7d54-f080-4b5a-b361-fba2b1662f21➛outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{}},{"name":"a65a31df-bd26-4480-ab15-5a38db62fe3a.outcome","label":"a65a31df-bd26-4480-ab15-5a38db62fe3a➛outcome","type":"string","base_type":"string","usedInstances":{"f45bf5d6-8abf-4c06-b314-b0385a832ca9":["condition"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{}}]</label_cache>
+<master>true</master>
+<name>ClaimEase — Reimbursement Approval Flow</name>
+<natlang/>
+<outputs/>
+<parent_flow>bdd68412f8ff47efb1ff772919b8bf3a</parent_flow>
+<remote_trigger_id/>
+<run_as>system</run_as>
+<run_with_roles/>
+<sc_callable>false</sc_callable>
+<status>published</status>
+<sys_class_name>sys_hub_flow_snapshot</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:42</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>09760aaac30417100d60f8ddd401312a</sys_id>
+<sys_mod_count>1</sys_mod_count>
+<sys_name/>
+<sys_overrides/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 14:04:06</sys_updated_on>
+<type>flow</type>
+<version>2</version>
+</sys_hub_flow_snapshot>
+<sys_hub_flow_snapshot>
+<access>public</access>
+<acls/>
+<active>true</active>
+<allow_high_security_roles>false</allow_high_security_roles>
+<annotation/>
+<attributes>browserActivatedIn=chrome,integrationActivatedIn=standalone,timeFromCreateToActivate=27281000,viewActivatedIn=naturalLanguage</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category/>
+<copied_from/>
+<copied_from_name/>
+<description>ClaimEase reimbursement approval automation. Triggered when flow_started changes to true on a submitted claim. Re-checks eligibility and the duplicate rule server-side, resolves the Manager (with fallback approver group) and Finance approvers, then routes to the parallel path for small claims or the sequential path at or above the configured threshold using native Flow Designer approvals. Captures the full audit trail and never auto-approves an unknown outcome.</description>
+<flow_priority>MEDIUM</flow_priority>
+<internal_name>claimease_reimbursement_approval_flow</internal_name>
+<label_cache>[{"name":"a65a31df-bd26-4480-ab15-5a38db62fe3a.outcome","label":"36 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"f45bf5d6-8abf-4c06-b314-b0385a832ca9":["condition"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"eb3a7d54-f080-4b5a-b361-fba2b1662f21.outcome","label":"25 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b.outcome","label":"24 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financePolicy","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance group policy","reference_display":"Finance group policy","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financePolicy"],"b1662134-0788-4169-aee1-8de0fabef683":["financePolicy"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financePolicy"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeGroup","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance approver group sys_id","reference_display":"Finance approver group sys_id","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financeGroup"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["approverGroup"],"b1662134-0788-4169-aee1-8de0fabef683":["financeGroup"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["approverGroup"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financeGroup"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerApproverUsers","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager approver user sys_ids","reference_display":"Manager approver user sys_ids","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["managerApproverUsers"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["approverUsers"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["managerApproverUsers"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["approverUsers"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-managerApproverUsers"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance notification recipients","reference_display":"Finance notification recipients","type":"string","base_type":"string","usedInstances":{"23c99d60-6f64-47a7-8c42-82e7a192c50a":["parm1"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financeRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager notification recipients","reference_display":"Manager notification recipients","type":"string","base_type":"string","usedInstances":{"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["parm1"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-managerRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.usedFallback","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager fallback used","reference_display":"Manager fallback used","type":"boolean","base_type":"boolean","usedInstances":{"8ddf5cf9-5271-41b8-9b05-6fdb4e968d4d":["condition"]},"attributes":{"uiType":"boolean","uiTypeLabel":"True/False","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-usedFallback"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.supportRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Support team notification recipients","reference_display":"Support team notification recipients","type":"string","base_type":"string","usedInstances":{"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm1"],"42337fda-7cab-4326-b931-55813186d859":["parm1"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-supportRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateOf","label":"1 - ClaimEase - Evaluate Approval Routing➛Duplicate of claim sys_id","reference_display":"Duplicate of claim sys_id","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["duplicateOf"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-duplicateOf"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.exceptionReason","label":"1 - ClaimEase - Evaluate Approval Routing➛Exception reason","reference_display":"Exception reason","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["exceptionReason"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["exceptionReason"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm2"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["exceptionReason"],"42337fda-7cab-4326-b931-55813186d859":["parm2"],"830ba694-555a-482e-962c-59f7aa9ace83":["exceptionReason"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm2"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-exceptionReason"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateMessage","label":"1 - ClaimEase - Evaluate Approval Routing➛Duplicate message","reference_display":"Duplicate message","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["rejectionReason"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-duplicateMessage"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.claimNumber","label":"1 - ClaimEase - Evaluate Approval Routing➛Claim number","reference_display":"Claim number","type":"string","base_type":"string","usedInstances":{"641e6c91-fd6b-4ded-a52b-f87f3502cfb1":["log_message"],"fee23af6-9da0-4e3e-83b0-0ffe03825e7e":["log_message"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-claimNumber"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.routing","label":"1 - ClaimEase - Evaluate Approval Routing➛Routing outcome","reference_display":"Routing outcome","type":"string","base_type":"string","usedInstances":{"fcc8d0bc-851f-4596-b715-e736e6c53699":["condition"],"c9681ec7-0143-44a9-9264-97dcbb8218b0":["condition"],"fb1e4b89-0309-4467-b2bd-425978508c61":["condition"],"64912e26-fe6a-438e-986e-67fb67e91b41":["condition"],"bf44afc6-4498-4dca-8a1f-36abcc1fe32a":["condition"],"e8da5bd0-c859-4d17-8ebd-c78c5aad87ab":["condition"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-routing"}},{"name":"Created or Updated_1.current","label":"Trigger - Record Created or Updated➛x_2180676_claime_0_claim Record","type":"reference","base_type":"reference","usedInstances":{"8e44aaf5-6620-4aa2-a755-5d46455a37da":["claim"],"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["claim"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["claim"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["record"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["claim"],"42337fda-7cab-4326-b931-55813186d859":["record"],"830ba694-555a-482e-962c-59f7aa9ace83":["claim"],"239263bf-a4a2-4705-b70f-db5b7624153f":["record"],"5fe58d25-e7df-45bd-8a72-4daa1ecb2eca":["claim"],"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["record"],"23c99d60-6f64-47a7-8c42-82e7a192c50a":["record"],"c252e821-3880-4891-aedf-a90494d9efa8":["claim"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["claim"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["claim"],"ee739611-43ae-462b-88f2-913028fbf72f":["claim"],"34c99034-28b1-447d-8bd1-ae9f5053b1b9":["claim"],"3e477f2f-cafd-4ea5-aa3d-11ebba99fe4f":["claim"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["record"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["claim"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["claim"],"74c147c9-fe22-4882-a004-013b0c9bdfb7":["claim"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["record"],"b1662134-0788-4169-aee1-8de0fabef683":["claim"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["claim"]},"attributes":{}}]</label_cache>
+<master>false</master>
+<name>ClaimEase — Reimbursement Approval Flow</name>
+<natlang/>
+<outputs/>
+<parent_flow>bdd68412f8ff47efb1ff772919b8bf3a</parent_flow>
+<remote_trigger_id>e46e2766c38057100d60f8ddd4013119</remote_trigger_id>
+<run_as>system</run_as>
+<run_with_roles/>
+<sc_callable>false</sc_callable>
+<status>published</status>
+<sys_class_name>sys_hub_flow_snapshot</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 21:13:09</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>0a2f63e6c38057100d60f8ddd401313e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name/>
+<sys_overrides/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 21:13:09</sys_updated_on>
+<type>flow</type>
+<version>2</version>
+</sys_hub_flow_snapshot>
+<sys_hub_flow_snapshot>
+<access>public</access>
+<acls/>
+<active>true</active>
+<allow_high_security_roles>false</allow_high_security_roles>
+<annotation/>
+<attributes>browserActivatedIn=chrome,integrationActivatedIn=standalone,timeFromCreateToActivate=3973000,viewActivatedIn=naturalLanguage</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category/>
+<copied_from/>
+<copied_from_name/>
+<description>ClaimEase reimbursement approval automation. Triggered when flow_started changes to true on a submitted claim. Re-checks eligibility and the duplicate rule server-side, resolves the Manager (with fallback approver group) and Finance approvers, then routes to the parallel path for small claims or the sequential path at or above the configured threshold using native Flow Designer approvals. Captures the full audit trail and never auto-approves an unknown outcome.</description>
+<flow_priority>MEDIUM</flow_priority>
+<internal_name>claimease_reimbursement_approval_flow</internal_name>
+<label_cache>[{"name":"Created or Updated_1.current","label":"Trigger - Record Created or Updated➛x_2180676_claime_0_claim Record","type":"reference","base_type":"reference","usedInstances":{"8e44aaf5-6620-4aa2-a755-5d46455a37da":["claim"],"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["claim"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["claim"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["record"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["claim"],"42337fda-7cab-4326-b931-55813186d859":["record"],"830ba694-555a-482e-962c-59f7aa9ace83":["claim"],"239263bf-a4a2-4705-b70f-db5b7624153f":["record"],"5fe58d25-e7df-45bd-8a72-4daa1ecb2eca":["claim"],"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["record"],"23c99d60-6f64-47a7-8c42-82e7a192c50a":["record"],"c252e821-3880-4891-aedf-a90494d9efa8":["claim"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["claim"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["claim"],"ee739611-43ae-462b-88f2-913028fbf72f":["claim"],"34c99034-28b1-447d-8bd1-ae9f5053b1b9":["claim"],"3e477f2f-cafd-4ea5-aa3d-11ebba99fe4f":["claim"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["record"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["claim"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["claim"],"74c147c9-fe22-4882-a004-013b0c9bdfb7":["claim"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["record"],"b1662134-0788-4169-aee1-8de0fabef683":["claim"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["claim"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.routing","label":"1 - ClaimEase - Evaluate Approval Routing➛Routing outcome","reference_display":"Routing outcome","type":"string","base_type":"string","usedInstances":{"fcc8d0bc-851f-4596-b715-e736e6c53699":["condition"],"c9681ec7-0143-44a9-9264-97dcbb8218b0":["condition"],"fb1e4b89-0309-4467-b2bd-425978508c61":["condition"],"64912e26-fe6a-438e-986e-67fb67e91b41":["condition"],"bf44afc6-4498-4dca-8a1f-36abcc1fe32a":["condition"],"e8da5bd0-c859-4d17-8ebd-c78c5aad87ab":["condition"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-routing"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.claimNumber","label":"1 - ClaimEase - Evaluate Approval Routing➛Claim number","reference_display":"Claim number","type":"string","base_type":"string","usedInstances":{"641e6c91-fd6b-4ded-a52b-f87f3502cfb1":["log_message"],"fee23af6-9da0-4e3e-83b0-0ffe03825e7e":["log_message"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-claimNumber"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateMessage","label":"1 - ClaimEase - Evaluate Approval Routing➛Duplicate message","reference_display":"Duplicate message","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["rejectionReason"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-duplicateMessage"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.exceptionReason","label":"1 - ClaimEase - Evaluate Approval Routing➛Exception reason","reference_display":"Exception reason","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["exceptionReason"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["exceptionReason"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm2"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["exceptionReason"],"42337fda-7cab-4326-b931-55813186d859":["parm2"],"830ba694-555a-482e-962c-59f7aa9ace83":["exceptionReason"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm2"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-exceptionReason"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateOf","label":"1 - ClaimEase - Evaluate Approval Routing➛Duplicate of claim sys_id","reference_display":"Duplicate of claim sys_id","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["duplicateOf"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-duplicateOf"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.supportRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Support team notification recipients","reference_display":"Support team notification recipients","type":"string","base_type":"string","usedInstances":{"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm1"],"42337fda-7cab-4326-b931-55813186d859":["parm1"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-supportRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.usedFallback","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager fallback used","reference_display":"Manager fallback used","type":"boolean","base_type":"boolean","usedInstances":{"8ddf5cf9-5271-41b8-9b05-6fdb4e968d4d":["condition"]},"attributes":{"uiType":"boolean","uiTypeLabel":"True/False","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-usedFallback"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager notification recipients","reference_display":"Manager notification recipients","type":"string","base_type":"string","usedInstances":{"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["parm1"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-managerRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance notification recipients","reference_display":"Finance notification recipients","type":"string","base_type":"string","usedInstances":{"23c99d60-6f64-47a7-8c42-82e7a192c50a":["parm1"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financeRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerApproverUsers","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager approver user sys_ids","reference_display":"Manager approver user sys_ids","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["managerApproverUsers"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["approverUsers"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["managerApproverUsers"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["approverUsers"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-managerApproverUsers"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeGroup","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance approver group sys_id","reference_display":"Finance approver group sys_id","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financeGroup"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["approverGroup"],"b1662134-0788-4169-aee1-8de0fabef683":["financeGroup"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["approverGroup"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financeGroup"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financePolicy","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance group policy","reference_display":"Finance group policy","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financePolicy"],"b1662134-0788-4169-aee1-8de0fabef683":["financePolicy"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financePolicy"}},{"name":"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b.outcome","label":"24 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"eb3a7d54-f080-4b5a-b361-fba2b1662f21.outcome","label":"25 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"a65a31df-bd26-4480-ab15-5a38db62fe3a.outcome","label":"36 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"f45bf5d6-8abf-4c06-b314-b0385a832ca9":["condition"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}}]</label_cache>
+<master>false</master>
+<name>ClaimEase — Reimbursement Approval Flow</name>
+<natlang/>
+<outputs/>
+<parent_flow>bdd68412f8ff47efb1ff772919b8bf3a</parent_flow>
+<remote_trigger_id>1975526ec38417100d60f8ddd401317d</remote_trigger_id>
+<run_as>system</run_as>
+<run_with_roles/>
+<sc_callable>false</sc_callable>
+<status>published</status>
+<sys_class_name>sys_hub_flow_snapshot</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 19:46:03</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>163b57e6c3cc17100d60f8ddd4013165</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name/>
+<sys_overrides/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 19:46:03</sys_updated_on>
+<type>flow</type>
+<version>2</version>
+</sys_hub_flow_snapshot>
+<sys_hub_flow_snapshot>
+<access>public</access>
+<acls/>
+<active>true</active>
+<allow_high_security_roles>false</allow_high_security_roles>
+<annotation/>
+<attributes>browserActivatedIn=chrome,integrationActivatedIn=standalone,timeFromCreateToActivate=3973000,viewActivatedIn=naturalLanguage</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category/>
+<copied_from/>
+<copied_from_name/>
+<description>ClaimEase reimbursement approval automation. Triggered when flow_started changes to true on a submitted claim. Re-checks eligibility and the duplicate rule server-side, resolves the Manager (with fallback approver group) and Finance approvers, then routes to the parallel path for small claims or the sequential path at or above the configured threshold using native Flow Designer approvals. Captures the full audit trail and never auto-approves an unknown outcome.</description>
+<flow_priority>MEDIUM</flow_priority>
+<internal_name>claimease_reimbursement_approval_flow</internal_name>
+<label_cache>[{"name":"Created or Updated_1.current","label":"Trigger - Record Created or Updated➛x_2180676_claime_0_claim Record","type":"reference","base_type":"reference","usedInstances":{"8e44aaf5-6620-4aa2-a755-5d46455a37da":["claim"],"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["claim"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["claim"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["record"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["claim"],"42337fda-7cab-4326-b931-55813186d859":["record"],"830ba694-555a-482e-962c-59f7aa9ace83":["claim"],"239263bf-a4a2-4705-b70f-db5b7624153f":["record"],"5fe58d25-e7df-45bd-8a72-4daa1ecb2eca":["claim"],"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["record"],"23c99d60-6f64-47a7-8c42-82e7a192c50a":["record"],"c252e821-3880-4891-aedf-a90494d9efa8":["claim"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["claim"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["claim"],"ee739611-43ae-462b-88f2-913028fbf72f":["claim"],"34c99034-28b1-447d-8bd1-ae9f5053b1b9":["claim"],"3e477f2f-cafd-4ea5-aa3d-11ebba99fe4f":["claim"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["record"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["claim"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["claim"],"74c147c9-fe22-4882-a004-013b0c9bdfb7":["claim"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["record"],"b1662134-0788-4169-aee1-8de0fabef683":["claim"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["claim"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.routing","label":"1 - ClaimEase - Evaluate Approval Routing➛Routing outcome","reference_display":"Routing outcome","type":"string","base_type":"string","usedInstances":{"fcc8d0bc-851f-4596-b715-e736e6c53699":["condition"],"c9681ec7-0143-44a9-9264-97dcbb8218b0":["condition"],"fb1e4b89-0309-4467-b2bd-425978508c61":["condition"],"64912e26-fe6a-438e-986e-67fb67e91b41":["condition"],"bf44afc6-4498-4dca-8a1f-36abcc1fe32a":["condition"],"e8da5bd0-c859-4d17-8ebd-c78c5aad87ab":["condition"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-routing"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.claimNumber","label":"1 - ClaimEase - Evaluate Approval Routing➛Claim number","reference_display":"Claim number","type":"string","base_type":"string","usedInstances":{"641e6c91-fd6b-4ded-a52b-f87f3502cfb1":["log_message"],"fee23af6-9da0-4e3e-83b0-0ffe03825e7e":["log_message"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-claimNumber"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateMessage","label":"1 - ClaimEase - Evaluate Approval Routing➛Duplicate message","reference_display":"Duplicate message","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["rejectionReason"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-duplicateMessage"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.exceptionReason","label":"1 - ClaimEase - Evaluate Approval Routing➛Exception reason","reference_display":"Exception reason","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["exceptionReason"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["exceptionReason"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm2"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["exceptionReason"],"42337fda-7cab-4326-b931-55813186d859":["parm2"],"830ba694-555a-482e-962c-59f7aa9ace83":["exceptionReason"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm2"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-exceptionReason"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateOf","label":"1 - ClaimEase - Evaluate Approval Routing➛Duplicate of claim sys_id","reference_display":"Duplicate of claim sys_id","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["duplicateOf"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-duplicateOf"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.supportRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Support team notification recipients","reference_display":"Support team notification recipients","type":"string","base_type":"string","usedInstances":{"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm1"],"42337fda-7cab-4326-b931-55813186d859":["parm1"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-supportRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.usedFallback","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager fallback used","reference_display":"Manager fallback used","type":"boolean","base_type":"boolean","usedInstances":{"8ddf5cf9-5271-41b8-9b05-6fdb4e968d4d":["condition"]},"attributes":{"uiType":"boolean","uiTypeLabel":"True/False","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-usedFallback"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager notification recipients","reference_display":"Manager notification recipients","type":"string","base_type":"string","usedInstances":{"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["parm1"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-managerRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance notification recipients","reference_display":"Finance notification recipients","type":"string","base_type":"string","usedInstances":{"23c99d60-6f64-47a7-8c42-82e7a192c50a":["parm1"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financeRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerApproverUsers","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager approver user sys_ids","reference_display":"Manager approver user sys_ids","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["managerApproverUsers"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["approverUsers"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["managerApproverUsers"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["approverUsers"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-managerApproverUsers"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeGroup","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance approver group sys_id","reference_display":"Finance approver group sys_id","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financeGroup"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["approverGroup"],"b1662134-0788-4169-aee1-8de0fabef683":["financeGroup"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["approverGroup"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financeGroup"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financePolicy","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance group policy","reference_display":"Finance group policy","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financePolicy"],"b1662134-0788-4169-aee1-8de0fabef683":["financePolicy"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financePolicy"}},{"name":"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b.outcome","label":"24 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"eb3a7d54-f080-4b5a-b361-fba2b1662f21.outcome","label":"25 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"a65a31df-bd26-4480-ab15-5a38db62fe3a.outcome","label":"36 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"f45bf5d6-8abf-4c06-b314-b0385a832ca9":["condition"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}}]</label_cache>
+<master>false</master>
+<name>ClaimEase — Reimbursement Approval Flow</name>
+<natlang/>
+<outputs/>
+<parent_flow>bdd68412f8ff47efb1ff772919b8bf3a</parent_flow>
+<remote_trigger_id>1975526ec38417100d60f8ddd401317d</remote_trigger_id>
+<run_as>system</run_as>
+<run_with_roles/>
+<sc_callable>false</sc_callable>
+<status>published</status>
+<sys_class_name>sys_hub_flow_snapshot</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 20:05:25</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>7daf1b62c30057100d60f8ddd40131dd</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name/>
+<sys_overrides/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 20:05:25</sys_updated_on>
+<type>flow</type>
+<version>2</version>
+</sys_hub_flow_snapshot>
+<sys_hub_flow_snapshot>
+<access>public</access>
+<acls/>
+<active>true</active>
+<allow_high_security_roles>false</allow_high_security_roles>
+<annotation/>
+<attributes>browserActivatedIn=chrome,integrationActivatedIn=standalone,timeFromCreateToActivate=27281000,viewActivatedIn=naturalLanguage</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category/>
+<copied_from/>
+<copied_from_name/>
+<description>ClaimEase reimbursement approval automation. Triggered when flow_started changes to true on a submitted claim. Re-checks eligibility and the duplicate rule server-side, resolves the Manager (with fallback approver group) and Finance approvers, then routes to the parallel path for small claims or the sequential path at or above the configured threshold using native Flow Designer approvals. Captures the full audit trail and never auto-approves an unknown outcome.</description>
+<flow_priority>MEDIUM</flow_priority>
+<internal_name>claimease_reimbursement_approval_flow</internal_name>
+<label_cache>[{"name":"a65a31df-bd26-4480-ab15-5a38db62fe3a.outcome","label":"36 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"f45bf5d6-8abf-4c06-b314-b0385a832ca9":["condition"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"eb3a7d54-f080-4b5a-b361-fba2b1662f21.outcome","label":"25 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b.outcome","label":"24 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financePolicy","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance group policy","reference_display":"Finance group policy","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financePolicy"],"b1662134-0788-4169-aee1-8de0fabef683":["financePolicy"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financePolicy"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeGroup","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance approver group sys_id","reference_display":"Finance approver group sys_id","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financeGroup"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["approverGroup"],"b1662134-0788-4169-aee1-8de0fabef683":["financeGroup"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["approverGroup"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financeGroup"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerApproverUsers","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager approver user sys_ids","reference_display":"Manager approver user sys_ids","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["managerApproverUsers"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["approverUsers"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["managerApproverUsers"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["approverUsers"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-managerApproverUsers"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance notification recipients","reference_display":"Finance notification recipients","type":"string","base_type":"string","usedInstances":{"23c99d60-6f64-47a7-8c42-82e7a192c50a":["parm1"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financeRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager notification recipients","reference_display":"Manager notification recipients","type":"string","base_type":"string","usedInstances":{"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["parm1"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-managerRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.usedFallback","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager fallback used","reference_display":"Manager fallback used","type":"boolean","base_type":"boolean","usedInstances":{"8ddf5cf9-5271-41b8-9b05-6fdb4e968d4d":["condition"]},"attributes":{"uiType":"boolean","uiTypeLabel":"True/False","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-usedFallback"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.supportRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Support team notification recipients","reference_display":"Support team notification recipients","type":"string","base_type":"string","usedInstances":{"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm1"],"42337fda-7cab-4326-b931-55813186d859":["parm1"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-supportRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateOf","label":"1 - ClaimEase - Evaluate Approval Routing➛Duplicate of claim sys_id","reference_display":"Duplicate of claim sys_id","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["duplicateOf"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-duplicateOf"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.exceptionReason","label":"1 - ClaimEase - Evaluate Approval Routing➛Exception reason","reference_display":"Exception reason","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["exceptionReason"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["exceptionReason"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm2"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["exceptionReason"],"42337fda-7cab-4326-b931-55813186d859":["parm2"],"830ba694-555a-482e-962c-59f7aa9ace83":["exceptionReason"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm2"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-exceptionReason"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateMessage","label":"1 - ClaimEase - Evaluate Approval Routing➛Duplicate message","reference_display":"Duplicate message","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["rejectionReason"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-duplicateMessage"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.claimNumber","label":"1 - ClaimEase - Evaluate Approval Routing➛Claim number","reference_display":"Claim number","type":"string","base_type":"string","usedInstances":{"641e6c91-fd6b-4ded-a52b-f87f3502cfb1":["log_message"],"fee23af6-9da0-4e3e-83b0-0ffe03825e7e":["log_message"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-claimNumber"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.routing","label":"1 - ClaimEase - Evaluate Approval Routing➛Routing outcome","reference_display":"Routing outcome","type":"string","base_type":"string","usedInstances":{"fcc8d0bc-851f-4596-b715-e736e6c53699":["condition"],"c9681ec7-0143-44a9-9264-97dcbb8218b0":["condition"],"fb1e4b89-0309-4467-b2bd-425978508c61":["condition"],"64912e26-fe6a-438e-986e-67fb67e91b41":["condition"],"bf44afc6-4498-4dca-8a1f-36abcc1fe32a":["condition"],"e8da5bd0-c859-4d17-8ebd-c78c5aad87ab":["condition"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-routing"}},{"name":"Created or Updated_1.current","label":"Trigger - Record Created or Updated➛x_2180676_claime_0_claim Record","type":"reference","base_type":"reference","usedInstances":{"8e44aaf5-6620-4aa2-a755-5d46455a37da":["claim"],"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["claim"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["claim"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["record"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["claim"],"42337fda-7cab-4326-b931-55813186d859":["record"],"830ba694-555a-482e-962c-59f7aa9ace83":["claim"],"239263bf-a4a2-4705-b70f-db5b7624153f":["record"],"5fe58d25-e7df-45bd-8a72-4daa1ecb2eca":["claim"],"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["record"],"23c99d60-6f64-47a7-8c42-82e7a192c50a":["record"],"c252e821-3880-4891-aedf-a90494d9efa8":["claim"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["claim"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["claim"],"ee739611-43ae-462b-88f2-913028fbf72f":["claim"],"34c99034-28b1-447d-8bd1-ae9f5053b1b9":["claim"],"3e477f2f-cafd-4ea5-aa3d-11ebba99fe4f":["claim"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["record"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["claim"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["claim"],"74c147c9-fe22-4882-a004-013b0c9bdfb7":["claim"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["record"],"b1662134-0788-4169-aee1-8de0fabef683":["claim"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["claim"]},"attributes":{}}]</label_cache>
+<master>false</master>
+<name>ClaimEase — Reimbursement Approval Flow</name>
+<natlang/>
+<outputs/>
+<parent_flow>bdd68412f8ff47efb1ff772919b8bf3a</parent_flow>
+<remote_trigger_id>e46e2766c38057100d60f8ddd4013119</remote_trigger_id>
+<run_as>system</run_as>
+<run_with_roles/>
+<sc_callable>false</sc_callable>
+<status>published</status>
+<sys_class_name>sys_hub_flow_snapshot</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 21:36:10</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>9364ff26c3c057100d60f8ddd4013118</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name/>
+<sys_overrides/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 21:36:10</sys_updated_on>
+<type>flow</type>
+<version>2</version>
+</sys_hub_flow_snapshot>
+<sys_hub_flow_snapshot>
+<access>public</access>
+<acls/>
+<active>true</active>
+<allow_high_security_roles>false</allow_high_security_roles>
+<annotation/>
+<attributes>browserActivatedIn=chrome,integrationActivatedIn=standalone,timeFromCreateToActivate=3973000,viewActivatedIn=naturalLanguage</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category/>
+<copied_from/>
+<copied_from_name/>
+<description>ClaimEase reimbursement approval automation. Triggered when flow_started changes to true on a submitted claim. Re-checks eligibility and the duplicate rule server-side, resolves the Manager (with fallback approver group) and Finance approvers, then routes to the parallel path for small claims or the sequential path at or above the configured threshold using native Flow Designer approvals. Captures the full audit trail and never auto-approves an unknown outcome.</description>
+<flow_priority>MEDIUM</flow_priority>
+<internal_name>claimease_reimbursement_approval_flow</internal_name>
+<label_cache>[{"name":"Created or Updated_1.current","label":"Trigger - Record Created or Updated➛x_2180676_claime_0_claim Record","type":"reference","base_type":"reference","usedInstances":{"8e44aaf5-6620-4aa2-a755-5d46455a37da":["claim"],"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["claim"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["claim"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["record"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["claim"],"42337fda-7cab-4326-b931-55813186d859":["record"],"830ba694-555a-482e-962c-59f7aa9ace83":["claim"],"239263bf-a4a2-4705-b70f-db5b7624153f":["record"],"5fe58d25-e7df-45bd-8a72-4daa1ecb2eca":["claim"],"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["record"],"23c99d60-6f64-47a7-8c42-82e7a192c50a":["record"],"c252e821-3880-4891-aedf-a90494d9efa8":["claim"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["claim"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["claim"],"ee739611-43ae-462b-88f2-913028fbf72f":["claim"],"34c99034-28b1-447d-8bd1-ae9f5053b1b9":["claim"],"3e477f2f-cafd-4ea5-aa3d-11ebba99fe4f":["claim"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["record"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["claim"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["claim"],"74c147c9-fe22-4882-a004-013b0c9bdfb7":["claim"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["record"],"b1662134-0788-4169-aee1-8de0fabef683":["claim"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["claim"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.routing","label":"1 - ClaimEase - Evaluate Approval Routing➛Routing outcome","reference_display":"Routing outcome","type":"string","base_type":"string","usedInstances":{"fcc8d0bc-851f-4596-b715-e736e6c53699":["condition"],"c9681ec7-0143-44a9-9264-97dcbb8218b0":["condition"],"fb1e4b89-0309-4467-b2bd-425978508c61":["condition"],"64912e26-fe6a-438e-986e-67fb67e91b41":["condition"],"bf44afc6-4498-4dca-8a1f-36abcc1fe32a":["condition"],"e8da5bd0-c859-4d17-8ebd-c78c5aad87ab":["condition"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-routing"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.claimNumber","label":"1 - ClaimEase - Evaluate Approval Routing➛Claim number","reference_display":"Claim number","type":"string","base_type":"string","usedInstances":{"641e6c91-fd6b-4ded-a52b-f87f3502cfb1":["log_message"],"fee23af6-9da0-4e3e-83b0-0ffe03825e7e":["log_message"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-claimNumber"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateMessage","label":"1 - ClaimEase - Evaluate Approval Routing➛Duplicate message","reference_display":"Duplicate message","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["rejectionReason"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-duplicateMessage"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.exceptionReason","label":"1 - ClaimEase - Evaluate Approval Routing➛Exception reason","reference_display":"Exception reason","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["exceptionReason"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["exceptionReason"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm2"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["exceptionReason"],"42337fda-7cab-4326-b931-55813186d859":["parm2"],"830ba694-555a-482e-962c-59f7aa9ace83":["exceptionReason"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm2"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-exceptionReason"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateOf","label":"1 - ClaimEase - Evaluate Approval Routing➛Duplicate of claim sys_id","reference_display":"Duplicate of claim sys_id","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["duplicateOf"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-duplicateOf"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.supportRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Support team notification recipients","reference_display":"Support team notification recipients","type":"string","base_type":"string","usedInstances":{"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm1"],"42337fda-7cab-4326-b931-55813186d859":["parm1"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-supportRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.usedFallback","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager fallback used","reference_display":"Manager fallback used","type":"boolean","base_type":"boolean","usedInstances":{"8ddf5cf9-5271-41b8-9b05-6fdb4e968d4d":["condition"]},"attributes":{"uiType":"boolean","uiTypeLabel":"True/False","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-usedFallback"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager notification recipients","reference_display":"Manager notification recipients","type":"string","base_type":"string","usedInstances":{"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["parm1"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-managerRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeRecipients","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance notification recipients","reference_display":"Finance notification recipients","type":"string","base_type":"string","usedInstances":{"23c99d60-6f64-47a7-8c42-82e7a192c50a":["parm1"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["parm1"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financeRecipients"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerApproverUsers","label":"1 - ClaimEase - Evaluate Approval Routing➛Manager approver user sys_ids","reference_display":"Manager approver user sys_ids","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["managerApproverUsers"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["approverUsers"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["managerApproverUsers"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["approverUsers"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-managerApproverUsers"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeGroup","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance approver group sys_id","reference_display":"Finance approver group sys_id","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financeGroup"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["approverGroup"],"b1662134-0788-4169-aee1-8de0fabef683":["financeGroup"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["approverGroup"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financeGroup"}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financePolicy","label":"1 - ClaimEase - Evaluate Approval Routing➛Finance group policy","reference_display":"Finance group policy","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financePolicy"],"b1662134-0788-4169-aee1-8de0fabef683":["financePolicy"]},"attributes":{"uiType":"string","uiTypeLabel":"String","element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","pwd2droppable":"true","uiUniqueId":"898e3d17a08c405ea16e25dfce478fec-financePolicy"}},{"name":"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b.outcome","label":"24 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"eb3a7d54-f080-4b5a-b361-fba2b1662f21.outcome","label":"25 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}},{"name":"a65a31df-bd26-4480-ab15-5a38db62fe3a.outcome","label":"36 - ClaimEase - Record Approval Decision➛Outcome","reference_display":"Outcome","type":"string","base_type":"string","usedInstances":{"f45bf5d6-8abf-4c06-b314-b0385a832ca9":["condition"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{"element_mapping_provider":"com.glide.flow_design.action.data.FlowDesignVariableMapper","uiType":"string","timeFromCreateToActivate":"29000"}}]</label_cache>
+<master>false</master>
+<name>ClaimEase — Reimbursement Approval Flow</name>
+<natlang/>
+<outputs/>
+<parent_flow>bdd68412f8ff47efb1ff772919b8bf3a</parent_flow>
+<remote_trigger_id>1975526ec38417100d60f8ddd401317d</remote_trigger_id>
+<run_as>system</run_as>
+<run_with_roles/>
+<sc_callable>false</sc_callable>
+<status>published</status>
+<sys_class_name>sys_hub_flow_snapshot</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 14:41:28</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>ac85566ec38417100d60f8ddd4013109</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name/>
+<sys_overrides/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 14:41:28</sys_updated_on>
+<type>flow</type>
+<version>2</version>
+</sys_hub_flow_snapshot>
+<sys_hub_flow_snapshot>
+<access>public</access>
+<acls/>
+<active>false</active>
+<allow_high_security_roles>false</allow_high_security_roles>
+<annotation/>
+<attributes>timeFromCreateToActivate=29000</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category/>
+<copied_from/>
+<copied_from_name/>
+<description>ClaimEase reimbursement approval automation. Triggered when flow_started changes to true on a submitted claim. Re-checks eligibility and the duplicate rule server-side, resolves the Manager (with fallback approver group) and Finance approvers, then routes to the parallel path for small claims or the sequential path at or above the configured threshold using native Flow Designer approvals. Captures the full audit trail and never auto-approves an unknown outcome.</description>
+<flow_priority>MEDIUM</flow_priority>
+<internal_name>claimease_reimbursement_approval_flow</internal_name>
+<label_cache>[{"name":"Created or Updated_1.current","label":"Trigger - Record Created or Updated➛x_2180676_claime_0_claim Record","type":"reference","base_type":"reference","usedInstances":{"8e44aaf5-6620-4aa2-a755-5d46455a37da":["claim"],"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["claim"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["claim"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["record"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["claim"],"42337fda-7cab-4326-b931-55813186d859":["record"],"830ba694-555a-482e-962c-59f7aa9ace83":["claim"],"239263bf-a4a2-4705-b70f-db5b7624153f":["record"],"5fe58d25-e7df-45bd-8a72-4daa1ecb2eca":["claim"],"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["record"],"23c99d60-6f64-47a7-8c42-82e7a192c50a":["record"],"c252e821-3880-4891-aedf-a90494d9efa8":["claim"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["claim"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["claim"],"ee739611-43ae-462b-88f2-913028fbf72f":["claim"],"34c99034-28b1-447d-8bd1-ae9f5053b1b9":["claim"],"3e477f2f-cafd-4ea5-aa3d-11ebba99fe4f":["claim"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["record"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["claim"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["claim"],"74c147c9-fe22-4882-a004-013b0c9bdfb7":["claim"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["record"],"b1662134-0788-4169-aee1-8de0fabef683":["claim"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["claim"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.routing","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛routing","type":"string","base_type":"string","usedInstances":{"fcc8d0bc-851f-4596-b715-e736e6c53699":["condition"],"c9681ec7-0143-44a9-9264-97dcbb8218b0":["condition"],"fb1e4b89-0309-4467-b2bd-425978508c61":["condition"],"64912e26-fe6a-438e-986e-67fb67e91b41":["condition"],"bf44afc6-4498-4dca-8a1f-36abcc1fe32a":["condition"],"e8da5bd0-c859-4d17-8ebd-c78c5aad87ab":["condition"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.claimNumber","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛claimNumber","type":"string","base_type":"string","usedInstances":{"641e6c91-fd6b-4ded-a52b-f87f3502cfb1":["log_message"],"fee23af6-9da0-4e3e-83b0-0ffe03825e7e":["log_message"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateMessage","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛duplicateMessage","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["rejectionReason"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.exceptionReason","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛exceptionReason","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["exceptionReason"],"0ef25af2-3fa5-4b70-bc8e-7e4a7514edcb":["exceptionReason"],"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm2"],"448e182b-c588-41b9-a307-ccc6bd5de69e":["exceptionReason"],"42337fda-7cab-4326-b931-55813186d859":["parm2"],"830ba694-555a-482e-962c-59f7aa9ace83":["exceptionReason"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm2"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.duplicateOf","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛duplicateOf","type":"string","base_type":"string","usedInstances":{"011fa67c-5f84-4a33-89d6-3c4bb2d00222":["duplicateOf"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.supportRecipients","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛supportRecipients","type":"string","base_type":"string","usedInstances":{"559c8ee4-704a-455f-8b80-7951f5a1572b":["parm1"],"42337fda-7cab-4326-b931-55813186d859":["parm1"],"239263bf-a4a2-4705-b70f-db5b7624153f":["parm1"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.usedFallback","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛usedFallback","type":"boolean","base_type":"boolean","usedInstances":{"8ddf5cf9-5271-41b8-9b05-6fdb4e968d4d":["condition"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerRecipients","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛managerRecipients","type":"string","base_type":"string","usedInstances":{"3afa2960-d6f4-42da-8d24-73bcefaf1f58":["parm1"],"710baa0d-d2a7-4e34-bb25-0a31b251cef5":["parm1"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeRecipients","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛financeRecipients","type":"string","base_type":"string","usedInstances":{"23c99d60-6f64-47a7-8c42-82e7a192c50a":["parm1"],"0fe252eb-641c-488d-8fb0-1143aa18f6ab":["parm1"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.managerApproverUsers","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛managerApproverUsers","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["managerApproverUsers"],"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b":["approverUsers"],"00ad4da6-69fd-4032-a8dd-6fb83f4f945e":["managerApproverUsers"],"a65a31df-bd26-4480-ab15-5a38db62fe3a":["approverUsers"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financeGroup","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛financeGroup","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financeGroup"],"eb3a7d54-f080-4b5a-b361-fba2b1662f21":["approverGroup"],"b1662134-0788-4169-aee1-8de0fabef683":["financeGroup"],"db852b59-73df-4bf8-9bf6-857020f83f9a":["approverGroup"]},"attributes":{}},{"name":"8e44aaf5-6620-4aa2-a755-5d46455a37da.financePolicy","label":"8e44aaf5-6620-4aa2-a755-5d46455a37da➛financePolicy","type":"string","base_type":"string","usedInstances":{"c252e821-3880-4891-aedf-a90494d9efa8":["financePolicy"],"b1662134-0788-4169-aee1-8de0fabef683":["financePolicy"]},"attributes":{}},{"name":"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b.outcome","label":"9dc78045-4a69-4b07-bba2-b0d1ef4c0d8b➛outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{}},{"name":"eb3a7d54-f080-4b5a-b361-fba2b1662f21.outcome","label":"eb3a7d54-f080-4b5a-b361-fba2b1662f21➛outcome","type":"string","base_type":"string","usedInstances":{"860ade06-966c-4bb4-8add-cda384735397":["condition"],"8a9e5774-1c72-4a16-87c7-e147bb75d25c":["condition"]},"attributes":{}},{"name":"a65a31df-bd26-4480-ab15-5a38db62fe3a.outcome","label":"a65a31df-bd26-4480-ab15-5a38db62fe3a➛outcome","type":"string","base_type":"string","usedInstances":{"f45bf5d6-8abf-4c06-b314-b0385a832ca9":["condition"],"797c813e-8324-414f-a0b2-14390d7119ad":["log_message"]},"attributes":{}}]</label_cache>
+<master>true</master>
+<name>ClaimEase — Reimbursement Approval Flow</name>
+<natlang/>
+<outputs/>
+<parent_flow>bdd68412f8ff47efb1ff772919b8bf3a</parent_flow>
+<remote_trigger_id/>
+<run_as>system</run_as>
+<run_with_roles/>
+<sc_callable>false</sc_callable>
+<status>draft</status>
+<sys_class_name>sys_hub_flow_snapshot</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 14:41:12</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>e475de2ec38417100d60f8ddd40131b4</sys_id>
+<sys_mod_count>4</sys_mod_count>
+<sys_name/>
+<sys_overrides/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-24 08:51:57</sys_updated_on>
+<type>flow</type>
+<version>2</version>
+</sys_hub_flow_snapshot>
+</xml>

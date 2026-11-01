@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_script_email>
+<name>ClaimEase Claim Details</name>
+<new_lines_to_html>false</new_lines_to_html>
+<script><![CDATA[/**
+ * ClaimEase Claim Details  (mail script, shared by every ClaimEase notification)
+ *
+ * Prints the common claim-detail block required by every ClaimEase
+ * notification: claim number, category, amount WITH its currency, expense date,
+ * current claim status, the relevant approval stage, and the approver comments
+ * or rejection reason when one is present.
+ *
+ * Referenced inline from a notification body as
+ *     ${mail_script:ClaimEase Claim Details}
+ *
+ * `current` is the claim record for both the record-driven notifications and
+ * the event-driven ones (the flow fires every event against the claim).
+ *
+ * The base currency label is read from ClaimEaseConfig - "USD" is never
+ * hardcoded - and the claim's own currency field supplies the entered amount
+ * with its symbol/code.
+ */
+;(function runMailScript(
+    /* GlideRecord */ current,
+    /* TemplatePrinter */ template,
+    /* Optional EmailOutbound */ email,
+    /* Optional GlideRecord */ email_action,
+    /* Optional GlideRecord */ event
+) {
+    var config = new ClaimEaseConfig()
+
+    function esc(value) {
+        return ('' + (value || ''))
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+    }
+
+    var rows = []
+    function row(label, value) {
+        if (!value) {
+            return
+        }
+        rows.push(
+            '<tr><td style="padding:4px 14px 4px 0;color:#555555;vertical-align:top;">' +
+                esc(label) +
+                '</td><td style="padding:4px 0;color:#111111;"><strong>' +
+                esc(value) +
+                '</strong></td></tr>'
+        )
+    }
+
+    /* ---------- amount, always WITH a currency ---------- */
+    var amount = '' + (current.getDisplayValue('amount') || '')
+    var normalised = '' + (current.getValue('amount_usd') || '')
+    if (!amount && normalised) {
+        amount = normalised + ' ' + config.getBaseCurrency()
+    }
+    if (normalised && amount.indexOf(normalised) === -1) {
+        amount = amount + ' (' + normalised + ' ' + config.getBaseCurrency() + ')'
+    }
+
+    /* ---------- the relevant approval stage ---------- */
+    var managerApproval = '' + (current.getValue('manager_approval') || 'not_requested')
+    var financeApproval = '' + (current.getValue('finance_approval') || 'not_requested')
+    var stage
+    if (managerApproval === 'rejected') {
+        stage = 'Rejected by the manager'
+    } else if (financeApproval === 'rejected') {
+        stage = 'Rejected by Finance'
+    } else if (managerApproval === 'requested' && financeApproval === 'requested') {
+        stage = 'Manager and Finance approval requested at the same time (parallel path)'
+    } else if (managerApproval === 'requested') {
+        stage = 'Awaiting Manager approval'
+    } else if (managerApproval === 'approved' && financeApproval === 'requested') {
+        stage = 'Manager approved - awaiting Finance approval'
+    } else if (managerApproval === 'approved' && financeApproval === 'approved') {
+        stage = 'Approved by the manager and by Finance'
+    } else if (managerApproval === 'approved') {
+        stage = 'Approved by the manager'
+    } else if (financeApproval === 'approved') {
+        stage = 'Approved by Finance'
+    } else {
+        stage = 'No approval has been requested'
+    }
+
+    row('Claim number', current.getValue('number'))
+    row('Summary', current.getValue('short_description'))
+    row('Employee', current.getDisplayValue('requested_for'))
+    row('Category', current.getDisplayValue('category'))
+    row('Amount', amount)
+    row('Expense date', current.getDisplayValue('expense_date'))
+    row('Claim status', current.getDisplayValue('approval_status'))
+    row('Approval stage', stage)
+    row('Manager', current.getDisplayValue('manager'))
+    row('Manager comments', current.getValue('manager_comments'))
+    row('Finance comments', current.getValue('finance_comments'))
+    row('Rejection reason', current.getValue('rejection_reason'))
+    row('Exception note', current.getValue('exception_reason'))
+
+    template.print(
+        '<table role="presentation" cellpadding="0" cellspacing="0" ' +
+            'style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:14px;">' +
+            rows.join('') +
+            '</table>'
+    )
+})(current, template, email, email_action, event)
+]]></script>
+<sys_class_name>sys_script_email</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:00</sys_created_on>
+<sys_id>a8547f545eda4727a35e47fcb7978286</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase Claim Details</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_email_a8547f545eda4727a35e47fcb7978286</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:00</sys_updated_on>
+</sys_script_email>
+<sys_script_email>
+<name>ClaimEase Claim Portal Link</name>
+<new_lines_to_html>false</new_lines_to_html>
+<script><![CDATA[/**
+ * ClaimEase Claim Portal Link  (mail script)
+ *
+ * Prints the EMPLOYEE-facing deep link to the ClaimEase claim detail page, for
+ * use as the `href` of a button in a notification body:
+ *     <a href="${mail_script:ClaimEase Claim Portal Link}">View your claim</a>
+ *
+ * The portal suffix comes from ClaimEaseConfig.getPortalSuffix() (property
+ * `x_2180676_claime_0.portal_suffix`) and the instance URL from
+ * `glide.servlet.uri`, so the link is correct in every environment and nothing
+ * is hardcoded.
+ */
+;(function runMailScript(
+    /* GlideRecord */ current,
+    /* TemplatePrinter */ template,
+    /* Optional EmailOutbound */ email,
+    /* Optional GlideRecord */ email_action,
+    /* Optional GlideRecord */ event
+) {
+    var suffix = new ClaimEaseConfig().getPortalSuffix()
+    var base = '' + (gs.getProperty('glide.servlet.uri') || '')
+    while (base.length && base.charAt(base.length - 1) === '/') {
+        base = base.substring(0, base.length - 1)
+    }
+    template.print(
+        base +
+            '/' +
+            suffix +
+            '?id=x_2180676_claime_0_claimease_claim&sys_id=' +
+            current.getUniqueValue()
+    )
+})(current, template, email, email_action, event)
+]]></script>
+<sys_class_name>sys_script_email</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:00</sys_created_on>
+<sys_id>8bb371a082604a41958f5922d5ab6c9c</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase Claim Portal Link</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_email_8bb371a082604a41958f5922d5ab6c9c</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:00</sys_updated_on>
+</sys_script_email>
+<sys_script_email>
+<name>ClaimEase Claim Record Link</name>
+<new_lines_to_html>false</new_lines_to_html>
+<script><![CDATA[/**
+ * ClaimEase Claim Record Link  (mail script)
+ *
+ * Prints the APPROVER-facing platform record link, for use as the `href` of a
+ * button in an approver or support notification body:
+ *     <a href="${mail_script:ClaimEase Claim Record Link}">Open the claim</a>
+ *
+ * Approvers and ClaimEase administrators work in the platform UI (where the
+ * Approvals related list lives), so they get the record link rather than the
+ * employee portal link. The instance URL comes from `glide.servlet.uri`, so it
+ * is correct in every environment.
+ */
+;(function runMailScript(
+    /* GlideRecord */ current,
+    /* TemplatePrinter */ template,
+    /* Optional EmailOutbound */ email,
+    /* Optional GlideRecord */ email_action,
+    /* Optional GlideRecord */ event
+) {
+    var base = '' + (gs.getProperty('glide.servlet.uri') || '')
+    while (base.length && base.charAt(base.length - 1) === '/') {
+        base = base.substring(0, base.length - 1)
+    }
+    template.print(base + '/' + current.getTableName() + '.do?sys_id=' + current.getUniqueValue())
+})(current, template, email, email_action, event)
+]]></script>
+<sys_class_name>sys_script_email</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:00</sys_created_on>
+<sys_id>d23dede0a3074ff58758cce18c3d0d92</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase Claim Record Link</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_email_d23dede0a3074ff58758cce18c3d0d92</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:00</sys_updated_on>
+</sys_script_email>
+</xml>

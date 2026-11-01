@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sc_cat_item_catalog>
+<sc_cat_item>cddae28d1e274080b300d7f1376dff89</sc_cat_item>
+<sc_catalog>e0d08b13c3330100c8b837659bba8fb4</sc_catalog>
+<sys_class_name>sc_cat_item_catalog</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:49</sys_created_on>
+<sys_id>ad7480bb6e134521882993099625e1a2</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Service Catalog.</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sc_cat_item_catalog_ad7480bb6e134521882993099625e1a2</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:49</sys_updated_on>
+</sc_cat_item_catalog>
+</xml>

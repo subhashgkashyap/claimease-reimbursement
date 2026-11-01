@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sp_page>
+<category>custom</category>
+<css/>
+<draft>false</draft>
+<dynamic_title_structure>My claims - ${portal.title}</dynamic_title_structure>
+<human_readable_url_structure/>
+<id>x_2180676_claime_0_claimease_my_claims</id>
+<internal>false</internal>
+<omit_watcher>false</omit_watcher>
+<public>false</public>
+<roles>x_2180676_claime_0.employee</roles>
+<seo_script/>
+<short_description>Search, filter and track the reimbursement claims the signed-in employee submitted, including approv</short_description>
+<sys_class_name>sp_page</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>7c47eca74a39443fa02d5b0a5d5de04a</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claimease_my_claims</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_page_7c47eca74a39443fa02d5b0a5d5de04a</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<title>My claims</title>
+<use_seo_script>false</use_seo_script>
+</sp_page>
+<sp_page>
+<category>custom</category>
+<css/>
+<draft>false</draft>
+<dynamic_title_structure>ClaimEase - ${portal.title}</dynamic_title_structure>
+<human_readable_url_structure/>
+<id>x_2180676_claime_0_claimease_home</id>
+<internal>false</internal>
+<omit_watcher>false</omit_watcher>
+<public>false</public>
+<roles>x_2180676_claime_0.employee</roles>
+<seo_script/>
+<short_description>ClaimEase landing page: submit a reimbursement claim, or jump to the claims you have already submitt</short_description>
+<sys_class_name>sp_page</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>82c7627ebe2c41879a93bf9b1a35c736</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claimease_home</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_page_82c7627ebe2c41879a93bf9b1a35c736</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<title>ClaimEase</title>
+<use_seo_script>false</use_seo_script>
+</sp_page>
+<sp_page>
+<category>custom</category>
+<css/>
+<draft>false</draft>
+<dynamic_title_structure>Claim - ${portal.title}</dynamic_title_structure>
+<human_readable_url_structure/>
+<id>x_2180676_claime_0_claimease_claim</id>
+<internal>false</internal>
+<omit_watcher>false</omit_watcher>
+<public>false</public>
+<roles>x_2180676_claime_0.employee</roles>
+<seo_script/>
+<short_description>Employee-facing detail view of a single reimbursement claim, including approval progress and permitt</short_description>
+<sys_class_name>sp_page</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>c90898812a534012830d4be200141659</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claimease_claim</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_page_c90898812a534012830d4be200141659</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<title>Claim</title>
+<use_seo_script>false</use_seo_script>
+</sp_page>
+</xml>

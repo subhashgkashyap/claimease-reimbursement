@@ -1,0 +1,2058 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_script_include>
+<access>public</access>
+<active>true</active>
+<api_name>x_2180676_claime_0.ClaimEaseConfig</api_name>
+<caller_access>1</caller_access>
+<client_callable>false</client_callable>
+<description>Reusable accessor over the ClaimEase system properties. Owns the documented threshold boundary rule so approval routing and duplicate detection always agree about which claims are small.</description>
+<mobile_callable>false</mobile_callable>
+<name>ClaimEaseConfig</name>
+<sandbox_callable>false</sandbox_callable>
+<script><![CDATA[/**
+ * ClaimEaseConfig
+ * ============================================================================
+ * Thin, reusable, read-only accessor over the ClaimEase system properties.
+ * Every other ClaimEase artifact (business rules, record producer, flow,
+ * notifications, ATF tests) must read configuration through this class so that
+ * there is exactly ONE interpretation of each setting.
+ *
+ * NOTHING in this application may hardcode 50, 90 or "USD".
+ *
+ * ----------------------------------------------------------------------------
+ * THE $50 BOUNDARY RULE (and how to change it)
+ * ----------------------------------------------------------------------------
+ * Two features depend on "is this a small claim?":
+ *   1. Approval routing  — small claims take the PARALLEL path (Manager and
+ *      Finance asked at the same time); larger claims take the SEQUENTIAL path
+ *      (Manager, then Finance).
+ *   2. Duplicate detection — only small claims are subject to the rolling
+ *      window "one small claim per employee per N days" rule.
+ *
+ * The requirement describes behaviour *below* the threshold and *above* the
+ * threshold but is silent about an amount exactly EQUAL to it. ClaimEase
+ * resolves that boundary explicitly with a property instead of guessing:
+ *
+ *   x_2180676_claime_0.threshold_boundary = 'sequential'   (DEFAULT)
+ *       amount <  threshold  => small  => parallel
+ *       amount >= threshold  => large  => sequential
+ *       i.e. exactly $50 routes Manager -> Finance (sequential).
+ *
+ *   x_2180676_claime_0.threshold_boundary = 'parallel'
+ *       amount <= threshold  => small  => parallel
+ *       amount >  threshold  => large  => sequential
+ *       i.e. exactly $50 routes in parallel.
+ *
+ * `isParallelPath()` and `isSmallClaim()` deliberately share one comparison
+ * (`_isWithinSmallBoundary`) so routing and duplicate detection can NEVER
+ * disagree about which claims are "small".
+ *
+ * TO CHANGE THE BOUNDARY:
+ *   - Change the amount  -> set `x_2180676_claime_0.approval_threshold`.
+ *   - Change the currency the amount is expressed in -> `..._base_currency`.
+ *   - Change the exactly-equal case -> `..._threshold_boundary`.
+ *   No code change is required for any of these.
+ * ----------------------------------------------------------------------------
+ *
+ * Not client callable: all ClaimEase enforcement is server-side.
+ */
+var ClaimEaseConfig = Class.create()
+
+ClaimEaseConfig.prototype = {
+    /** Property namespace for this application. */
+    PREFIX: 'x_2180676_claime_0.',
+
+    /* Documented defaults, used when a property is missing, empty or invalid. */
+    DEFAULT_THRESHOLD: 50,
+    DEFAULT_BOUNDARY: 'sequential',
+    DEFAULT_BASE_CURRENCY: 'USD',
+    DEFAULT_WINDOW_DAYS: 90,
+
+    initialize: function () {
+        // Cache per-instance so a single transaction does not re-read the same
+        // property dozens of times.
+        this._groupCache = {}
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Low level property readers
+     * ------------------------------------------------------------------ */
+
+    /**
+     * Reads a raw property value as a trimmed string.
+     * @param {string} suffix property name without the scope prefix
+     * @param {string} dflt value to use when unset/blank
+     * @return {string}
+     */
+    _getString: function (suffix, dflt) {
+        var raw = gs.getProperty(this.PREFIX + suffix, dflt)
+        if (raw === null || raw === undefined) {
+            return dflt
+        }
+        var value = ('' + raw).replace(/^\s+|\s+$/g, '')
+        return value === '' ? dflt : value
+    },
+
+    /**
+     * Reads a numeric property. Falls back to `dflt` when unset or not a
+     * finite number (never throws, never returns NaN).
+     */
+    _getNumber: function (suffix, dflt) {
+        var parsed = parseFloat(this._getString(suffix, ''))
+        if (isNaN(parsed) || !isFinite(parsed)) {
+            return dflt
+        }
+        return parsed
+    },
+
+    /** Reads a boolean property. Only the literal string "true" is true. */
+    _getBoolean: function (suffix, dflt) {
+        var value = this._getString(suffix, dflt ? 'true' : 'false').toLowerCase()
+        if (value === 'true' || value === '1' || value === 'yes') {
+            return true
+        }
+        if (value === 'false' || value === '0' || value === 'no') {
+            return false
+        }
+        return !!dflt
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Approval routing / threshold
+     * ------------------------------------------------------------------ */
+
+    /**
+     * Approval threshold expressed in the base currency.
+     * @return {number} defaults to 50 when unset or invalid
+     */
+    getThreshold: function () {
+        var threshold = this._getNumber('approval_threshold', this.DEFAULT_THRESHOLD)
+        // A non-positive threshold would make every claim "large" and silently
+        // disable duplicate detection, so refuse it.
+        if (threshold <= 0) {
+            gs.error(
+                '[ClaimEase] Property ' +
+                    this.PREFIX +
+                    'approval_threshold is not a positive number; falling back to ' +
+                    this.DEFAULT_THRESHOLD
+            )
+            return this.DEFAULT_THRESHOLD
+        }
+        return threshold
+    },
+
+    /**
+     * How an amount exactly equal to the threshold is treated.
+     * @return {string} 'sequential' (default) or 'parallel'
+     */
+    getBoundaryMode: function () {
+        var mode = this._getString('threshold_boundary', this.DEFAULT_BOUNDARY).toLowerCase()
+        return mode === 'parallel' ? 'parallel' : 'sequential'
+    },
+
+    /**
+     * Currency the threshold and the duplicate rule are expressed in.
+     * @return {string} upper-case ISO code, defaults to 'USD'
+     */
+    getBaseCurrency: function () {
+        return this._getString('base_currency', this.DEFAULT_BASE_CURRENCY).toUpperCase()
+    },
+
+    /**
+     * THE single boundary comparison. Both approval routing and duplicate
+     * detection call this, which is what keeps them consistent.
+     *
+     * @param {number|string} amountInBaseCurrency normalised claim amount
+     * @return {boolean} true when the amount counts as a "small" claim
+     */
+    _isWithinSmallBoundary: function (amountInBaseCurrency) {
+        var amount = parseFloat(amountInBaseCurrency)
+        if (isNaN(amount) || !isFinite(amount)) {
+            // An unknown amount is never treated as small: it must not silently
+            // gain the parallel path nor silently escape duplicate detection.
+            return false
+        }
+        var threshold = this.getThreshold()
+        if (this.getBoundaryMode() === 'parallel') {
+            return amount <= threshold
+        }
+        return amount < threshold
+    },
+
+    /**
+     * @param {number} amountUsd amount already normalised to the base currency
+     * @return {boolean} true => Manager and Finance in parallel
+     */
+    isParallelPath: function (amountUsd) {
+        return this._isWithinSmallBoundary(amountUsd)
+    },
+
+    /**
+     * Uses the SAME comparison as isParallelPath so duplicate detection and
+     * approval routing can never disagree about which claims are "small".
+     *
+     * @param {number} amountUsd amount already normalised to the base currency
+     * @return {boolean}
+     */
+    isSmallClaim: function (amountUsd) {
+        return this._isWithinSmallBoundary(amountUsd)
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Duplicate prevention
+     * ------------------------------------------------------------------ */
+
+    /**
+     * Length of the rolling duplicate window, in whole days.
+     * @return {number} defaults to 90
+     */
+    getDuplicateWindowDays: function () {
+        var days = Math.floor(this._getNumber('duplicate_window_days', this.DEFAULT_WINDOW_DAYS))
+        if (isNaN(days) || days <= 0) {
+            return this.DEFAULT_WINDOW_DAYS
+        }
+        return days
+    },
+
+    /** Exclude Cancelled (and Duplicate) claims from duplicate detection. Default true. */
+    excludeCancelledFromDuplicate: function () {
+        return this._getBoolean('duplicate_exclude_cancelled', true)
+    },
+
+    /** Exclude Rejected claims from duplicate detection. Default FALSE — a rejected small claim still blocks. */
+    excludeRejectedFromDuplicate: function () {
+        return this._getBoolean('duplicate_exclude_rejected', false)
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Submission validation policy
+     * ------------------------------------------------------------------ */
+
+    /** Permit an expense date in the future. Default false. */
+    allowFutureExpenseDate: function () {
+        return this._getBoolean('allow_future_expense_date', false)
+    },
+
+    /** Require at least one receipt attachment before submission. Default true. */
+    requireReceipt: function () {
+        return this._getBoolean('require_receipt', true)
+    },
+
+    /** Allow submitting on behalf of another employee. Default false. */
+    allowDelegatedSubmission: function () {
+        return this._getBoolean('allow_delegated_submission', false)
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Approver resolution
+     * ------------------------------------------------------------------ */
+
+    /** Name of the group whose members perform Finance approval. */
+    getFinanceGroupName: function () {
+        return this._getString('finance_group', 'ClaimEase Finance Approvers')
+    },
+
+    /** Name of the fallback approver / exception-queue group. */
+    getFallbackGroupName: function () {
+        return this._getString('fallback_approver_group', 'ClaimEase Claim Administrators')
+    },
+
+    /** Finance group approval policy: 'anyone' (default) or 'everyone'. */
+    getFinanceGroupPolicy: function () {
+        var policy = this._getString('finance_group_policy', 'anyone').toLowerCase()
+        return policy === 'everyone' ? 'everyone' : 'anyone'
+    },
+
+    /** Service Portal URL suffix used when building employee-facing links. */
+    getPortalSuffix: function () {
+        return this._getString('portal_suffix', 'claimease')
+    },
+
+    /**
+     * Resolves a sys_user_group sys_id from its name.
+     * @return {string} sys_id, or '' when the group does not exist
+     */
+    _groupSysIdByName: function (groupName) {
+        if (!groupName) {
+            return ''
+        }
+        if (this._groupCache.hasOwnProperty(groupName)) {
+            return this._groupCache[groupName]
+        }
+        var sysId = ''
+        try {
+            var group = new GlideRecord('sys_user_group')
+            group.addQuery('name', groupName)
+            group.setLimit(1)
+            group.query()
+            if (group.next()) {
+                sysId = group.getUniqueValue()
+            } else {
+                gs.error('[ClaimEase] Configured group "' + groupName + '" does not exist in sys_user_group.')
+            }
+        } catch (e) {
+            gs.error('[ClaimEase] Unable to resolve group "' + groupName + '": ' + e)
+        }
+        this._groupCache[groupName] = sysId
+        return sysId
+    },
+
+    /** @return {string} sys_id of the Finance approver group, '' when not found */
+    getFinanceGroupSysId: function () {
+        return this._groupSysIdByName(this.getFinanceGroupName())
+    },
+
+    /** @return {string} sys_id of the fallback approver group, '' when not found */
+    getFallbackGroupSysId: function () {
+        return this._groupSysIdByName(this.getFallbackGroupName())
+    },
+
+    type: 'ClaimEaseConfig',
+}
+]]></script>
+<sys_class_name>sys_script_include</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:58</sys_created_on>
+<sys_id>0f112ff1033d4c66a516918b184cf06e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEaseConfig</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_include_0f112ff1033d4c66a516918b184cf06e</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:58</sys_updated_on>
+</sys_script_include>
+<sys_script_include>
+<access>public</access>
+<active>true</active>
+<api_name>x_2180676_claime_0.ClaimEaseCurrency</api_name>
+<caller_access>1</caller_access>
+<client_callable>false</client_callable>
+<description>Parses the composite currency value CODE;amount and converts it to the configured base currency, writing the result to amount_usd. Fails loudly when no exchange rate is available.</description>
+<mobile_callable>false</mobile_callable>
+<name>ClaimEaseCurrency</name>
+<sandbox_callable>false</sandbox_callable>
+<script><![CDATA[/**
+ * ClaimEaseCurrency
+ * ============================================================================
+ * Converts a ClaimEase claim amount into the configured base currency and
+ * writes the result to `amount_usd`, which is the ONLY field used for threshold
+ * evaluation and duplicate detection.
+ *
+ * SAFETY RULE: a foreign-currency amount is NEVER silently treated as if it
+ * were already in the base currency. If no rate can be found, every method
+ * returns `ok: false` with a readable `error`, and the caller (the "Normalise
+ * Amount" business rule) aborts the save / routes the claim to the exception
+ * queue rather than letting an unconverted amount reach approval routing.
+ *
+ * The `amount` field is a currency column, stored as "<CODE>;<amount>", e.g.
+ * "USD;25.0000". Parsing here is deliberately defensive and also accepts a
+ * plain numeric string, an empty value and a value with no separator.
+ *
+ * Not client callable.
+ */
+var ClaimEaseCurrency = Class.create()
+
+ClaimEaseCurrency.prototype = {
+    /** Platform FX rate table (from_currency / to_currency / rate / span_start / span_end). */
+    RATE_TABLE: 'fx_conversion_rate',
+
+    /** Decimal places kept on the normalised amount. */
+    SCALE: 2,
+
+    initialize: function () {
+        this.config = new ClaimEaseConfig()
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Parsing
+     * ------------------------------------------------------------------ */
+
+    /**
+     * Pulls the raw composite currency string out of whatever the caller
+     * handed us.
+     *
+     * @param {GlideRecord|string|number} input claim GlideRecord, or the raw value
+     * @return {string} raw value, possibly ''
+     */
+    _rawValueOf: function (input) {
+        if (input === null || input === undefined) {
+            return ''
+        }
+        if (typeof input === 'string' || typeof input === 'number') {
+            return ('' + input).replace(/^\s+|\s+$/g, '')
+        }
+        // Assume a GlideRecord positioned on a claim.
+        try {
+            if (typeof input.getValue === 'function') {
+                var fromRecord = input.getValue('amount')
+                return fromRecord === null || fromRecord === undefined
+                    ? ''
+                    : ('' + fromRecord).replace(/^\s+|\s+$/g, '')
+            }
+        } catch (e) {
+            gs.error('[ClaimEase] Could not read the amount field from the supplied record: ' + e)
+            return ''
+        }
+        return ('' + input).replace(/^\s+|\s+$/g, '')
+    },
+
+    /**
+     * Parses "<CODE>;<amount>" without attempting any conversion.
+     * Exposed so the validator can check "amount parses and is > 0" without
+     * needing an FX rate.
+     *
+     * @param {GlideRecord|string|number} input
+     * @return {{ok: boolean, value: number, code: string, error: string}}
+     *         `code` is '' when the stored value carried no currency code.
+     */
+    parseAmount: function (input) {
+        var result = { ok: false, value: 0, code: '', error: '' }
+        var raw = this._rawValueOf(input)
+
+        if (raw === '') {
+            result.error = 'Claim amount is empty.'
+            return result
+        }
+
+        var amountPart = raw
+        if (raw.indexOf(';') > -1) {
+            var parts = raw.split(';')
+            result.code = ('' + parts[0]).replace(/^\s+|\s+$/g, '').toUpperCase()
+            // Guard against a trailing separator such as "USD;".
+            amountPart = parts.length > 1 ? ('' + parts[1]).replace(/^\s+|\s+$/g, '') : ''
+        }
+
+        if (amountPart === '') {
+            result.error = 'Claim amount "' + raw + '" has a currency code but no numeric amount.'
+            return result
+        }
+
+        // Strip grouping separators a client may have submitted ("1,250.00").
+        var numeric = parseFloat(amountPart.replace(/,/g, ''))
+        if (isNaN(numeric) || !isFinite(numeric)) {
+            result.error = 'Claim amount "' + raw + '" is not a number.'
+            return result
+        }
+
+        result.ok = true
+        result.value = numeric
+        return result
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Conversion
+     * ------------------------------------------------------------------ */
+
+    /**
+     * Converts a claim amount into the configured base currency.
+     *
+     * @param {GlideRecord|string|number} glideRecordOrAmountString
+     * @return {{ok: boolean, value: number, code: string, error: string}}
+     *         `value` is the amount in the base currency when ok;
+     *         `code` is the source currency code that was detected.
+     */
+    toBaseCurrency: function (glideRecordOrAmountString) {
+        var base = this.config.getBaseCurrency()
+        var parsed = this.parseAmount(glideRecordOrAmountString)
+
+        if (!parsed.ok) {
+            return { ok: false, value: 0, code: parsed.code || base, error: parsed.error }
+        }
+
+        // No code recorded (plain numeric value) => the platform stored it in the
+        // base currency, so the amount is already usable.
+        if (!parsed.code || parsed.code === base) {
+            return { ok: true, value: this._round(parsed.value), code: base, error: '' }
+        }
+
+        var converted = this._convert(parsed.value, parsed.code, base)
+        if (!converted.ok) {
+            // Deliberately NOT falling back to the raw amount: see the safety rule
+            // in the file header.
+            return {
+                ok: false,
+                value: 0,
+                code: parsed.code,
+                error:
+                    'No usable exchange rate from ' +
+                    parsed.code +
+                    ' to ' +
+                    base +
+                    '. ' +
+                    converted.error,
+            }
+        }
+
+        return { ok: true, value: this._round(converted.value), code: parsed.code, error: '' }
+    },
+
+    /**
+     * Sets `amount_usd` on the supplied claim GlideRecord. Does NOT call
+     * update() — intended for use from a before business rule.
+     *
+     * @param {GlideRecord} claimGr claim record being saved
+     * @return {{ok: boolean, value: number, code: string, error: string}}
+     */
+    normalizeClaim: function (claimGr) {
+        var result = this.toBaseCurrency(claimGr)
+        if (result.ok && claimGr && typeof claimGr.setValue === 'function') {
+            claimGr.setValue('amount_usd', result.value)
+        }
+        return result
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Internals
+     * ------------------------------------------------------------------ */
+
+    _round: function (value) {
+        var factor = Math.pow(10, this.SCALE)
+        return Math.round(value * factor) / factor
+    },
+
+    /**
+     * Attempts every scoped-safe conversion route available on this instance.
+     * Everything is wrapped in try/catch: if the FX tables are not readable
+     * from this scope we report failure instead of guessing.
+     *
+     * Routes, in order:
+     *   1. direct rate   from -> to
+     *   2. inverse rate  to   -> from   (value / rate)
+     *   3. cross rate via a shared pivot currency P, using P -> from and P -> to
+     *      (the platform's seeded fx_conversion_rate data is EUR-pivoted, so the
+     *      cross route is what makes e.g. GBP -> USD work).
+     *
+     * @return {{ok: boolean, value: number, error: string}}
+     */
+    _convert: function (amount, fromCode, toCode) {
+        try {
+            var direct = this._lookupRate(fromCode, toCode)
+            if (direct !== null && direct !== 0) {
+                return { ok: true, value: amount * direct, error: '' }
+            }
+
+            var inverse = this._lookupRate(toCode, fromCode)
+            if (inverse !== null && inverse !== 0) {
+                return { ok: true, value: amount / inverse, error: '' }
+            }
+
+            var pivots = this._pivotCurrencies()
+            for (var i = 0; i < pivots.length; i++) {
+                var pivot = pivots[i]
+                if (pivot === fromCode || pivot === toCode) {
+                    continue
+                }
+                var pivotToFrom = this._lookupRate(pivot, fromCode)
+                var pivotToTarget = this._lookupRate(pivot, toCode)
+                if (pivotToFrom !== null && pivotToFrom !== 0 && pivotToTarget !== null) {
+                    return {
+                        ok: true,
+                        value: amount * (pivotToTarget / pivotToFrom),
+                        error: '',
+                    }
+                }
+            }
+
+            return {
+                ok: false,
+                value: 0,
+                error: 'No direct, inverse or cross rate exists in ' + this.RATE_TABLE + '.',
+            }
+        } catch (e) {
+            // Typically a cross-scope read restriction on the FX tables.
+            return {
+                ok: false,
+                value: 0,
+                error: 'Currency conversion is unavailable to this application scope: ' + e,
+            }
+        }
+    },
+
+    /**
+     * @return {number|null} the most recently effective rate, or null
+     */
+    _lookupRate: function (fromCode, toCode) {
+        if (!fromCode || !toCode || fromCode === toCode) {
+            return fromCode === toCode ? 1 : null
+        }
+
+        // Preferred: a rate whose effective span covers "now".
+        var effective = this._queryRate(fromCode, toCode, true)
+        if (effective !== null) {
+            return effective
+        }
+        // Fallback: the newest rate regardless of span. Still a real published
+        // rate, so it is safe (and far better than treating the amount as base
+        // currency), but we log it so administrators can refresh FX data.
+        var latest = this._queryRate(fromCode, toCode, false)
+        if (latest !== null) {
+            gs.info(
+                '[ClaimEase] Using the latest out-of-span exchange rate for ' +
+                    fromCode +
+                    ' -> ' +
+                    toCode +
+                    '. Consider refreshing the currency rate data.'
+            )
+        }
+        return latest
+    },
+
+    _queryRate: function (fromCode, toCode, restrictToSpan) {
+        var rateGr = new GlideRecord(this.RATE_TABLE)
+        rateGr.addQuery('from_currency', fromCode)
+        rateGr.addQuery('to_currency', toCode)
+        if (restrictToSpan) {
+            var now = new GlideDateTime()
+            rateGr.addQuery('span_start', '<=', now)
+            rateGr.addQuery('span_end', '>=', now)
+        }
+        rateGr.orderByDesc('span_start')
+        rateGr.setLimit(1)
+        rateGr.query()
+        if (!rateGr.next()) {
+            return null
+        }
+        var rate = parseFloat(rateGr.getValue('rate'))
+        if (isNaN(rate) || !isFinite(rate) || rate === 0) {
+            return null
+        }
+        return rate
+    },
+
+    /**
+     * Currencies that act as a hub in the rate table. Discovered from the data
+     * rather than hardcoded, with a conservative fallback.
+     *
+     * @return {string[]}
+     */
+    _pivotCurrencies: function () {
+        if (this._pivots) {
+            return this._pivots
+        }
+        var pivots = []
+        try {
+            var agg = new GlideAggregate(this.RATE_TABLE)
+            agg.addAggregate('COUNT')
+            agg.groupBy('from_currency')
+            agg.orderByAggregate('COUNT')
+            agg.query()
+            while (agg.next() && pivots.length < 5) {
+                var code = ('' + agg.getValue('from_currency')).toUpperCase()
+                if (code) {
+                    pivots.push(code)
+                }
+            }
+        } catch (e) {
+            gs.info('[ClaimEase] Could not derive pivot currencies, using defaults: ' + e)
+        }
+        if (!pivots.length) {
+            pivots = [this.config.getBaseCurrency(), 'USD', 'EUR']
+        }
+        this._pivots = pivots
+        return pivots
+    },
+
+    type: 'ClaimEaseCurrency',
+}
+]]></script>
+<sys_class_name>sys_script_include</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:58</sys_created_on>
+<sys_id>571a6ec7943d43799dbbca18850e2746</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEaseCurrency</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_include_571a6ec7943d43799dbbca18850e2746</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:58</sys_updated_on>
+</sys_script_include>
+<sys_script_include>
+<access>public</access>
+<active>true</active>
+<api_name>x_2180676_claime_0.ClaimEaseDuplicateCheck</api_name>
+<caller_access>1</caller_access>
+<client_callable>false</client_callable>
+<description>Server-only duplicate validation implementing the rolling-window rule for small claims, plus the per-employee submission mutex. Reusable from the record producer, business rules, the flow and ATF tests.</description>
+<mobile_callable>false</mobile_callable>
+<name>ClaimEaseDuplicateCheck</name>
+<sandbox_callable>false</sandbox_callable>
+<script><![CDATA[/**
+ * ClaimEaseDuplicateCheck
+ * ============================================================================
+ * Reusable, SERVER-ONLY duplicate validation for ClaimEase. This is the single
+ * implementation of the rolling-window rule and is callable from the record
+ * producer, business rules, the approval flow and ATF tests.
+ *
+ * ----------------------------------------------------------------------------
+ * THE RULE
+ * ----------------------------------------------------------------------------
+ * A claim is a duplicate when ALL of the following hold:
+ *   1. The claim being validated is a SMALL claim, i.e.
+ *      `ClaimEaseConfig.isSmallClaim(amount_usd)` is true. Claims at or above
+ *      the boundary are returned as "not duplicate" IMMEDIATELY, so the rule can
+ *      never block an unrelated claim of $50 or more.
+ *   2. The same employee (`requested_for`) has an earlier SMALL claim — the
+ *      category is deliberately ignored, as required.
+ *   3. That earlier claim has a non-empty `submitted_on` that falls inside the
+ *      rolling window. The window is computed with explicit GlideDateTime
+ *      arithmetic (`addDaysUTC`) rather than relative-date query strings, so the
+ *      boundary and the time zone are unambiguous:
+ *
+ *          windowStart = now (UTC) addDaysUTC(-duplicate_window_days)
+ *          qualifying  <=>  submitted_on >= windowStart
+ *
+ *      The window start instant is INCLUSIVE: a prior claim submitted at
+ *      exactly `windowStart` still blocks. `GlideDateTime.subtract` is used to
+ *      log how old the matched claim is.
+ *   4. The earlier claim's status is not excluded by configuration:
+ *        - `cancelled` AND `duplicate` are excluded when
+ *          `duplicate_exclude_cancelled` is true (default true);
+ *        - `rejected` is excluded only when `duplicate_exclude_rejected` is true
+ *          (default FALSE — a rejected small claim still consumes the window).
+ *   5. It is not the record currently being validated (`excludeClaimSysId`).
+ *
+ * The most recent qualifying claim is returned (ordered by `submitted_on`
+ * descending).
+ *
+ * ----------------------------------------------------------------------------
+ * INFORMATION DISCLOSURE
+ * ----------------------------------------------------------------------------
+ * The friendly message only names the existing claim when the caller is
+ * actually allowed to read it (`GlideRecord.canRead()` on the matched record,
+ * or the caller is the employee / a ClaimEase admin). Otherwise a generic
+ * message with no identifiers is returned, so a delegate or a portal visitor
+ * can never learn another employee's claim numbers.
+ *
+ * ----------------------------------------------------------------------------
+ * CONCURRENCY
+ * ----------------------------------------------------------------------------
+ * `acquireSubmissionLock()` must be called BEFORE `check()` by any caller that
+ * is about to create or submit a claim. It takes a per-employee named mutex
+ * backed by a UNIQUE database index (see `ClaimEaseLock`), which makes it
+ * impossible for two simultaneous qualifying submissions to both pass the
+ * query. The lock is released by the "Release Submission Lock" after-rule, once
+ * the claim row has committed.
+ *
+ * Not client callable.
+ */
+var ClaimEaseDuplicateCheck = Class.create()
+
+ClaimEaseDuplicateCheck.prototype = {
+    CLAIM_TABLE: 'x_2180676_claime_0_claim',
+
+    /** Lock lifetime, in seconds. Covers a save transaction without stranding locks. */
+    LOCK_TTL_SECONDS: 60,
+
+    initialize: function () {
+        this.config = new ClaimEaseConfig()
+        this.lock = new ClaimEaseLock()
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Concurrency helpers
+     * ------------------------------------------------------------------ */
+
+    /** @return {string} the named mutex used to serialise one employee's submissions */
+    lockKeyFor: function (requestedForSysId) {
+        return 'claim_submit:' + requestedForSysId
+    },
+
+    /**
+     * Serialises submissions for one employee. Call this immediately before
+     * `check()` when a claim is being created or submitted.
+     *
+     * @param {string} requestedForSysId employee the claim is for
+     * @param {string} ownerToken        unique per attempt (ClaimEase passes the claim sys_id)
+     * @return {{acquired: boolean, reentrant: boolean, lockKey: string, error: string}}
+     */
+    acquireSubmissionLock: function (requestedForSysId, ownerToken) {
+        return this.lock.acquire(
+            this.lockKeyFor(requestedForSysId),
+            ownerToken,
+            this.LOCK_TTL_SECONDS,
+            'ClaimEase duplicate guard'
+        )
+    },
+
+    /**
+     * Releases the per-employee submission lock. Safe to call when no lock is
+     * held.
+     *
+     * @return {boolean} true when a lock was released
+     */
+    releaseSubmissionLock: function (requestedForSysId, ownerToken) {
+        return this.lock.release(this.lockKeyFor(requestedForSysId), ownerToken)
+    },
+
+    /* ------------------------------------------------------------------ *
+     * The rule
+     * ------------------------------------------------------------------ */
+
+    /**
+     * Start of the rolling window, computed in UTC with explicit arithmetic.
+     * @return {GlideDateTime}
+     */
+    getWindowStart: function () {
+        var windowStart = new GlideDateTime()
+        windowStart.addDaysUTC(-this.config.getDuplicateWindowDays())
+        return windowStart
+    },
+
+    /**
+     * Evaluates the rolling-window duplicate rule.
+     *
+     * @param {string} requestedForSysId employee the claim is for
+     * @param {number} amountUsd         claim amount normalised to the base currency
+     * @param {string} [excludeClaimSysId] sys_id of the claim being validated
+     * @return {{isDuplicate: boolean, existingSysId: string, existingNumber: string,
+     *           existingStatus: string, message: string, windowStart: string}}
+     */
+    check: function (requestedForSysId, amountUsd, excludeClaimSysId) {
+        var outcome = {
+            isDuplicate: false,
+            existingSysId: '',
+            existingNumber: '',
+            existingStatus: '',
+            message: '',
+            windowStart: '',
+        }
+
+        if (!requestedForSysId) {
+            gs.error('[ClaimEase] Duplicate check called without a requested_for value; skipping.')
+            return outcome
+        }
+
+        var amount = parseFloat(amountUsd)
+        if (isNaN(amount) || !isFinite(amount)) {
+            // The normalisation rule aborts the save before this point, so an
+            // unparseable amount here is a programming error, not a duplicate.
+            gs.error(
+                '[ClaimEase] Duplicate check received a non-numeric normalised amount ("' +
+                    amountUsd +
+                    '"); treating the claim as not duplicate.'
+            )
+            return outcome
+        }
+
+        // Rule 1: the rule applies to SMALL claims only. Anything at or above the
+        // boundary is released immediately.
+        if (!this.config.isSmallClaim(amount)) {
+            return outcome
+        }
+
+        var windowStart = this.getWindowStart()
+        outcome.windowStart = windowStart.getValue()
+
+        var threshold = this.config.getThreshold()
+        var parallelBoundary = this.config.getBoundaryMode() === 'parallel'
+
+        var claims = new GlideRecord(this.CLAIM_TABLE)
+        // Same employee, ANY category.
+        claims.addQuery('requested_for', requestedForSysId)
+        // Rule 3: a prior claim must actually have been submitted.
+        claims.addNotNullQuery('submitted_on')
+        claims.addQuery('submitted_on', '>=', windowStart)
+        // Rule 2: the prior claim must itself be a small claim. The SAME boundary
+        // comparison as ClaimEaseConfig is applied, expressed as a query.
+        claims.addQuery('amount_usd', parallelBoundary ? '<=' : '<', threshold)
+        // A zero/unset normalised amount is not a real small claim.
+        claims.addQuery('amount_usd', '>', 0)
+        // Rule 5: never match the record being validated.
+        if (excludeClaimSysId) {
+            claims.addQuery('sys_id', '!=', excludeClaimSysId)
+        }
+        // Rule 4: configurable status exclusions.
+        var excludedStatuses = this._excludedStatuses()
+        if (excludedStatuses.length) {
+            claims.addQuery('approval_status', 'NOT IN', excludedStatuses.join(','))
+        }
+        claims.orderByDesc('submitted_on')
+        claims.setLimit(1)
+        claims.query()
+
+        if (!claims.next()) {
+            return outcome
+        }
+
+        outcome.isDuplicate = true
+        outcome.existingSysId = claims.getUniqueValue()
+
+        // Diagnostic only - uses GlideDateTime.subtract so the window maths stays explicit.
+        var ageDays = this._daysBetween(new GlideDateTime(claims.getValue('submitted_on')), new GlideDateTime())
+        gs.info(
+            '[ClaimEase] Duplicate small-value claim detected. Matched claim sys_id=' +
+                outcome.existingSysId +
+                ', submitted ' +
+                ageDays +
+                ' day(s) ago, window start ' +
+                outcome.windowStart +
+                ' (inclusive).'
+        )
+
+        if (this._callerMayIdentify(claims, requestedForSysId)) {
+            outcome.existingNumber = '' + claims.getValue('number')
+            outcome.existingStatus = '' + claims.getDisplayValue('approval_status')
+            outcome.message = this._specificMessage(outcome, claims.getDisplayValue('submitted_on'))
+        } else {
+            // No claim number, no status, no dates - nothing identifying.
+            outcome.message = this._genericMessage()
+        }
+
+        return outcome
+    },
+
+    /**
+     * Convenience wrapper for business rules. Runs `check()`, always stamps
+     * `duplicate_check`, and on a hit marks the claim as a duplicate so that no
+     * eligible claim is created and no approval is started.
+     *
+     * Does NOT call update() — intended for use from a before business rule.
+     *
+     * @param {GlideRecord} claimGr the claim being saved
+     * @return {boolean} true when a duplicate was detected
+     */
+    enforce: function (claimGr) {
+        if (!claimGr) {
+            return false
+        }
+
+        // Record that duplicate validation has been evaluated, hit or miss.
+        claimGr.setValue('duplicate_check', true)
+
+        var result = this.check(
+            claimGr.getValue('requested_for'),
+            claimGr.getValue('amount_usd'),
+            claimGr.getUniqueValue()
+        )
+
+        if (!result.isDuplicate) {
+            return false
+        }
+
+        claimGr.setValue('duplicate_of', result.existingSysId)
+        claimGr.setValue('approval_status', 'duplicate')
+        // Belt and braces: a blocked submission must never start an approval.
+        claimGr.setValue('flow_started', false)
+        claimGr.setValue('rejection_reason', result.message)
+        claimGr.setValue(
+            'exception_reason',
+            this._truncate('Duplicate small-value claim within the rolling duplicate window.', 255)
+        )
+
+        return true
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Internals
+     * ------------------------------------------------------------------ */
+
+    /** @return {string[]} approval_status values excluded from duplicate detection */
+    _excludedStatuses: function () {
+        var excluded = []
+        if (this.config.excludeCancelledFromDuplicate()) {
+            excluded.push('cancelled')
+            // A claim already marked as a duplicate must never itself block.
+            excluded.push('duplicate')
+        }
+        if (this.config.excludeRejectedFromDuplicate()) {
+            excluded.push('rejected')
+        }
+        return excluded
+    },
+
+    /**
+     * Is the caller allowed to be told WHICH claim matched?
+     *
+     * @param {GlideRecord} matchedClaim the matched claim, positioned
+     * @param {string} requestedForSysId employee the new claim is for
+     * @return {boolean}
+     */
+    _callerMayIdentify: function (matchedClaim, requestedForSysId) {
+        try {
+            // Primary check: record-level read access for the current user.
+            if (typeof matchedClaim.canRead === 'function' && matchedClaim.canRead()) {
+                return true
+            }
+            // The employee may always be told about their own claim.
+            if (requestedForSysId && ('' + requestedForSysId) === ('' + gs.getUserID())) {
+                return true
+            }
+            // Administrators troubleshooting the exception queue.
+            return gs.hasRole('admin') || gs.hasRole('x_2180676_claime_0.admin')
+        } catch (e) {
+            // Fail closed: never leak on an unexpected error.
+            gs.error('[ClaimEase] Could not evaluate read access for a matched duplicate claim: ' + e)
+            return false
+        }
+    },
+
+    _specificMessage: function (outcome, submittedOnDisplay) {
+        return (
+            'This claim looks like a repeat of claim ' +
+            outcome.existingNumber +
+            ', which was submitted on ' +
+            submittedOnDisplay +
+            ' and is currently "' +
+            outcome.existingStatus +
+            '". Only one reimbursement claim below ' +
+            this.config.getThreshold() +
+            ' ' +
+            this.config.getBaseCurrency() +
+            ' can be submitted per employee every ' +
+            this.config.getDuplicateWindowDays() +
+            ' days, so this claim has been recorded as a duplicate instead of going for approval. ' +
+            'If this is a genuinely different expense, please contact your ClaimEase administrator.'
+        )
+    },
+
+    _genericMessage: function () {
+        return (
+            'A similar small-value reimbursement claim has already been submitted for this employee within the last ' +
+            this.config.getDuplicateWindowDays() +
+            ' days. Only one claim below ' +
+            this.config.getThreshold() +
+            ' ' +
+            this.config.getBaseCurrency() +
+            ' is allowed in that period, so this claim has been recorded as a duplicate instead of going for approval. ' +
+            'Please contact your ClaimEase administrator if you believe this is incorrect.'
+        )
+    },
+
+    /**
+     * Whole days between two instants, using GlideDateTime.subtract so the
+     * arithmetic is explicit and time-zone safe.
+     *
+     * @return {number}
+     */
+    _daysBetween: function (start, end) {
+        try {
+            var duration = GlideDateTime.subtract(start, end)
+            return Math.floor(duration.getNumericValue() / (1000 * 60 * 60 * 24))
+        } catch (e) {
+            return -1
+        }
+    },
+
+    _truncate: function (text, maxLength) {
+        var value = '' + (text || '')
+        return value.length > maxLength ? value.substring(0, maxLength) : value
+    },
+
+    type: 'ClaimEaseDuplicateCheck',
+}
+]]></script>
+<sys_class_name>sys_script_include</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:57</sys_created_on>
+<sys_id>0d8e54987f254701aa2739c95f3a867f</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEaseDuplicateCheck</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_include_0d8e54987f254701aa2739c95f3a867f</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:57</sys_updated_on>
+</sys_script_include>
+<sys_script_include>
+<access>package_private</access>
+<active>true</active>
+<api_name>x_2180676_claime_0.ClaimEaseLock</api_name>
+<caller_access/>
+<client_callable>false</client_callable>
+<description>Named mutex for ClaimEase, enforced by a UNIQUE database index on the lock key so two simultaneous acquires cannot both succeed. Internal helper used by ClaimEaseDuplicateCheck.</description>
+<mobile_callable>false</mobile_callable>
+<name>ClaimEaseLock</name>
+<sandbox_callable>false</sandbox_callable>
+<script><![CDATA[/**
+ * ClaimEaseLock
+ * ============================================================================
+ * A named, database-enforced mutex for ClaimEase, used to serialise claim
+ * submissions per employee so that two simultaneous qualifying submissions can
+ * never both pass the duplicate check.
+ *
+ * ----------------------------------------------------------------------------
+ * WHY THIS STRATEGY WAS CHOSEN (please read before changing it)
+ * ----------------------------------------------------------------------------
+ * Investigated first:
+ *   - `GlideRecordLock` / `GlideNativeRecordMutex`: the platform does have
+ *     cluster-wide record mutexes, but they are not part of the documented
+ *     scoped-application API surface. A scoped app (`x_2180676_claime_0`)
+ *     cannot depend on them: the call either fails the scope check at runtime
+ *     or is silently unavailable after an upgrade. Correctness must not rest on
+ *     an undocumented, non-scoped class.
+ *   - `GlideRecord.setWorkflow(false)`: only suppresses business rules /
+ *     notifications for an operation. It provides NO mutual exclusion and is
+ *     irrelevant to this problem (it is used elsewhere in ClaimEase purely to
+ *     avoid recursive rule execution).
+ *   - A client-side "are you sure" check: rejected outright — the requirement
+ *     is server-side enforcement across every interface (form, portal, Table
+ *     API, script, flow).
+ *
+ * CHOSEN: a lock row in `x_2180676_claime_0_claim_lock` whose `lock_key` column
+ * carries a UNIQUE index. Acquiring the lock is a single INSERT. If two
+ * transactions on two cluster nodes try to acquire the same key at the same
+ * instant, the DATABASE rejects one of them — the race is impossible by
+ * construction rather than by lucky timing. No spin-waiting, no reliance on
+ * node-local state, and it works identically for the form, the portal, the
+ * Table API and server scripts.
+ *
+ * LOCK LIFETIME
+ *   acquire() is called from the BEFORE insert/update duplicate guard, and
+ *   release() from an AFTER insert/update rule. That is deliberate: the lock
+ *   must still be held while the claim row commits, otherwise a second
+ *   transaction could acquire the lock and run its duplicate query before the
+ *   first claim became visible. `expires_on` bounds the damage if a transaction
+ *   aborts between the two rules — the next acquirer reclaims the stale lock.
+ *
+ * Not client callable.
+ */
+var ClaimEaseLock = Class.create()
+
+ClaimEaseLock.prototype = {
+    LOCK_TABLE: 'x_2180676_claime_0_claim_lock',
+
+    /**
+     * Default lifetime of a lock. Long enough to cover a save transaction,
+     * short enough that an aborted transaction only briefly inconveniences the
+     * same employee.
+     */
+    DEFAULT_TTL_SECONDS: 60,
+
+    initialize: function () {},
+
+    /**
+     * Acquires the named lock.
+     *
+     * @param {string} lockKey      the named mutex
+     * @param {string} ownerToken   identifies the holder (ClaimEase uses the claim sys_id)
+     * @param {number} [ttlSeconds] lock lifetime, defaults to DEFAULT_TTL_SECONDS
+     * @param {string} [context]    diagnostic text stored on the lock row
+     * @return {{acquired: boolean, reentrant: boolean, lockKey: string, error: string}}
+     */
+    acquire: function (lockKey, ownerToken, ttlSeconds, context) {
+        var result = { acquired: false, reentrant: false, lockKey: '' + lockKey, error: '' }
+
+        if (!lockKey || !ownerToken) {
+            result.error = 'A lock key and an owner token are both required.'
+            gs.error('[ClaimEase] ClaimEaseLock.acquire called without a key or owner token.')
+            return result
+        }
+
+        var ttl = parseInt(ttlSeconds, 10)
+        if (isNaN(ttl) || ttl <= 0) {
+            ttl = this.DEFAULT_TTL_SECONDS
+        }
+
+        // Two passes at most: the second pass exists only to retry after a stale
+        // lock has been reclaimed, so this can never spin.
+        for (var attempt = 0; attempt < 2; attempt++) {
+            if (this._insertLock(lockKey, ownerToken, ttl, context)) {
+                result.acquired = true
+                return result
+            }
+
+            // The insert was refused, so a row already exists for this key.
+            var existing = this._findLock(lockKey)
+            if (!existing) {
+                // It disappeared between the insert and the read: try once more.
+                continue
+            }
+
+            if (('' + existing.getValue('owner_token')) === ('' + ownerToken)) {
+                // Same holder (e.g. a nested update in the same transaction):
+                // treat as re-entrant and extend the lease.
+                this._extendLock(existing, ttl)
+                result.acquired = true
+                result.reentrant = true
+                return result
+            }
+
+            if (this._isExpired(existing)) {
+                gs.info('[ClaimEase] Reclaiming an expired submission lock for key "' + lockKey + '".')
+                this._reclaimLock(existing)
+                continue
+            }
+
+            result.error = 'Lock "' + lockKey + '" is currently held by another transaction.'
+            return result
+        }
+
+        if (!result.error) {
+            result.error = 'Could not acquire lock "' + lockKey + '" after reclaiming a stale lock.'
+        }
+        return result
+    },
+
+    /**
+     * Releases a lock, but only if this owner still holds it.
+     *
+     * @param {string} lockKey
+     * @param {string} ownerToken
+     * @return {boolean} true when a lock row was removed
+     */
+    release: function (lockKey, ownerToken) {
+        if (!lockKey || !ownerToken) {
+            return false
+        }
+        try {
+            var lockGr = new GlideRecord(this.LOCK_TABLE)
+            lockGr.addQuery('lock_key', '' + lockKey)
+            lockGr.addQuery('owner_token', '' + ownerToken)
+            lockGr.setLimit(1)
+            lockGr.query()
+            if (!lockGr.next()) {
+                return false
+            }
+            lockGr.setWorkflow(false)
+            lockGr.deleteRecord()
+            return true
+        } catch (e) {
+            gs.error('[ClaimEase] Failed to release submission lock "' + lockKey + '": ' + e)
+            return false
+        }
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Internals
+     * ------------------------------------------------------------------ */
+
+    /**
+     * The actual mutual exclusion: the UNIQUE index on `lock_key` makes the
+     * second concurrent insert fail.
+     *
+     * @return {boolean} true when this caller won the race
+     */
+    _insertLock: function (lockKey, ownerToken, ttlSeconds, context) {
+        try {
+            var lockGr = new GlideRecord(this.LOCK_TABLE)
+            lockGr.initialize()
+            lockGr.setValue('lock_key', '' + lockKey)
+            lockGr.setValue('owner_token', '' + ownerToken)
+            lockGr.setValue('context', this._truncate(context || 'ClaimEase submission guard', 255))
+            lockGr.setValue('expires_on', this._expiryFrom(ttlSeconds))
+            lockGr.setWorkflow(false)
+            var sysId = lockGr.insert()
+            return !!sysId
+        } catch (e) {
+            // A unique-index violation is an expected, non-exceptional outcome.
+            gs.info('[ClaimEase] Submission lock "' + lockKey + '" is already held (' + e + ').')
+            return false
+        }
+    },
+
+    _findLock: function (lockKey) {
+        try {
+            var lockGr = new GlideRecord(this.LOCK_TABLE)
+            lockGr.addQuery('lock_key', '' + lockKey)
+            lockGr.setLimit(1)
+            lockGr.query()
+            return lockGr.next() ? lockGr : null
+        } catch (e) {
+            gs.error('[ClaimEase] Failed to read submission lock "' + lockKey + '": ' + e)
+            return null
+        }
+    },
+
+    _extendLock: function (lockGr, ttlSeconds) {
+        try {
+            lockGr.setValue('expires_on', this._expiryFrom(ttlSeconds))
+            lockGr.setWorkflow(false)
+            lockGr.update()
+        } catch (e) {
+            gs.info('[ClaimEase] Could not extend an existing submission lock: ' + e)
+        }
+    },
+
+    _reclaimLock: function (lockGr) {
+        try {
+            lockGr.setWorkflow(false)
+            lockGr.deleteRecord()
+        } catch (e) {
+            gs.info('[ClaimEase] Could not reclaim an expired submission lock: ' + e)
+        }
+    },
+
+    /** @return {boolean} true when the lock row is past its expiry instant */
+    _isExpired: function (lockGr) {
+        var expires = lockGr.getValue('expires_on')
+        if (!expires) {
+            // A lock with no expiry is malformed; treat it as stale so it cannot
+            // block submissions permanently.
+            return true
+        }
+        var expiry = new GlideDateTime(expires)
+        var now = new GlideDateTime()
+        return expiry.compareTo(now) <= 0
+    },
+
+    /** @return {string} internal date-time string `ttlSeconds` from now */
+    _expiryFrom: function (ttlSeconds) {
+        var expiry = new GlideDateTime()
+        expiry.addSeconds(ttlSeconds)
+        return expiry.getValue()
+    },
+
+    _truncate: function (text, maxLength) {
+        var value = '' + (text || '')
+        return value.length > maxLength ? value.substring(0, maxLength) : value
+    },
+
+    type: 'ClaimEaseLock',
+}
+]]></script>
+<sys_class_name>sys_script_include</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:58</sys_created_on>
+<sys_id>14400c73ae1744c59799d227e102a21f</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEaseLock</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_include_14400c73ae1744c59799d227e102a21f</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:58</sys_updated_on>
+</sys_script_include>
+<sys_script_include>
+<access>package_private</access>
+<active>true</active>
+<api_name>x_2180676_claime_0.ClaimEaseNumber</api_name>
+<caller_access/>
+<client_callable>false</client_callable>
+<description>Issues reimbursement claim numbers (CLM0001000, ...) from the sys_number counter for the claim table. Replaces the global getNextObjNumberPadded default, which a scoped application cannot call.</description>
+<mobile_callable>false</mobile_callable>
+<name>ClaimEaseNumber</name>
+<sandbox_callable>false</sandbox_callable>
+<script><![CDATA[/**
+ * ClaimEaseNumber
+ * ============================================================================
+ * Generates the `number` value for a reimbursement claim (CLM0001000, ...).
+ *
+ * ----------------------------------------------------------------------------
+ * WHY THIS CLASS EXISTS
+ * ----------------------------------------------------------------------------
+ * The usual dictionary default for an auto-numbered table is
+ *
+ *     javascript:getNextObjNumberPadded();
+ *
+ * That does NOT work from a scoped application on this instance, and produced
+ * the runtime error:
+ *
+ *     "getNextObjNumberPadded undefined, maybe missing global qualifier"
+ *
+ * The reason is that `getNextObjNumberPadded` is not a global *function* — it is
+ * a METHOD on the global `NumberManager` script include, and that script include
+ * is published as `access = package_private`. A scoped application therefore
+ * cannot call it, qualified (`global.NumberManager`) or not. Rather than depend
+ * on an inaccessible global, ClaimEase issues its own numbers from the very same
+ * platform record the `autoNumber` table property created:
+ *
+ *     sys_number  where category = 'x_2180676_claime_0_claim'
+ *                 -> prefix 'CLM', number 1000, maximum_digits 7
+ *
+ * Administrators keep using the standard Number Maintenance UI to change the
+ * prefix, the next number or the padding; nothing here is hardcoded except the
+ * last-resort fallbacks.
+ *
+ * ----------------------------------------------------------------------------
+ * CONCURRENCY
+ * ----------------------------------------------------------------------------
+ * `sys_number.number` holds the NEXT number to issue (this matches the platform
+ * convention in NumberManager.createNumberCategory, which stores 10001 after
+ * issuing 10000). Issuing a number is therefore a read-modify-write.
+ *
+ * Two safeguards make that safe:
+ *   1. After reserving a candidate, we verify no claim already carries it and
+ *      re-reserve if one does (bounded retry). This closes the practical race
+ *      between two simultaneous inserts.
+ *   2. The `number` column has a UNIQUE index, so the database is the final
+ *      arbiter: a genuine collision can never be persisted.
+ *
+ * If numbering cannot be resolved at all, `getNext()` returns a timestamp-based
+ * fallback and logs an error, because refusing to number a claim would block a
+ * legitimate submission outright.
+ *
+ * Not client callable.
+ */
+var ClaimEaseNumber = Class.create()
+
+ClaimEaseNumber.prototype = {
+    CLAIM_TABLE: 'x_2180676_claime_0_claim',
+    NUMBER_TABLE: 'sys_number',
+
+    /* Last-resort values, used only when the sys_number record is missing. */
+    DEFAULT_PREFIX: 'CLM',
+    DEFAULT_DIGITS: 7,
+    DEFAULT_START: 1000,
+
+    /** Bounded retry when a reserved number turns out to be taken. */
+    MAX_ATTEMPTS: 10,
+
+    initialize: function () {},
+
+    /**
+     * Issues the next claim number.
+     *
+     * @return {string} e.g. 'CLM0001000' (never empty)
+     */
+    getNext: function () {
+        for (var attempt = 0; attempt < this.MAX_ATTEMPTS; attempt++) {
+            var candidate = this._reserveNext()
+
+            if (!candidate) {
+                // The counter record could not be read or written at all.
+                break
+            }
+
+            if (!this._numberExists(candidate)) {
+                return candidate
+            }
+
+            gs.info(
+                '[ClaimEase] Claim number "' +
+                    candidate +
+                    '" was already taken; reserving the next one (attempt ' +
+                    (attempt + 1) +
+                    ').'
+            )
+        }
+
+        return this._fallbackNumber()
+    },
+
+    /* ------------------------------------------------------------------ *
+     * Internals
+     * ------------------------------------------------------------------ */
+
+    /**
+     * Reads the counter, issues its current value and stores value + 1.
+     *
+     * @return {string} the reserved number, or '' when the counter is unusable
+     */
+    _reserveNext: function () {
+        try {
+            var counter = new GlideRecord(this.NUMBER_TABLE)
+            counter.addQuery('category', this.CLAIM_TABLE)
+            counter.setLimit(1)
+            counter.query()
+
+            if (!counter.next()) {
+                gs.error(
+                    '[ClaimEase] No sys_number record exists for category "' +
+                        this.CLAIM_TABLE +
+                        '". Claim numbering is falling back to a generated value. ' +
+                        'Re-install the application or create the Number Maintenance record.'
+                )
+                return ''
+            }
+
+            var prefix = '' + (counter.getValue('prefix') || this.DEFAULT_PREFIX)
+
+            var digits = parseInt(counter.getValue('maximum_digits'), 10)
+            if (isNaN(digits) || digits <= 0) {
+                digits = this.DEFAULT_DIGITS
+            }
+
+            var next = parseInt(counter.getValue('number'), 10)
+            if (isNaN(next) || next <= 0) {
+                next = this.DEFAULT_START
+            }
+
+            // Store the following value before returning this one.
+            counter.setValue('number', next + 1)
+            counter.setWorkflow(false)
+            counter.update()
+
+            return prefix + this._pad(next, digits)
+        } catch (e) {
+            gs.error('[ClaimEase] Could not reserve a claim number from sys_number: ' + e)
+            return ''
+        }
+    },
+
+    /**
+     * @param {string} candidate
+     * @return {boolean} true when a claim already carries this number
+     */
+    _numberExists: function (candidate) {
+        try {
+            var existing = new GlideRecord(this.CLAIM_TABLE)
+            existing.addQuery('number', candidate)
+            existing.setLimit(1)
+            existing.query()
+            return existing.hasNext()
+        } catch (e) {
+            gs.error('[ClaimEase] Could not verify claim number uniqueness: ' + e)
+            // Treat as "not taken": the UNIQUE index still protects the data.
+            return false
+        }
+    },
+
+    /**
+     * Unique, human-recognisable fallback used only when the counter is
+     * unavailable. Deliberately distinguishable from a normal sequence number
+     * so administrators can spot it.
+     *
+     * @return {string}
+     */
+    _fallbackNumber: function () {
+        var stamp = new GlideDateTime().getNumericValue()
+        var fallback = this.DEFAULT_PREFIX + 'X' + stamp
+        gs.error(
+            '[ClaimEase] Issued fallback claim number "' +
+                fallback +
+                '" because the Number Maintenance counter could not be used.'
+        )
+        return fallback
+    },
+
+    /** Zero-pads a number to the configured width. */
+    _pad: function (value, digits) {
+        var text = '' + value
+        while (text.length < digits) {
+            text = '0' + text
+        }
+        return text
+    },
+
+    type: 'ClaimEaseNumber',
+}
+]]></script>
+<sys_class_name>sys_script_include</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:21</sys_created_on>
+<sys_id>4ccdc79686274dfd9962c08ae46f1797</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEaseNumber</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_include_4ccdc79686274dfd9962c08ae46f1797</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:21</sys_updated_on>
+</sys_script_include>
+<sys_script_include>
+<access>public</access>
+<active>true</active>
+<api_name>x_2180676_claime_0.ClaimEaseValidator</api_name>
+<caller_access>1</caller_access>
+<client_callable>false</client_callable>
+<description>Server-side claim validation shared by the record producer and the business rules. Also resolves the approving manager with a fallback group, and owns the approval-field authorisation checks.</description>
+<mobile_callable>false</mobile_callable>
+<name>ClaimEaseValidator</name>
+<sandbox_callable>false</sandbox_callable>
+<script><![CDATA[/**
+ * ClaimEaseValidator
+ * ============================================================================
+ * Server-side validation and authorisation for ClaimEase, shared by the record
+ * producer and the business rules so that every interface (form, portal, Table
+ * API, script, flow) is held to exactly the same rules. There is no
+ * client-only validation anywhere in this application.
+ *
+ * `validate()` returns `{ valid: boolean, errors: string[] }` where every entry
+ * in `errors` is a friendly, user-facing sentence. Technical detail (field
+ * names, sys_ids, exception text) goes to `gs.error`/`gs.info` ONLY, and never
+ * contains another employee's data.
+ *
+ * This class also owns the approval-field authorisation helpers used by the
+ * "Protect Approval Fields" business rule, so that rule can stay thin.
+ *
+ * Not client callable.
+ */
+var ClaimEaseValidator = Class.create()
+
+ClaimEaseValidator.prototype = {
+    CLAIM_TABLE: 'x_2180676_claime_0_claim',
+
+    /** The eight permitted claim categories. */
+    ALLOWED_CATEGORIES: [
+        'business_travel',
+        'meals',
+        'accommodation',
+        'medical',
+        'office_supplies',
+        'internet_phone',
+        'training',
+        'other',
+    ],
+
+    /**
+     * Session flag the approval automation sets while it writes approval
+     * decisions. See `isApprovalAutomation()` for the full contract.
+     */
+    AUTOMATION_FLAG: 'x_2180676_claime_0.approval_automation',
+
+    ROLE_ADMIN: 'x_2180676_claime_0.admin',
+    ROLE_MANAGER: 'x_2180676_claime_0.manager',
+    ROLE_FINANCE: 'x_2180676_claime_0.finance_approver',
+
+    initialize: function () {
+        this.config = new ClaimEaseConfig()
+        this.currency = new ClaimEaseCurrency()
+    },
+
+    /* ================================================================== *
+     * VALIDATION
+     * ================================================================== */
+
+    /**
+     * Validates a claim.
+     *
+     * @param {GlideRecord} claimGr the claim being created or saved
+     * @param {{checkReceipt: boolean}} [options]
+     *        `checkReceipt` - evaluate the receipt-attachment requirement.
+     *        Callers pass false on insert, because no attachment can exist
+     *        before the record does.
+     * @return {{valid: boolean, errors: string[]}}
+     */
+    validate: function (claimGr, options) {
+        var errors = []
+        var opts = options || {}
+
+        if (!claimGr) {
+            gs.error('[ClaimEase] ClaimEaseValidator.validate was called without a record.')
+            return { valid: false, errors: ['The claim could not be validated. Please try again.'] }
+        }
+
+        this._validateMandatory(claimGr, errors)
+        this._validateAmount(claimGr, errors)
+        this._validateCategory(claimGr, errors)
+        this._validateExpenseDate(claimGr, errors)
+        this._validateRequestedFor(claimGr, errors)
+        this._validateDelegation(claimGr, errors)
+
+        if (opts.checkReceipt === true) {
+            this._validateReceipt(claimGr, errors)
+        }
+
+        return { valid: errors.length === 0, errors: errors }
+    },
+
+    /** Mandatory fields that must be present on every claim. */
+    _validateMandatory: function (claimGr, errors) {
+        var mandatory = [
+            { field: 'short_description', label: 'a short description of the expense' },
+            { field: 'requested_for', label: 'the employee the claim is for' },
+            { field: 'category', label: 'a claim category' },
+            { field: 'amount', label: 'the claim amount' },
+            { field: 'expense_date', label: 'the date the expense was incurred' },
+        ]
+        for (var i = 0; i < mandatory.length; i++) {
+            var value = claimGr.getValue(mandatory[i].field)
+            if (value === null || value === undefined || ('' + value).replace(/^\s+|\s+$/g, '') === '') {
+                errors.push('Please provide ' + mandatory[i].label + '.')
+            }
+        }
+    },
+
+    /** The amount must parse and be strictly greater than zero. */
+    _validateAmount: function (claimGr, errors) {
+        var raw = claimGr.getValue('amount')
+        if (raw === null || raw === undefined || ('' + raw) === '') {
+            // Already reported by the mandatory check.
+            return
+        }
+
+        var parsed = this.currency.parseAmount(raw)
+        if (!parsed.ok) {
+            gs.error('[ClaimEase] Amount validation failed: ' + parsed.error)
+            errors.push('Please enter the claim amount as a number, for example 24.50.')
+            return
+        }
+        if (parsed.value === 0) {
+            errors.push('The claim amount cannot be zero. Please enter the amount you actually spent.')
+            return
+        }
+        if (parsed.value < 0) {
+            errors.push('The claim amount cannot be negative. Please enter a positive amount.')
+        }
+    },
+
+    /** Category must be one of the eight allowed values. */
+    _validateCategory: function (claimGr, errors) {
+        var category = '' + (claimGr.getValue('category') || '')
+        if (category === '') {
+            // Already reported by the mandatory check.
+            return
+        }
+        if (this.ALLOWED_CATEGORIES.indexOf(category) === -1) {
+            gs.error('[ClaimEase] Rejected an unrecognised claim category value: "' + category + '".')
+            errors.push('Please choose one of the available claim categories.')
+        }
+    },
+
+    /** Expense date must be a real date, and not in the future unless configured. */
+    _validateExpenseDate: function (claimGr, errors) {
+        var raw = '' + (claimGr.getValue('expense_date') || '')
+        if (raw === '') {
+            // Already reported by the mandatory check.
+            return
+        }
+
+        var expenseDate
+        try {
+            expenseDate = new GlideDate()
+            expenseDate.setValue(raw)
+            if (!expenseDate.getValue()) {
+                throw 'empty after parse'
+            }
+        } catch (e) {
+            gs.error('[ClaimEase] Expense date "' + raw + '" could not be parsed: ' + e)
+            errors.push('Please enter a valid expense date.')
+            return
+        }
+
+        if (this.config.allowFutureExpenseDate()) {
+            return
+        }
+
+        // GlideDate() with no arguments is initialised to the current date.
+        var today = new GlideDate()
+        if (expenseDate.compareTo(today) > 0) {
+            errors.push('The expense date cannot be in the future. Please enter the date you actually incurred the expense.')
+        }
+    },
+
+    /** requested_for must point at an existing, active user. */
+    _validateRequestedFor: function (claimGr, errors) {
+        var userSysId = '' + (claimGr.getValue('requested_for') || '')
+        if (userSysId === '') {
+            // Already reported by the mandatory check.
+            return
+        }
+        var user = new GlideRecord('sys_user')
+        if (!user.get(userSysId)) {
+            gs.error('[ClaimEase] requested_for points at a user record that does not exist.')
+            errors.push('The employee selected for this claim could not be found. Please choose a valid employee.')
+            return
+        }
+        if (user.getValue('active') !== '1') {
+            gs.error('[ClaimEase] requested_for points at an inactive user record.')
+            errors.push('Claims cannot be raised for an inactive employee. Please choose an active employee.')
+        }
+    },
+
+    /**
+     * Delegated submission (requested_for differs from the submitter) is only
+     * allowed when policy permits it or the caller is a ClaimEase admin.
+     */
+    _validateDelegation: function (claimGr, errors) {
+        var requestedFor = '' + (claimGr.getValue('requested_for') || '')
+        if (requestedFor === '') {
+            return
+        }
+        var submittedBy = '' + (claimGr.getValue('submitted_by') || gs.getUserID())
+        if (requestedFor === submittedBy) {
+            return
+        }
+        if (this.config.allowDelegatedSubmission() || this.isClaimEaseAdmin()) {
+            return
+        }
+        gs.error('[ClaimEase] Blocked a delegated submission while allow_delegated_submission is false.')
+        errors.push(
+            'You can only submit reimbursement claims for yourself. Please ask the employee to submit their own claim, ' +
+                'or contact your ClaimEase administrator.'
+        )
+    },
+
+    /** At least one attachment is required when require_receipt is true. */
+    _validateReceipt: function (claimGr, errors) {
+        if (!this.config.requireReceipt()) {
+            return
+        }
+        var claimSysId = claimGr.getUniqueValue()
+        if (!claimSysId) {
+            return
+        }
+        if (this.hasAttachment(claimSysId)) {
+            return
+        }
+        errors.push('Please attach a receipt or supporting document before submitting this claim.')
+    },
+
+    /**
+     * @param {string} claimSysId
+     * @return {boolean} true when the claim has at least one attachment
+     */
+    hasAttachment: function (claimSysId) {
+        try {
+            var attachments = new GlideRecord('sys_attachment')
+            attachments.addQuery('table_name', this.CLAIM_TABLE)
+            attachments.addQuery('table_sys_id', claimSysId)
+            attachments.setLimit(1)
+            attachments.query()
+            return attachments.hasNext()
+        } catch (e) {
+            gs.error('[ClaimEase] Could not check attachments for a claim: ' + e)
+            // Fail closed: if we cannot prove a receipt exists, treat it as missing.
+            return false
+        }
+    },
+
+    /* ================================================================== *
+     * APPROVER RESOLUTION
+     * ================================================================== */
+
+    /**
+     * Resolves the approving manager for an employee.
+     *
+     * This NEVER returns "no approval needed". When the employee has no manager
+     * on their user record, the configured fallback approver group is returned
+     * instead, so the claim is routed to the exception queue rather than being
+     * auto-approved or silently stalled.
+     *
+     * @param {string} userSysId sys_user sys_id
+     * @return {{managerSysId: string, usedFallback: boolean, fallbackGroupSysId: string, error: string}}
+     */
+    resolveManager: function (userSysId) {
+        var result = { managerSysId: '', usedFallback: false, fallbackGroupSysId: '', error: '' }
+
+        if (!userSysId) {
+            result.usedFallback = true
+            result.fallbackGroupSysId = this.config.getFallbackGroupSysId()
+            result.error = 'No employee was supplied, so the claim must be routed to the fallback approver group.'
+            gs.error('[ClaimEase] resolveManager called without a user sys_id.')
+            return result
+        }
+
+        try {
+            var user = new GlideRecord('sys_user')
+            if (!user.get(userSysId)) {
+                result.usedFallback = true
+                result.fallbackGroupSysId = this.config.getFallbackGroupSysId()
+                result.error = 'The employee record could not be found.'
+                gs.error('[ClaimEase] resolveManager could not load the supplied user record.')
+                return result
+            }
+
+            var managerSysId = '' + (user.getValue('manager') || '')
+            if (managerSysId) {
+                // A manager who is inactive cannot approve, so fall back.
+                var manager = new GlideRecord('sys_user')
+                if (manager.get(managerSysId) && manager.getValue('active') === '1') {
+                    result.managerSysId = managerSysId
+                    return result
+                }
+                result.error = 'The recorded manager is missing or inactive.'
+                gs.info('[ClaimEase] Manager on the employee record is missing or inactive; using the fallback group.')
+            } else {
+                result.error = 'The employee has no manager recorded.'
+                gs.info('[ClaimEase] Employee has no manager recorded; using the fallback group.')
+            }
+        } catch (e) {
+            result.error = 'Manager resolution failed.'
+            gs.error('[ClaimEase] resolveManager failed: ' + e)
+        }
+
+        result.usedFallback = true
+        result.fallbackGroupSysId = this.config.getFallbackGroupSysId()
+        if (!result.fallbackGroupSysId) {
+            gs.error(
+                '[ClaimEase] No manager AND no fallback approver group could be resolved. Check the property ' +
+                    'x_2180676_claime_0.fallback_approver_group.'
+            )
+        }
+        return result
+    },
+
+    /* ================================================================== *
+     * APPROVAL AUTHORISATION (used by "Protect Approval Fields")
+     * ================================================================== */
+
+    /** @return {boolean} platform admin or ClaimEase scoped admin */
+    isClaimEaseAdmin: function () {
+        try {
+            return gs.hasRole('admin') || gs.hasRole(this.ROLE_ADMIN)
+        } catch (e) {
+            return false
+        }
+    },
+
+    /**
+     * DOCUMENTED AUTOMATION BYPASS
+     * ----------------------------------------------------------------------
+     * The approval automation (Flow Designer) writes `manager_approval` and
+     * `finance_approval` on behalf of an approver, so it cannot satisfy the
+     * "you must BE the manager" test. The agreed bypass is a session
+     * scratchpad flag that the flow sets immediately before it writes the
+     * decision and clears afterwards:
+     *
+     *     gs.getSession().putClientData('x_2180676_claime_0.approval_automation', 'true');
+     *     // ... update the claim ...
+     *     gs.getSession().clearClientData('x_2180676_claime_0.approval_automation');
+     *
+     * The flag ALONE is never sufficient. The session must additionally hold a
+     * ClaimEase approval role (admin / manager / finance_approver) AND the
+     * claim must already have `flow_started = true`, i.e. the approval process
+     * really is running for that claim. An employee therefore cannot forge the
+     * flag to approve their own claim.
+     *
+     * @param {GlideRecord} claimGr the claim being updated
+     * @return {boolean}
+     */
+    isApprovalAutomation: function (claimGr) {
+        try {
+            if (!claimGr || claimGr.getValue('flow_started') !== '1') {
+                return false
+            }
+            var session = gs.getSession()
+            if (!session || typeof session.getClientData !== 'function') {
+                return false
+            }
+            var flag = '' + (session.getClientData(this.AUTOMATION_FLAG) || '')
+            if (flag !== 'true') {
+                return false
+            }
+            return (
+                this.isClaimEaseAdmin() ||
+                gs.hasRole(this.ROLE_MANAGER) ||
+                gs.hasRole(this.ROLE_FINANCE)
+            )
+        } catch (e) {
+            gs.info('[ClaimEase] Could not evaluate the approval automation bypass: ' + e)
+            return false
+        }
+    },
+
+    /**
+     * May the current user change `manager_approval` on this claim?
+     * Allowed for: the recorded manager, a ClaimEase admin, or the approval
+     * automation.
+     *
+     * @param {GlideRecord} claimGr
+     * @return {boolean}
+     */
+    canSetManagerApproval: function (claimGr) {
+        if (this.isClaimEaseAdmin()) {
+            return true
+        }
+        if (this.isApprovalAutomation(claimGr)) {
+            return true
+        }
+        var recordedManager = '' + (claimGr.getValue('manager') || '')
+        return recordedManager !== '' && recordedManager === ('' + gs.getUserID())
+    },
+
+    /**
+     * May the current user change `finance_approval` on this claim?
+     * Allowed for: a member of the configured Finance group, a holder of the
+     * finance_approver role, a ClaimEase admin, or the approval automation.
+     *
+     * @param {GlideRecord} claimGr
+     * @return {boolean}
+     */
+    canSetFinanceApproval: function (claimGr) {
+        if (this.isClaimEaseAdmin()) {
+            return true
+        }
+        if (this.isApprovalAutomation(claimGr)) {
+            return true
+        }
+        try {
+            if (gs.hasRole(this.ROLE_FINANCE)) {
+                return true
+            }
+        } catch (e) {
+            gs.info('[ClaimEase] Role check for the finance approver role failed: ' + e)
+        }
+        return this.isFinanceGroupMember(gs.getUserID())
+    },
+
+    /**
+     * @param {string} userSysId
+     * @return {boolean} true when the user belongs to the configured Finance group
+     */
+    isFinanceGroupMember: function (userSysId) {
+        var groupSysId = this.config.getFinanceGroupSysId()
+        if (!groupSysId || !userSysId) {
+            return false
+        }
+        try {
+            var member = new GlideRecord('sys_user_grmember')
+            member.addQuery('group', groupSysId)
+            member.addQuery('user', userSysId)
+            member.setLimit(1)
+            member.query()
+            return member.hasNext()
+        } catch (e) {
+            gs.error('[ClaimEase] Could not evaluate Finance group membership: ' + e)
+            return false
+        }
+    },
+
+    /**
+     * Validates approval state transitions.
+     *
+     * @param {GlideRecord} current
+     * @param {GlideRecord} previous
+     * @return {string[]} friendly errors; empty when the transition is valid
+     */
+    validateApprovalTransition: function (current, previous) {
+        var errors = []
+        if (!current || !previous) {
+            return errors
+        }
+
+        var managerNow = '' + (current.getValue('manager_approval') || '')
+        var managerBefore = '' + (previous.getValue('manager_approval') || '')
+        var financeNow = '' + (current.getValue('finance_approval') || '')
+        var financeBefore = '' + (previous.getValue('finance_approval') || '')
+        var statusNow = '' + (current.getValue('approval_status') || '')
+        var statusBefore = '' + (previous.getValue('approval_status') || '')
+
+        var managerChanged = managerNow !== managerBefore
+        var financeChanged = financeNow !== financeBefore
+
+        if (!managerChanged && !financeChanged) {
+            return errors
+        }
+
+        // No approval decisions on a closed-out claim.
+        var closedStatuses = ['cancelled', 'duplicate']
+        if (closedStatuses.indexOf(statusBefore) > -1 || closedStatuses.indexOf(statusNow) > -1) {
+            errors.push(
+                'This claim has been cancelled or recorded as a duplicate, so it can no longer be approved or rejected.'
+            )
+            return errors
+        }
+
+        // Finance cannot approve a claim the manager has rejected.
+        if (financeChanged && financeNow === 'approved' && managerNow === 'rejected') {
+            errors.push('Finance cannot approve this claim because the manager has already rejected it.')
+        }
+
+        // A recorded decision cannot be quietly rewound to "not requested".
+        var decided = ['approved', 'rejected']
+        if (managerChanged && decided.indexOf(managerBefore) > -1 && managerNow === 'not_requested') {
+            errors.push('The manager decision on this claim has already been recorded and cannot be reset.')
+        }
+        if (financeChanged && decided.indexOf(financeBefore) > -1 && financeNow === 'not_requested') {
+            errors.push('The finance decision on this claim has already been recorded and cannot be reset.')
+        }
+
+        return errors
+    },
+
+    type: 'ClaimEaseValidator',
+}
+]]></script>
+<sys_class_name>sys_script_include</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:58</sys_created_on>
+<sys_id>85da19cd6ffd46b983ecc43037702360</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEaseValidator</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_include_85da19cd6ffd46b983ecc43037702360</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:58</sys_updated_on>
+</sys_script_include>
+</xml>

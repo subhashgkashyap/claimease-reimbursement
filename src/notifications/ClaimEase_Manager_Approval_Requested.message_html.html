@@ -1,0 +1,15 @@
+/* ClaimEase - notifications
+ * name: ClaimEase - Manager Approval Requested
+ * event_name: x_2180676_claime_0.mgr.approval.request
+ * subject: ClaimEase: your approval is needed for claim ${number}
+ * active: true
+ * field: message_html
+ */
+
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello,</p>
+<p>A reimbursement claim submitted by <strong>${requested_for.name}</strong> is waiting for your <strong>Manager approval</strong>. Please approve or reject it from your approval record, adding a comment so the employee understands the decision.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Record Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">Open the claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>

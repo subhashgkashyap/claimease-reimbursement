@@ -1,0 +1,158 @@
+/* ClaimEase - portal_widgets
+ * name: ClaimEase - My Claims
+ * id: x_2180676_claime_0_my_claims
+ * field: template
+ */
+
+<!--
+  ClaimEase - "My Claims" template (AngularJS / Bootstrap 3)
+
+  Shows only the claims the server returned for the signed-in employee. Every
+  status-bearing value is rendered with the class the server computed for that
+  specific value, so the meaning is visible and not a flat grey badge.
+-->
+<div class="panel panel-default claimease-my-claims">
+  <div class="panel-heading">
+    <h2 class="h4 panel-title">{{c.data.title}}</h2>
+  </div>
+
+  <!-- Search and filter -->
+  <div class="panel-body claimease-filters">
+    <form name="claimFilters" ng-submit="c.applyFilters()" novalidate>
+      <div class="row">
+        <div class="col-md-3 col-sm-6">
+          <div class="form-group">
+            <label for="claimease-number">${Claim number}</label>
+            <input type="text" id="claimease-number" name="number" class="form-control"
+                   ng-model="c.form.number" placeholder="${e.g. CLM0001001}" />
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="form-group">
+            <label for="claimease-category">${Category}</label>
+            <select id="claimease-category" name="category" class="form-control" ng-model="c.form.category">
+              <option value="">${All categories}</option>
+              <option ng-repeat="choice in c.data.categoryChoices track by choice.value"
+                      value="{{choice.value}}">{{choice.label}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="form-group">
+            <label for="claimease-status">${Status}</label>
+            <select id="claimease-status" name="status" class="form-control" ng-model="c.form.status">
+              <option value="">${All statuses}</option>
+              <option ng-repeat="choice in c.data.statusChoices track by choice.value"
+                      value="{{choice.value}}">{{choice.label}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="form-group">
+            <label for="claimease-from">${Submitted from}</label>
+            <input type="date" id="claimease-from" name="submittedFrom" class="form-control"
+                   ng-model="c.form.submittedFrom" />
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="form-group">
+            <label for="claimease-to">${Submitted to}</label>
+            <input type="date" id="claimease-to" name="submittedTo" class="form-control"
+                   ng-model="c.form.submittedTo" />
+          </div>
+        </div>
+      </div>
+      <div class="claimease-filter-actions">
+        <button type="submit" class="btn btn-primary" ng-disabled="c.loading">${Search}</button>
+        <button type="button" class="btn btn-default" ng-click="c.clearFilters()" ng-disabled="c.loading">${Clear}</button>
+        <a class="btn btn-link" ng-href="?id={{c.data.submitPageId}}">${Submit a new claim}</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading -->
+  <div class="panel-body text-muted" ng-if="c.loading">
+    <i class="fa fa-spinner fa-spin" aria-hidden="true"></i> ${Loading your claims}...
+  </div>
+
+  <!-- Claims -->
+  <div class="table-responsive" ng-if="!c.loading && c.data.claims.length">
+    <table class="table table-striped claimease-table">
+      <caption class="sr-only">{{c.data.title}}</caption>
+      <thead>
+        <tr>
+          <th scope="col">${Claim}</th>
+          <th scope="col">${Category}</th>
+          <th scope="col">${Amount}</th>
+          <th scope="col">${Expense date}</th>
+          <th scope="col">${Submitted}</th>
+          <th scope="col">${Status}</th>
+          <th scope="col">${Approval progress}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="claim in c.data.claims track by claim.sys_id">
+          <th scope="row">
+            <a ng-href="{{c.claimUrl(claim)}}">{{claim.number}}</a>
+            <div class="text-muted claimease-summary">{{claim.short_description}}</div>
+          </th>
+          <td>{{claim.category}}</td>
+          <td class="claimease-amount">{{claim.amount}}</td>
+          <td>{{claim.expense_date}}</td>
+          <td>{{claim.submitted_on || '-'}}</td>
+          <td>
+            <span class="label" ng-class="claim.statusClass" ng-bind="claim.status"></span>
+            <div class="claimease-flags">
+              <span class="text-danger" ng-if="claim.hasRejectionReason">
+                <i class="fa fa-exclamation-circle" aria-hidden="true"></i> ${Reason given}
+              </span>
+              <span class="text-muted" ng-if="claim.hasFinanceComments">
+                <i class="fa fa-comment-o" aria-hidden="true"></i> ${Finance comments}
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="claimease-progress">
+              <span class="claimease-step">
+                <span class="claimease-step-label">${Manager}</span>
+                <span class="label" ng-class="claim.managerApprovalClass" ng-bind="claim.managerApproval"></span>
+              </span>
+              <span class="claimease-step">
+                <span class="claimease-step-label">${Finance}</span>
+                <span class="label" ng-class="claim.financeApprovalClass" ng-bind="claim.financeApproval"></span>
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Empty states -->
+  <div class="panel-body text-center text-muted" ng-if="!c.loading && !c.data.claims.length">
+    <i class="fa fa-inbox fa-2x" aria-hidden="true"></i>
+    <p ng-if="c.data.hasFilters">${No claims of yours match that search. Try clearing the filters.}</p>
+    <p ng-if="!c.data.hasFilters">${You have not submitted any reimbursement claims yet.}</p>
+    <a class="btn btn-primary" ng-href="?id={{c.data.submitPageId}}">${Submit a reimbursement claim}</a>
+  </div>
+
+  <!-- Pagination -->
+  <nav class="panel-footer" ng-if="!c.loading && c.data.totalPages > 1" aria-label="${Pagination}">
+    <div class="btn-group">
+      <button type="button" class="btn btn-default" ng-click="c.goToPage(c.data.page - 1)"
+              ng-disabled="c.data.page === 1" aria-label="${Previous page}">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="btn btn-default" ng-repeat="page in c.pages() track by page"
+              ng-class="{active: page === c.data.page}" ng-click="c.goToPage(page)"
+              ng-attr-aria-current="{{page === c.data.page ? 'page' : undefined}}">{{page}}</button>
+      <button type="button" class="btn btn-default" ng-click="c.goToPage(c.data.page + 1)"
+              ng-disabled="c.data.page === c.data.totalPages" aria-label="${Next page}">
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+    <span class="claimease-count text-muted">
+      ${Showing} {{c.data.windowStart}} - {{c.data.windowEnd}} ${of} {{c.data.rowCount}}
+    </span>
+  </nav>
+</div>

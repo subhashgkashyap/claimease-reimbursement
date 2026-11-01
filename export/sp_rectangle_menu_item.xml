@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sp_rectangle_menu_item>
+<active>true</active>
+<color>default</color>
+<condition/>
+<display_1/>
+<display_2/>
+<display_date/>
+<filter/>
+<glyph>home</glyph>
+<hint>ClaimEase home</hint>
+<kb_article/>
+<kb_category/>
+<kb_topic/>
+<label>Home</label>
+<order>100</order>
+<record_script/>
+<sc_cat_item/>
+<sc_category/>
+<short_description>ClaimEase landing page.</short_description>
+<sp_page>82c7627ebe2c41879a93bf9b1a35c736</sp_page>
+<sp_rectangle_menu>d9511bb4733543649873a74abaf8490a</sp_rectangle_menu>
+<sp_rectangle_menu_item/>
+<sys_class_name>sp_rectangle_menu_item</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>1c1aefa4f7704a418e215df43025a299</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Home</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_rectangle_menu_item_1c1aefa4f7704a418e215df43025a299</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<table/>
+<type>page</type>
+<url/>
+<url_target/>
+</sp_rectangle_menu_item>
+<sp_rectangle_menu_item>
+<active>true</active>
+<color>default</color>
+<condition/>
+<display_1/>
+<display_2/>
+<display_date/>
+<filter/>
+<glyph>plus-circle</glyph>
+<hint>Submit a reimbursement claim</hint>
+<kb_article/>
+<kb_category/>
+<kb_topic/>
+<label>Submit a claim</label>
+<order>200</order>
+<record_script/>
+<sc_cat_item>cddae28d1e274080b300d7f1376dff89</sc_cat_item>
+<sc_category/>
+<short_description>Opens the ClaimEase reimbursement record producer.</short_description>
+<sp_page>9f12251147132100ba13a5554ee490f4</sp_page>
+<sp_rectangle_menu>d9511bb4733543649873a74abaf8490a</sp_rectangle_menu>
+<sp_rectangle_menu_item/>
+<sys_class_name>sp_rectangle_menu_item</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>17a2a0c956d44ae699b35b796a88f1e6</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Submit a claim</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_rectangle_menu_item_17a2a0c956d44ae699b35b796a88f1e6</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<table/>
+<type>sc_cat_item</type>
+<url/>
+<url_target/>
+</sp_rectangle_menu_item>
+<sp_rectangle_menu_item>
+<active>true</active>
+<color>default</color>
+<condition/>
+<display_1/>
+<display_2/>
+<display_date/>
+<filter/>
+<glyph>list-ul</glyph>
+<hint>Track the claims you submitted</hint>
+<kb_article/>
+<kb_category/>
+<kb_topic/>
+<label>My claims</label>
+<order>300</order>
+<record_script/>
+<sc_cat_item/>
+<sc_category/>
+<short_description>Searchable list of the employee's own claims.</short_description>
+<sp_page>7c47eca74a39443fa02d5b0a5d5de04a</sp_page>
+<sp_rectangle_menu>d9511bb4733543649873a74abaf8490a</sp_rectangle_menu>
+<sp_rectangle_menu_item/>
+<sys_class_name>sp_rectangle_menu_item</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>1261e7e2e5c44f948c2c4c01b1e169b8</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>My claims</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_rectangle_menu_item_1261e7e2e5c44f948c2c4c01b1e169b8</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<table/>
+<type>page</type>
+<url/>
+<url_target/>
+</sp_rectangle_menu_item>
+</xml>

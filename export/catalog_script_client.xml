@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<catalog_script_client>
+<active>true</active>
+<applies_catalog>true</applies_catalog>
+<applies_extended>false</applies_extended>
+<applies_req_item>false</applies_req_item>
+<applies_sc_task>false</applies_sc_task>
+<applies_target_record>false</applies_target_record>
+<applies_to>item</applies_to>
+<cat_item>cddae28d1e274080b300d7f1376dff89</cat_item>
+<cat_variable>IO:88795d277254496290f48fd322eb5ec1</cat_variable>
+<condition/>
+<description/>
+<field/>
+<global>false</global>
+<isolate_script>true</isolate_script>
+<messages/>
+<name>ClaimEase - Claim amount must be greater</name>
+<order/>
+<published_ref/>
+<script><![CDATA[/**
+ * ClaimEase - Claim amount onChange (catalog client script)
+ *
+ * USABILITY ONLY: gives the employee immediate feedback that the amount must be
+ * a number greater than zero. The authoritative check is
+ * ClaimEaseValidator._validateAmount, which runs on the server for every
+ * interface via the "Validate Claim" business rule.
+ */
+function onChange(control, oldValue, newValue, isLoading) {
+    if (isLoading) {
+        return
+    }
+
+    g_form.hideFieldMsg('claim_amount', true)
+
+    var raw = (newValue || '').toString().replace(/^\s+|\s+$/g, '')
+    if (raw === '') {
+        return
+    }
+
+    // Accept grouped input such as "1,250.00".
+    var amount = parseFloat(raw.replace(/,/g, ''))
+
+    if (isNaN(amount) || !isFinite(amount)) {
+        g_form.showFieldMsg('claim_amount', 'Please enter the amount as a number, for example 24.50.', 'error')
+        return
+    }
+
+    if (amount === 0) {
+        g_form.showFieldMsg(
+            'claim_amount',
+            'The claim amount cannot be zero. Please enter the amount you actually spent.',
+            'error'
+        )
+        return
+    }
+
+    if (amount < 0) {
+        g_form.showFieldMsg('claim_amount', 'The claim amount must be a positive number.', 'error')
+    }
+}
+]]></script>
+<sys_class_name>catalog_script_client</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:47</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>06bca1cf671a4e04a4ba85d83e0de0f4</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Claim amount must be greater</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>catalog_script_client_06bca1cf671a4e04a4ba85d83e0de0f4</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:47</sys_updated_on>
+<table/>
+<type>onChange</type>
+<ui_type>10</ui_type>
+<va_supported>true</va_supported>
+<variable_set/>
+<view/>
+</catalog_script_client>
+<catalog_script_client>
+<active>true</active>
+<applies_catalog>true</applies_catalog>
+<applies_extended>false</applies_extended>
+<applies_req_item>false</applies_req_item>
+<applies_sc_task>false</applies_sc_task>
+<applies_target_record>false</applies_target_record>
+<applies_to>item</applies_to>
+<cat_item>cddae28d1e274080b300d7f1376dff89</cat_item>
+<cat_variable>IO:5a4a0fceba2c43d49277ad6a91877fc5</cat_variable>
+<condition/>
+<description/>
+<field/>
+<global>false</global>
+<isolate_script>true</isolate_script>
+<messages/>
+<name>ClaimEase - Expense date cannot be in th</name>
+<order/>
+<published_ref/>
+<script><![CDATA[/**
+ * ClaimEase - Expense date onChange (catalog client script)
+ *
+ * USABILITY ONLY: warns the employee straight away that the expense date cannot
+ * be in the future. The authoritative check is
+ * ClaimEaseValidator._validateExpenseDate, which reads the
+ * `allow_future_expense_date` property on the server. This script deliberately
+ * cannot read that property (no GlideAjax), so it is only a hint: if an
+ * administrator permits future dates, the server accepts the claim even though
+ * the form showed this message.
+ */
+function onChange(control, oldValue, newValue, isLoading) {
+    if (isLoading) {
+        return
+    }
+
+    g_form.hideFieldMsg('expense_incurred_on', true)
+
+    var raw = (newValue || '').toString().replace(/^\s+|\s+$/g, '')
+    if (raw === '') {
+        return
+    }
+
+    var entered = parseIsoDate(raw)
+    if (!entered) {
+        // Unrecognised date format: say nothing and let the server decide.
+        return
+    }
+
+    var today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    if (entered.getTime() > today.getTime()) {
+        g_form.showFieldMsg(
+            'expense_incurred_on',
+            'The expense date cannot be in the future. Please enter the date you actually incurred the expense.',
+            'error'
+        )
+    }
+
+    /**
+     * Service Portal supplies catalog date variables in the internal
+     * yyyy-MM-dd format. Anything else is treated as unknown rather than
+     * guessed at, so a dd/mm vs mm/dd locale can never produce a wrong warning.
+     */
+    function parseIsoDate(value) {
+        var match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value)
+        if (!match) {
+            return null
+        }
+        var year = parseInt(match[1], 10)
+        var month = parseInt(match[2], 10) - 1
+        var day = parseInt(match[3], 10)
+        var date = new Date(year, month, day)
+        date.setHours(0, 0, 0, 0)
+        if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
+            return null
+        }
+        return date
+    }
+}
+]]></script>
+<sys_class_name>catalog_script_client</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:47</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>470235b0682a4063a0b6794cb8d05416</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Expense date cannot be in th</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>catalog_script_client_470235b0682a4063a0b6794cb8d05416</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:47</sys_updated_on>
+<table/>
+<type>onChange</type>
+<ui_type>10</ui_type>
+<va_supported>true</va_supported>
+<variable_set/>
+<view/>
+</catalog_script_client>
+<catalog_script_client>
+<active>true</active>
+<applies_catalog>true</applies_catalog>
+<applies_extended>false</applies_extended>
+<applies_req_item>false</applies_req_item>
+<applies_sc_task>false</applies_sc_task>
+<applies_target_record>false</applies_target_record>
+<applies_to>item</applies_to>
+<cat_item>cddae28d1e274080b300d7f1376dff89</cat_item>
+<cat_variable/>
+<condition/>
+<description/>
+<field/>
+<global>false</global>
+<isolate_script>true</isolate_script>
+<messages/>
+<name>ClaimEase - Reimbursement claim onLoad g</name>
+<order/>
+<published_ref/>
+<script><![CDATA[/**
+ * ClaimEase - Reimbursement claim form, onLoad (catalog client script)
+ *
+ * USABILITY ONLY. Nothing here is a security control: requested_for is forced
+ * to the authenticated user by the record producer script, and every rule
+ * hinted at below is enforced server-side by ClaimEaseValidator and the claim
+ * business rules for every interface.
+ */
+function onLoad() {
+    // Belt and braces alongside the variable's readOnly flag and the UI policy:
+    // the employee submits for themselves, so there is nothing to choose here.
+    if (g_form.hasField('requested_for_employee')) {
+        g_form.setReadOnly('requested_for_employee', true)
+    }
+
+    // One short, friendly reminder of what makes a claim go through first time.
+    g_form.addInfoMessage(
+        'Tell us what you spent and when, then attach your receipt or supporting document before you submit. ' +
+            'Your claim goes for approval as soon as it passes our automatic checks.'
+    )
+}
+]]></script>
+<sys_class_name>catalog_script_client</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:47</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>946d1e630c09438ba8fcbd09906a06c3</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Reimbursement claim onLoad g</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>catalog_script_client_946d1e630c09438ba8fcbd09906a06c3</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:47</sys_updated_on>
+<table/>
+<type>onLoad</type>
+<ui_type>10</ui_type>
+<va_supported>true</va_supported>
+<variable_set/>
+<view/>
+</catalog_script_client>
+<catalog_script_client>
+<active>true</active>
+<applies_catalog>true</applies_catalog>
+<applies_extended>false</applies_extended>
+<applies_req_item>false</applies_req_item>
+<applies_sc_task>false</applies_sc_task>
+<applies_target_record>false</applies_target_record>
+<applies_to>item</applies_to>
+<cat_item>cddae28d1e274080b300d7f1376dff89</cat_item>
+<cat_variable/>
+<condition/>
+<description/>
+<field/>
+<global>false</global>
+<isolate_script>true</isolate_script>
+<messages/>
+<name>ClaimEase - Reimbursement claim submit c</name>
+<order/>
+<published_ref/>
+<script><![CDATA[/**
+ * ClaimEase - Reimbursement claim onSubmit checks (catalog client script)
+ *
+ * USABILITY ONLY, and synchronous by design (no GlideAjax: an async call never
+ * completes before the form submits). Every check below is also performed
+ * server-side by ClaimEaseValidator through the "Validate Claim" business rule,
+ * so removing or bypassing this script changes nothing about what the platform
+ * will accept.
+ */
+function onSubmit() {
+    var problems = []
+
+    var summary = value('claim_summary')
+    var category = value('claim_category')
+    var amountRaw = value('claim_amount')
+    var expenseDate = value('expense_incurred_on')
+
+    if (summary === '') {
+        problems.push('Please tell us what you are claiming for.')
+        g_form.showFieldMsg('claim_summary', 'Please tell us what you are claiming for.', 'error')
+    }
+
+    if (category === '') {
+        problems.push('Please choose a claim category.')
+        g_form.showFieldMsg('claim_category', 'Please choose a claim category.', 'error')
+    }
+
+    if (amountRaw === '') {
+        problems.push('Please enter the claim amount.')
+        g_form.showFieldMsg('claim_amount', 'Please enter the claim amount.', 'error')
+    } else {
+        var amount = parseFloat(amountRaw.replace(/,/g, ''))
+        if (isNaN(amount) || !isFinite(amount)) {
+            problems.push('Please enter the claim amount as a number, for example 24.50.')
+            g_form.showFieldMsg('claim_amount', 'Please enter the amount as a number, for example 24.50.', 'error')
+        } else if (amount <= 0) {
+            problems.push('The claim amount must be greater than zero.')
+            g_form.showFieldMsg('claim_amount', 'The claim amount must be greater than zero.', 'error')
+        }
+    }
+
+    if (expenseDate === '') {
+        problems.push('Please enter the date you incurred the expense.')
+        g_form.showFieldMsg('expense_incurred_on', 'Please enter the date you incurred the expense.', 'error')
+    }
+
+    if (problems.length > 0) {
+        g_form.addErrorMessage(
+            problems.length === 1
+                ? problems[0]
+                : 'Your claim is not quite ready: ' + problems.join(' ')
+        )
+        return false
+    }
+
+    return true
+
+    function value(name) {
+        if (!g_form.hasField(name)) {
+            return ''
+        }
+        return (g_form.getValue(name) || '').toString().replace(/^\s+|\s+$/g, '')
+    }
+}
+]]></script>
+<sys_class_name>catalog_script_client</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:47</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>ef98acd1b72f43ad806abc30af4402df</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Reimbursement claim submit c</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>catalog_script_client_ef98acd1b72f43ad806abc30af4402df</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:47</sys_updated_on>
+<table/>
+<type>onSubmit</type>
+<ui_type>10</ui_type>
+<va_supported>true</va_supported>
+<variable_set/>
+<view/>
+</catalog_script_client>
+</xml>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sysevent_register>
+<caller_access/>
+<derived_priority>100</derived_priority>
+<description>ClaimEase: Finance approval requested. parm1 = Finance group member sys_ids.</description>
+<event_name>x_2180676_claime_0.fin.approval.request</event_name>
+<fired_by>Flow: ClaimEase - Reimbursement Approval Flow</fired_by>
+<preserve_null_parm1>false</preserve_null_parm1>
+<priority>100</priority>
+<queue/>
+<suffix>fin.approval.request</suffix>
+<sys_class_name>sysevent_register</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:05</sys_created_on>
+<sys_id>15628e6d958a488a8806a9cff23298ba</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.fin.approval.request</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_register_15628e6d958a488a8806a9cff23298ba</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:05</sys_updated_on>
+<table>x_2180676_claime_0_claim</table>
+</sysevent_register>
+<sysevent_register>
+<caller_access/>
+<derived_priority>100</derived_priority>
+<description>ClaimEase: Manager approval requested. parm1 = recipient user sys_ids.</description>
+<event_name>x_2180676_claime_0.mgr.approval.request</event_name>
+<fired_by>Flow: ClaimEase - Reimbursement Approval Flow</fired_by>
+<preserve_null_parm1>false</preserve_null_parm1>
+<priority>100</priority>
+<queue/>
+<suffix>mgr.approval.request</suffix>
+<sys_class_name>sysevent_register</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:05</sys_created_on>
+<sys_id>38600f1362f04bb7b570c31cf12f7203</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.mgr.approval.request</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_register_38600f1362f04bb7b570c31cf12f7203</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:05</sys_updated_on>
+<table>x_2180676_claime_0_claim</table>
+</sysevent_register>
+<sysevent_register>
+<caller_access/>
+<derived_priority>100</derived_priority>
+<description>ClaimEase: no Finance approver available. parm1 = support recipients.</description>
+<event_name>x_2180676_claime_0.no.finance.approver</event_name>
+<fired_by>Flow: ClaimEase - Reimbursement Approval Flow</fired_by>
+<preserve_null_parm1>false</preserve_null_parm1>
+<priority>100</priority>
+<queue/>
+<suffix>no.finance.approver</suffix>
+<sys_class_name>sysevent_register</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:05</sys_created_on>
+<sys_id>700f2a042dc845d78d7f5d02ce1ce5f0</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.no.finance.approver</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_register_700f2a042dc845d78d7f5d02ce1ce5f0</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:05</sys_updated_on>
+<table>x_2180676_claime_0_claim</table>
+</sysevent_register>
+<sysevent_register>
+<caller_access/>
+<derived_priority>100</derived_priority>
+<description>ClaimEase: no manager configured for the employee. parm1 = support recipients.</description>
+<event_name>x_2180676_claime_0.no.manager</event_name>
+<fired_by>Flow: ClaimEase - Reimbursement Approval Flow</fired_by>
+<preserve_null_parm1>false</preserve_null_parm1>
+<priority>100</priority>
+<queue/>
+<suffix>no.manager</suffix>
+<sys_class_name>sysevent_register</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:05</sys_created_on>
+<sys_id>7bbbcd0a3f5c41c4a296011c15fbc5bd</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.no.manager</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_register_7bbbcd0a3f5c41c4a296011c15fbc5bd</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:05</sys_updated_on>
+<table>x_2180676_claime_0_claim</table>
+</sysevent_register>
+</xml>

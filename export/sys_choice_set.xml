@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_choice_set>
+<element>finance_approval</element>
+<name>x_2180676_claime_0_claim</name>
+<sys_class_name>sys_choice_set</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:38</sys_created_on>
+<sys_id>09725abf27724040b5cd63cf02d4d47a</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>finance_approval</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_choice_x_2180676_claime_0_claim_finance_approval</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:38</sys_updated_on>
+</sys_choice_set>
+<sys_choice_set>
+<element>manager_approval</element>
+<name>x_2180676_claime_0_claim</name>
+<sys_class_name>sys_choice_set</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:39</sys_created_on>
+<sys_id>7f89f06db54a47d183387c3dba3a02c6</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>manager_approval</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_choice_x_2180676_claime_0_claim_manager_approval</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:39</sys_updated_on>
+</sys_choice_set>
+<sys_choice_set>
+<element>approval_status</element>
+<name>x_2180676_claime_0_claim</name>
+<sys_class_name>sys_choice_set</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:38</sys_created_on>
+<sys_id>8a4f0a3fe6914ea495d78d2be34f0da3</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>approval_status</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_choice_x_2180676_claime_0_claim_approval_status</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:38</sys_updated_on>
+</sys_choice_set>
+<sys_choice_set>
+<element>category</element>
+<name>x_2180676_claime_0_claim</name>
+<sys_class_name>sys_choice_set</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:38</sys_created_on>
+<sys_id>8dbec8e684e1443096a7aa062cd16b6e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>category</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_choice_x_2180676_claime_0_claim_category</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:38</sys_updated_on>
+</sys_choice_set>
+</xml>

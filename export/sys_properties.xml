@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_properties>
+<choices/>
+<description>Allow a user to submit a claim on behalf of another employee. Default false. When false, only a ClaimEase administrator may set Requested For to another user.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.allow_delegated_submission</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>allow_delegated_submission</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>3452a8541c7a401c823f6e34d34df343</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.allow_delegated_submission</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_3452a8541c7a401c823f6e34d34df343</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>boolean</type>
+<value>false</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices/>
+<description>Permit an expense date in the future. Default false — future-dated expenses are rejected at submission.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.allow_future_expense_date</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>allow_future_expense_date</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>fafaf93b13b548b191a3b8920f84148f</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.allow_future_expense_date</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_fafaf93b13b548b191a3b8920f84148f</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>boolean</type>
+<value>false</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices/>
+<description>Claim amount (in the base currency) that separates parallel approval from sequential approval. Default 50.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.approval_threshold</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>approval_threshold</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>34f568911e804e6289b515c2b5d0c3d8</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.approval_threshold</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_34f568911e804e6289b515c2b5d0c3d8</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>string</type>
+<value>50</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices/>
+<description>Base currency the approval threshold and duplicate rule are expressed in. Claim amounts in other currencies are converted to this currency before evaluation.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.base_currency</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>base_currency</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>754692238c91429fa507f0c20801d17b</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.base_currency</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_754692238c91429fa507f0c20801d17b</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>string</type>
+<value>USD</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices/>
+<description>Exclude Cancelled and Duplicate Claim records from duplicate detection. Default true, per policy.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.duplicate_exclude_cancelled</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>duplicate_exclude_cancelled</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>ec9999867d9b42449c5b1a1465a0a2bc</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.duplicate_exclude_cancelled</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_ec9999867d9b42449c5b1a1465a0a2bc</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>boolean</type>
+<value>true</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices/>
+<description>Exclude Rejected claims from duplicate detection. Default false — a rejected small claim still consumes the window until policy changes.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.duplicate_exclude_rejected</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>duplicate_exclude_rejected</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>e07b9c4288174e20a14849e674128a68</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.duplicate_exclude_rejected</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_e07b9c4288174e20a14849e674128a68</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>boolean</type>
+<value>false</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices/>
+<description>Length in days of the rolling window used to detect duplicate small-value claims. Default 90.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.duplicate_window_days</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>duplicate_window_days</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>063b8dc6a57c4b6d8a50673116a53884</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.duplicate_window_days</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_063b8dc6a57c4b6d8a50673116a53884</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>integer</type>
+<value>90</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices/>
+<description>Name of the sys_user_group used as the fallback approver / exception queue when an employee has no manager configured.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.fallback_approver_group</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>fallback_approver_group</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>03095e2359b34ec3bf34bd0e27e4e42a</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.fallback_approver_group</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_03095e2359b34ec3bf34bd0e27e4e42a</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>string</type>
+<value>ClaimEase Claim Administrators</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices/>
+<description>Name of the sys_user_group whose members perform Finance approval. One member approval satisfies the Finance step by default.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.finance_group</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>finance_group</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>1830d8abb6bc44d09ee126f5ea4f6fa1</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.finance_group</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_1830d8abb6bc44d09ee126f5ea4f6fa1</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>string</type>
+<value>ClaimEase Finance Approvers</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices>anyone,everyone</choices>
+<description>Finance group approval policy. "anyone" (default) = one member approval satisfies Finance. "everyone" = all members must approve.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.finance_group_policy</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>finance_group_policy</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>655fece61f33470dbfe6873876898ac9</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.finance_group_policy</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_655fece61f33470dbfe6873876898ac9</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>choicelist</type>
+<value>anyone</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices/>
+<description>Service Portal URL suffix used when building employee-facing claim links in notifications.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.portal_suffix</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>portal_suffix</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>22a643df78844d37b8b0eb5927aef6cf</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.portal_suffix</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_22a643df78844d37b8b0eb5927aef6cf</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>string</type>
+<value>claimease</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices/>
+<description>Require at least one receipt/supporting-document attachment before a claim can be submitted.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.require_receipt</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>require_receipt</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>609fb39faa9e4db6a1650972d5ee3284</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.require_receipt</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_609fb39faa9e4db6a1650972d5ee3284</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>boolean</type>
+<value>true</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+<sys_properties>
+<choices>sequential,parallel</choices>
+<description>How a claim exactly equal to the threshold is routed. "sequential" (default) = Manager then Finance. "parallel" = Manager and Finance at the same time.</description>
+<ignore_cache>true</ignore_cache>
+<is_private>false</is_private>
+<name>x_2180676_claime_0.threshold_boundary</name>
+<read_roles>admin,x_2180676_claime_0.admin</read_roles>
+<suffix>threshold_boundary</suffix>
+<sys_class_name>sys_properties</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>32c82cb6d2a945cea60e697423138943</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.threshold_boundary</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_properties_32c82cb6d2a945cea60e697423138943</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+<type>choicelist</type>
+<value>sequential</value>
+<write_roles>admin,x_2180676_claime_0.admin</write_roles>
+</sys_properties>
+</xml>

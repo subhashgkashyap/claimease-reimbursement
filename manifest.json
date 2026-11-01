@@ -1,0 +1,309 @@
+{
+  "scope": "x_2180676_claime_0",
+  "scope_sys_id": "b1cb0c6ac304d3100d60f8ddd4013149",
+  "tables": {
+    "catalog_script_client": {
+      "expected": 4,
+      "exported": 4,
+      "bytes": 12447
+    },
+    "catalog_ui_policy": {
+      "expected": 2,
+      "exported": 2,
+      "bytes": 3837
+    },
+    "catalog_ui_policy_action": {
+      "expected": 2,
+      "exported": 2,
+      "bytes": 2428
+    },
+    "item_option_new": {
+      "expected": 6,
+      "exported": 6,
+      "bytes": 22692
+    },
+    "m2m_sp_portal_catalog": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 836
+    },
+    "question_choice": {
+      "expected": 8,
+      "exported": 8,
+      "bytes": 6178
+    },
+    "sc_cat_item_catalog": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 791
+    },
+    "sc_cat_item_category": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 771
+    },
+    "sc_cat_item_producer": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 21170
+    },
+    "sc_cat_item_user_criteria_mtom": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 854
+    },
+    "sc_category": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 1220
+    },
+    "sp_column": {
+      "expected": 4,
+      "exported": 4,
+      "bytes": 3060
+    },
+    "sp_container": {
+      "expected": 3,
+      "exported": 3,
+      "bytes": 2963
+    },
+    "sp_instance": {
+      "expected": 4,
+      "exported": 4,
+      "bytes": 14443
+    },
+    "sp_instance_menu": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 2525
+    },
+    "sp_page": {
+      "expected": 3,
+      "exported": 3,
+      "bytes": 3494
+    },
+    "sp_page_route_map": {
+      "expected": 3,
+      "exported": 3,
+      "bytes": 3288
+    },
+    "sp_portal": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 1786
+    },
+    "sp_rectangle_menu_item": {
+      "expected": 3,
+      "exported": 3,
+      "bytes": 3724
+    },
+    "sp_row": {
+      "expected": 4,
+      "exported": 4,
+      "bytes": 2828
+    },
+    "sp_widget": {
+      "expected": 3,
+      "exported": 3,
+      "bytes": 44615
+    },
+    "sys_app_info": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 674
+    },
+    "sys_choice_set": {
+      "expected": 4,
+      "exported": 4,
+      "bytes": 2745
+    },
+    "sys_db_object": {
+      "expected": 2,
+      "exported": 2,
+      "bytes": 3023
+    },
+    "sys_dictionary": {
+      "expected": 32,
+      "exported": 32,
+      "bytes": 626697
+    },
+    "sys_documentation": {
+      "expected": 254,
+      "exported": 254,
+      "bytes": 200780
+    },
+    "sys_hub_action_input": {
+      "expected": 32,
+      "exported": 32,
+      "bytes": 78605
+    },
+    "sys_hub_action_output": {
+      "expected": 50,
+      "exported": 50,
+      "bytes": 130838
+    },
+    "sys_hub_action_type_definition": {
+      "expected": 3,
+      "exported": 3,
+      "bytes": 15836
+    },
+    "sys_hub_action_type_snapshot": {
+      "expected": 3,
+      "exported": 3,
+      "bytes": 14457
+    },
+    "sys_hub_flow": {
+      "expected": 5,
+      "exported": 5,
+      "bytes": 24922
+    },
+    "sys_hub_flow_block": {
+      "expected": 31,
+      "exported": 31,
+      "bytes": 135577
+    },
+    "sys_hub_flow_input": {
+      "expected": 58,
+      "exported": 58,
+      "bytes": 146116
+    },
+    "sys_hub_flow_output": {
+      "expected": 12,
+      "exported": 12,
+      "bytes": 30169
+    },
+    "sys_hub_flow_snapshot": {
+      "expected": 11,
+      "exported": 11,
+      "bytes": 92494
+    },
+    "sys_hub_step_ext_input": {
+      "expected": 32,
+      "exported": 32,
+      "bytes": 78925
+    },
+    "sys_hub_step_ext_output": {
+      "expected": 38,
+      "exported": 38,
+      "bytes": 94278
+    },
+    "sys_index": {
+      "expected": 5,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    "sys_metadata_delete": {
+      "expected": 16,
+      "exported": 16,
+      "bytes": 15896
+    },
+    "sys_notification_category": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 942
+    },
+    "sys_number": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 756
+    },
+    "sys_properties": {
+      "expected": 13,
+      "exported": 13,
+      "bytes": 14376
+    },
+    "sys_relationship": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 1189
+    },
+    "sys_restricted_caller_access": {
+      "expected": 42,
+      "exported": 42,
+      "bytes": 46212
+    },
+    "sys_scope_privilege": {
+      "expected": 28,
+      "exported": 28,
+      "bytes": 24248
+    },
+    "sys_script": {
+      "expected": 8,
+      "exported": 8,
+      "bytes": 38195
+    },
+    "sys_script_email": {
+      "expected": 3,
+      "exported": 3,
+      "bytes": 8897
+    },
+    "sys_script_include": {
+      "expected": 6,
+      "exported": 6,
+      "bytes": 81779
+    },
+    "sys_security_acl": {
+      "expected": 10,
+      "exported": 10,
+      "bytes": 14378
+    },
+    "sys_security_acl_role": {
+      "expected": 26,
+      "exported": 26,
+      "bytes": 21456
+    },
+    "sys_ui_form": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 842
+    },
+    "sys_ui_list": {
+      "expected": 3,
+      "exported": 3,
+      "bytes": 2585
+    },
+    "sys_ui_related_list": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 961
+    },
+    "sys_ui_section": {
+      "expected": 6,
+      "exported": 6,
+      "bytes": 5210
+    },
+    "sys_user_role": {
+      "expected": 4,
+      "exported": 4,
+      "bytes": 4332
+    },
+    "sys_user_role_contains": {
+      "expected": 5,
+      "exported": 5,
+      "bytes": 3917
+    },
+    "sysevent_email_action": {
+      "expected": 12,
+      "exported": 12,
+      "bytes": 44838
+    },
+    "sysevent_register": {
+      "expected": 4,
+      "exported": 4,
+      "bytes": 4372
+    },
+    "ua_table_licensing_config": {
+      "expected": 2,
+      "exported": 2,
+      "bytes": 2018
+    },
+    "user_criteria": {
+      "expected": 1,
+      "exported": 1,
+      "bytes": 1259
+    }
+  },
+  "totals": {
+    "expected": 819,
+    "exported": 819
+  }
+}

@@ -1,0 +1,121 @@
+/* ClaimEase - portal_widgets
+ * name: ClaimEase - Claim detail
+ * id: x_2180676_claime_0_claim_detail
+ * field: template
+ */
+
+<!--
+  ClaimEase - Claim detail template (AngularJS / Bootstrap 3)
+
+  Renders only what the server returned. There is no `manager` field, no
+  internal process field and no approver identity anywhere in this template,
+  because the server never sends them.
+-->
+<div class="claimease-claim-detail">
+
+  <!-- Nothing to show: neutral message, no record data -->
+  <div class="panel panel-default" ng-if="!c.data.available">
+    <div class="panel-body text-center text-muted">
+      <i class="fa fa-folder-open-o fa-2x" aria-hidden="true"></i>
+      <p>{{c.data.message}}</p>
+      <a class="btn btn-default" ng-href="?id={{c.data.myClaimsPageId}}">${Back to my claims}</a>
+    </div>
+  </div>
+
+  <div ng-if="c.data.available">
+    <!-- Header -->
+    <div class="panel panel-default">
+      <div class="panel-heading claimease-detail-heading">
+        <h2 class="h4 panel-title">
+          {{c.data.claim.number}}
+          <span class="label" ng-class="c.data.claim.statusClass" ng-bind="c.data.claim.status"></span>
+        </h2>
+        <a class="btn btn-link btn-sm" ng-href="?id={{c.data.myClaimsPageId}}">${Back to my claims}</a>
+      </div>
+      <div class="panel-body">
+        <p class="claimease-detail-summary">{{c.data.claim.short_description}}</p>
+
+        <dl class="dl-horizontal claimease-detail-list">
+          <dt>${Requested for}</dt>
+          <dd>{{c.data.claim.requested_for}}</dd>
+
+          <dt>${Category}</dt>
+          <dd>{{c.data.claim.category}}</dd>
+
+          <dt>${Claim amount}</dt>
+          <dd>{{c.data.claim.amount}}</dd>
+
+          <dt>${Expense date}</dt>
+          <dd>{{c.data.claim.expense_date}}</dd>
+
+          <dt>${Submitted}</dt>
+          <dd>{{c.data.claim.submitted_on || '-'}}</dd>
+
+          <dt>${Last updated}</dt>
+          <dd>{{c.data.claim.last_status_update || '-'}}</dd>
+
+          <dt ng-if="c.data.claim.description">${Business justification}</dt>
+          <dd ng-if="c.data.claim.description" class="claimease-detail-text">{{c.data.claim.description}}</dd>
+
+          <dt ng-if="c.data.claim.duplicate_of">${Duplicate of}</dt>
+          <dd ng-if="c.data.claim.duplicate_of">{{c.data.claim.duplicate_of}}</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Approval progress -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="h5 panel-title">${Approval progress}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="row claimease-progress">
+          <div class="col-sm-6">
+            <div class="claimease-step">
+              <span class="claimease-step-name">${Manager approval}</span>
+              <span class="label" ng-class="c.data.claim.managerApprovalClass"
+                    ng-bind="c.data.claim.managerApproval"></span>
+              <div class="text-muted claimease-step-hint">{{c.data.claim.managerApprovalHint}}</div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="claimease-step">
+              <span class="claimease-step-name">${Finance approval}</span>
+              <span class="label" ng-class="c.data.claim.financeApprovalClass"
+                    ng-bind="c.data.claim.financeApproval"></span>
+              <div class="text-muted claimease-step-hint">{{c.data.claim.financeApprovalHint}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-danger claimease-feedback" ng-if="c.data.claim.rejection_reason">
+          <strong>${Why this claim was not approved}</strong>
+          <p class="claimease-detail-text">{{c.data.claim.rejection_reason}}</p>
+        </div>
+
+        <div class="alert alert-info claimease-feedback" ng-if="c.data.claim.finance_comments">
+          <strong>${Finance comments}</strong>
+          <p class="claimease-detail-text">{{c.data.claim.finance_comments}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attachments -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="h5 panel-title">${Receipts and supporting documents}</h3>
+      </div>
+      <ul class="list-group" ng-if="c.data.attachments.length">
+        <li class="list-group-item" ng-repeat="file in c.data.attachments track by file.sys_id">
+          <a ng-href="{{file.url}}" target="_blank" rel="noopener">
+            <i class="fa fa-paperclip" aria-hidden="true"></i> {{file.file_name}}
+          </a>
+          <small class="text-muted claimease-file-meta">{{file.size}} &bull; {{file.created_on}}</small>
+        </li>
+      </ul>
+      <div class="panel-body text-muted" ng-if="!c.data.attachments.length">
+        ${No receipts or supporting documents are attached to this claim.}
+      </div>
+    </div>
+  </div>
+</div>

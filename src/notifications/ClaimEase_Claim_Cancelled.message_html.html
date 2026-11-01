@@ -1,0 +1,14 @@
+/* ClaimEase - notifications
+ * name: ClaimEase - Claim Cancelled
+ * subject: ClaimEase: claim ${number} cancelled
+ * active: true
+ * field: message_html
+ */
+
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello ${requested_for.first_name},</p>
+<p>Reimbursement claim <strong>${number}</strong> has been <strong>cancelled</strong>. It will not be approved or reimbursed. If you still need to claim this expense, please submit a new claim.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Portal Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">View your claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>

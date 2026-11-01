@@ -1,0 +1,45 @@
+/* ClaimEase - portal_widgets
+ * name: ClaimEase - Submit or track a claim
+ * id: x_2180676_claime_0_claim_actions
+ * field: template
+ */
+
+<!--
+  ClaimEase - Landing widget template (AngularJS / Bootstrap 3)
+  Two clear actions: submit a claim, or track the claims you already submitted.
+-->
+<div class="panel panel-default claimease-actions">
+  <div class="panel-heading">
+    <h2 class="h4 panel-title">${Reimbursement claims}</h2>
+  </div>
+  <div class="panel-body">
+    <p class="claimease-lead">
+      ${Paid for something yourself? Claim it back here. Tell us what you spent and when, attach your receipt, and we will send your claim for approval straight away.}
+    </p>
+
+    <div class="row claimease-action-row">
+      <div class="col-sm-6 col-xs-12">
+        <a ng-if="c.data.submitUrl" ng-href="{{c.data.submitUrl}}" class="btn btn-primary btn-block claimease-action">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+          <span>${Submit a reimbursement claim}</span>
+        </a>
+        <div class="alert alert-warning" ng-if="!c.data.submitUrl">
+          ${The claim submission form is not available right now. Please contact your ClaimEase administrator.}
+        </div>
+      </div>
+      <div class="col-sm-6 col-xs-12">
+        <a ng-href="{{c.data.myClaimsUrl}}" class="btn btn-default btn-block claimease-action">
+          <i class="fa fa-list-ul" aria-hidden="true"></i>
+          <span>${My claims}</span>
+        </a>
+      </div>
+    </div>
+
+    <ul class="claimease-tips">
+      <li>${Attach the receipt or supporting document before you submit - claims need it.}</li>
+      <li>${Use the date you actually incurred the expense, not today's date.}</li>
+      <li>${Claims are submitted for you only. If a claim is needed for somebody else, contact your ClaimEase administrator.}</li>
+      <li>${Track approval progress, approver feedback and finance comments on the My claims page.}</li>
+    </ul>
+  </div>
+</div>

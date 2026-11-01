@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_scope_privilege>
+<operation>write</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:19</sys_created_on>
+<sys_id>0944e68cb7ce4f69bf57c32ebdb5c87c</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sys_number</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_0944e68cb7ce4f69bf57c32ebdb5c87c</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:19</sys_updated_on>
+<target_name>sys_number</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:19</sys_created_on>
+<sys_id>1700ced5d5f347cfb6916250d242099e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sys_attachment</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_1700ced5d5f347cfb6916250d242099e</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:19</sys_updated_on>
+<target_name>sys_attachment</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:20</sys_created_on>
+<sys_id>1ebddeff5b9541ea8f6dc3c211d71d64</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sys_properties</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_1ebddeff5b9541ea8f6dc3c211d71d64</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:20</sys_updated_on>
+<target_name>sys_properties</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:20</sys_created_on>
+<sys_id>20c5010c454d40a197e0d46a571abc84</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sys_user_grmember</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_20c5010c454d40a197e0d46a571abc84</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:20</sys_updated_on>
+<target_name>sys_user_grmember</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>david.loo</sys_created_by>
+<sys_created_on>2026-10-23 09:12:13</sys_created_on>
+<sys_id>212a05aec30cd3100d60f8ddd401310c</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sys_user</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_212a05aec30cd3100d60f8ddd401310c</sys_update_name>
+<sys_updated_by>david.loo</sys_updated_by>
+<sys_updated_on>2026-10-23 09:12:13</sys_updated_on>
+<target_name>sys_user</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>david.loo</sys_created_by>
+<sys_created_on>2026-10-23 09:12:13</sys_created_on>
+<sys_id>292a05aec30cd3100d60f8ddd4013110</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>GlideRecord.setWorkflow</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_292a05aec30cd3100d60f8ddd4013110</sys_update_name>
+<sys_updated_by>david.loo</sys_updated_by>
+<sys_updated_on>2026-10-23 09:12:13</sys_updated_on>
+<target_name>GlideRecord.setWorkflow</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-24 08:30:35</sys_created_on>
+<sys_id>293ace72c38497100d60f8ddd40131c9</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sys_email</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_293ace72c38497100d60f8ddd40131c9</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-24 08:30:35</sys_updated_on>
+<target_name>sys_email</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>david.loo</sys_created_by>
+<sys_created_on>2026-10-23 09:12:13</sys_created_on>
+<sys_id>2d2a05aec30cd3100d60f8ddd4013103</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Glide API: user roles and groups</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_2d2a05aec30cd3100d60f8ddd4013103</sys_update_name>
+<sys_updated_by>david.loo</sys_updated_by>
+<sys_updated_on>2026-10-23 09:12:13</sys_updated_on>
+<target_name>Glide API: user roles and groups</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>david.loo</sys_created_by>
+<sys_created_on>2026-10-23 09:12:14</sys_created_on>
+<sys_id>352a05aec30cd3100d60f8ddd401314e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Glide API: scripting</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_352a05aec30cd3100d60f8ddd401314e</sys_update_name>
+<sys_updated_by>david.loo</sys_updated_by>
+<sys_updated_on>2026-10-23 09:12:14</sys_updated_on>
+<target_name>Glide API: scripting</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>create</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:20</sys_created_on>
+<sys_id>4228e5b264ad43dcb8cb01cdcbd4992e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sysapproval_approver</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_4228e5b264ad43dcb8cb01cdcbd4992e</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:20</sys_updated_on>
+<target_name>sysapproval_approver</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>system</sys_created_by>
+<sys_created_on>2026-10-23 13:38:34</sys_created_on>
+<sys_id>5317c22ec30417100d60f8ddd4013146</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>TemplatePrinter.print</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_5317c22ec30417100d60f8ddd4013146</sys_update_name>
+<sys_updated_by>system</sys_updated_by>
+<sys_updated_on>2026-10-23 13:38:34</sys_updated_on>
+<target_name>TemplatePrinter.print</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>claude.user</sys_created_by>
+<sys_created_on>2026-10-25 20:01:07</sys_created_on>
+<sys_id>5ad1bd93c308d3100d60f8ddd401318f</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>GlideRecordSecure.getValue</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_5ad1bd93c308d3100d60f8ddd401318f</sys_update_name>
+<sys_updated_by>claude.user</sys_updated_by>
+<sys_updated_on>2026-10-25 20:01:07</sys_updated_on>
+<target_name>GlideRecordSecure.getValue</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>david.loo</sys_created_by>
+<sys_created_on>2026-10-23 09:12:13</sys_created_on>
+<sys_id>612a05aec30cd3100d60f8ddd4013121</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>GlideRecord.insert</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_612a05aec30cd3100d60f8ddd4013121</sys_update_name>
+<sys_updated_by>david.loo</sys_updated_by>
+<sys_updated_on>2026-10-23 09:12:13</sys_updated_on>
+<target_name>GlideRecord.insert</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-24 08:30:35</sys_created_on>
+<sys_id>613ace72c38497100d60f8ddd40131d1</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Glide API: event management</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_613ace72c38497100d60f8ddd40131d1</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-24 08:30:35</sys_updated_on>
+<target_name>Glide API: event management</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:05:25</sys_created_on>
+<sys_id>698ff5aac3c017100d60f8ddd401317e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sys_security_acl</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_698ff5aac3c017100d60f8ddd401317e</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:05:25</sys_updated_on>
+<target_name>sys_security_acl</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:05:58</sys_created_on>
+<sys_id>6dafb9aac3c017100d60f8ddd401318e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sys_script</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_6dafb9aac3c017100d60f8ddd401318e</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:05:58</sys_updated_on>
+<target_name>sys_script</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:20</sys_created_on>
+<sys_id>78ba7c1121fb4136a28ad226a355bfeb</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sys_user_group</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_78ba7c1121fb4136a28ad226a355bfeb</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:20</sys_updated_on>
+<target_name>sys_user_group</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:36:15</sys_created_on>
+<sys_id>91968aaac30417100d60f8ddd4013167</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sys_hub_flow</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_91968aaac30417100d60f8ddd4013167</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:36:15</sys_updated_on>
+<target_name>sys_hub_flow</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>write</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:20</sys_created_on>
+<sys_id>9c564c1238ec4ac2bf5d21305675b1cb</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sysapproval_approver</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_9c564c1238ec4ac2bf5d21305675b1cb</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:20</sys_updated_on>
+<target_name>sysapproval_approver</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>david.loo</sys_created_by>
+<sys_created_on>2026-10-23 09:12:14</sys_created_on>
+<sys_id>a92a05aec30cd3100d60f8ddd4013131</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>GlideRecord.deleteRecord</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_a92a05aec30cd3100d60f8ddd4013131</sys_update_name>
+<sys_updated_by>david.loo</sys_updated_by>
+<sys_updated_on>2026-10-23 09:12:14</sys_updated_on>
+<target_name>GlideRecord.deleteRecord</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>david.loo</sys_created_by>
+<sys_created_on>2026-10-23 09:12:13</sys_created_on>
+<sys_id>a92ac1aec30cd3100d60f8ddd40131fc</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Glide API: properties</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_a92ac1aec30cd3100d60f8ddd40131fc</sys_update_name>
+<sys_updated_by>david.loo</sys_updated_by>
+<sys_updated_on>2026-10-23 09:12:13</sys_updated_on>
+<target_name>Glide API: properties</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>david.loo</sys_created_by>
+<sys_created_on>2026-10-23 09:12:13</sys_created_on>
+<sys_id>ad2a05aec30cd3100d60f8ddd4013107</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>GlideRecord.setValue</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_ad2a05aec30cd3100d60f8ddd4013107</sys_update_name>
+<sys_updated_by>david.loo</sys_updated_by>
+<sys_updated_on>2026-10-23 09:12:13</sys_updated_on>
+<target_name>GlideRecord.setValue</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>david.loo</sys_created_by>
+<sys_created_on>2026-10-23 09:12:14</sys_created_on>
+<sys_id>b52a05aec30cd3100d60f8ddd4013152</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ResourceSupport</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_b52a05aec30cd3100d60f8ddd4013152</sys_update_name>
+<sys_updated_by>david.loo</sys_updated_by>
+<sys_updated_on>2026-10-23 09:12:14</sys_updated_on>
+<target_name>ResourceSupport</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_script_include</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:20</sys_created_on>
+<sys_id>b6bea799025746968b2b4bafb90c4ba7</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sys_number</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_b6bea799025746968b2b4bafb90c4ba7</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:20</sys_updated_on>
+<target_name>sys_number</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 20:41:49</sys_created_on>
+<sys_id>c7f7af66c30057100d60f8ddd4013147</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ScopedGlideElement</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_c7f7af66c30057100d60f8ddd4013147</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 20:41:49</sys_updated_on>
+<target_name>ScopedGlideElement</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:20</sys_created_on>
+<sys_id>d04eb15481ea4223893dd1c4dad16a96</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>fx_conversion_rate</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_d04eb15481ea4223893dd1c4dad16a96</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:20</sys_updated_on>
+<target_name>fx_conversion_rate</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>read</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:20</sys_created_on>
+<sys_id>dafe881d6b78497288ab31d791a1d6bc</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>sysapproval_approver</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_dafe881d6b78497288ab31d791a1d6bc</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:20</sys_updated_on>
+<target_name>sysapproval_approver</target_name>
+<target_scope>global</target_scope>
+<target_type>sys_db_object</target_type>
+</sys_scope_privilege>
+<sys_scope_privilege>
+<operation>execute</operation>
+<source_scope>b1cb0c6ac304d3100d60f8ddd4013149</source_scope>
+<status>allowed</status>
+<sys_class_name>sys_scope_privilege</sys_class_name>
+<sys_created_by>david.loo</sys_created_by>
+<sys_created_on>2026-10-23 09:12:13</sys_created_on>
+<sys_id>e12a05aec30cd3100d60f8ddd4013129</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>GlideRecord.update</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_scope_privilege_e12a05aec30cd3100d60f8ddd4013129</sys_update_name>
+<sys_updated_by>david.loo</sys_updated_by>
+<sys_updated_on>2026-10-23 09:12:13</sys_updated_on>
+<target_name>GlideRecord.update</target_name>
+<target_scope>global</target_scope>
+<target_type>scriptable</target_type>
+</sys_scope_privilege>
+</xml>

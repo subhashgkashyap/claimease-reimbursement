@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sp_instance>
+<active>true</active>
+<advanced_placeholder_dimensions>false</advanced_placeholder_dimensions>
+<async_load>false</async_load>
+<async_load_device_type>desktop,tablet,mobile</async_load_device_type>
+<async_load_trigger>viewport</async_load_trigger>
+<class_name/>
+<color>default</color>
+<css/>
+<glyph/>
+<id/>
+<order>100</order>
+<placeholder_dimensions>{
+	"mobile": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"desktop": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"tablet": {
+		"height": "250px",
+		"width": "100%"
+	}
+}</placeholder_dimensions>
+<placeholder_dimensions_script><![CDATA[function evaluateConfig(options) { return {
+	"mobile": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"desktop": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"tablet": {
+		"height": "250px",
+		"width": "100%"
+	}
+}; }]]></placeholder_dimensions_script>
+<placeholder_template>&lt;!--
+	AngularJS template with configurable options.
+	Use the "options" object to control dynamic behavior.
+	Example: Display an element when max row count is 10:
+	&lt;div ng-if="options.maxRowCount === 10"&gt;&lt;/div&gt;
+	The "skeleton-container" class is used for loading placeholders.
+--&gt;
+	&lt;div class="skeleton-container"&gt;
+	&lt;!-- Header Skeleton --&gt;
+	&lt;div class="skeleton-box skeleton-header"&gt;&lt;/div&gt;
+	&lt;!-- Body Skeleton --&gt;
+	&lt;div class="skeleton-box skeleton-line"&gt;&lt;/div&gt;
+	&lt;div class="skeleton-box skeleton-line small"&gt;&lt;/div&gt;
+	&lt;div class="skeleton-box skeleton-line medium"&gt;&lt;/div&gt;
+&lt;/div&gt;</placeholder_template>
+<preserve_placeholder_size>false</preserve_placeholder_size>
+<roles/>
+<short_description>Out-of-the-box Simple List widget showing the signed-in employee their five most recent claims. The requested_for filter is stored on this instance, not supplied by the browser.</short_description>
+<size>md</size>
+<sp_column>4dca1534169e4acb96b18cbd3684fd61</sp_column>
+<sp_widget>5b255672cb03020000f8d856634c9c28</sp_widget>
+<sys_class_name>sp_instance</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:50</sys_created_on>
+<sys_id>1b3293855d8b4bc8a1997835d8d82b32</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_instance_1b3293855d8b4bc8a1997835d8d82b32</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:50</sys_updated_on>
+<title/>
+<url/>
+<widget_parameters><![CDATA[{"title":{"value":"My most recent claims","displayValue":"My most recent claims"},"table":{"value":"x_2180676_claime_0_claim","displayValue":"x_2180676_claime_0_claim"},"filter":{"value":"requested_for=javascript:gs.getUserID()","displayValue":"requested_for=javascript:gs.getUserID()"},"display_field":{"value":"number","displayValue":"number"},"secondary_fields":{"value":"short_description,approval_status,amount,submitted_on","displayValue":"short_description,approval_status,amount,submitted_on"},"order_by":{"value":"submitted_on","displayValue":"submitted_on"},"order_direction":{"value":"desc","displayValue":"desc"},"maximum_entries":{"value":"5","displayValue":"5"},"sp_page":{"value":"x_2180676_claime_0_claimease_claim","displayValue":"x_2180676_claime_0_claimease_claim"},"hide_footer":{"value":"true","displayValue":"true"},"always_show":{"value":"true","displayValue":"true"},"glyph":{"value":"list","displayValue":"list"}}]]></widget_parameters>
+</sp_instance>
+<sp_instance>
+<active>true</active>
+<advanced_placeholder_dimensions>false</advanced_placeholder_dimensions>
+<async_load>false</async_load>
+<async_load_device_type>desktop,tablet,mobile</async_load_device_type>
+<async_load_trigger>viewport</async_load_trigger>
+<class_name/>
+<color>default</color>
+<css/>
+<glyph/>
+<id/>
+<order>100</order>
+<placeholder_dimensions>{
+	"mobile": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"desktop": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"tablet": {
+		"height": "250px",
+		"width": "100%"
+	}
+}</placeholder_dimensions>
+<placeholder_dimensions_script><![CDATA[function evaluateConfig(options) { return {
+	"mobile": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"desktop": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"tablet": {
+		"height": "250px",
+		"width": "100%"
+	}
+}; }]]></placeholder_dimensions_script>
+<placeholder_template>&lt;!--
+	AngularJS template with configurable options.
+	Use the "options" object to control dynamic behavior.
+	Example: Display an element when max row count is 10:
+	&lt;div ng-if="options.maxRowCount === 10"&gt;&lt;/div&gt;
+	The "skeleton-container" class is used for loading placeholders.
+--&gt;
+	&lt;div class="skeleton-container"&gt;
+	&lt;!-- Header Skeleton --&gt;
+	&lt;div class="skeleton-box skeleton-header"&gt;&lt;/div&gt;
+	&lt;!-- Body Skeleton --&gt;
+	&lt;div class="skeleton-box skeleton-line"&gt;&lt;/div&gt;
+	&lt;div class="skeleton-box skeleton-line small"&gt;&lt;/div&gt;
+	&lt;div class="skeleton-box skeleton-line medium"&gt;&lt;/div&gt;
+&lt;/div&gt;</placeholder_template>
+<preserve_placeholder_size>false</preserve_placeholder_size>
+<roles/>
+<short_description>ClaimEase claim detail. Curated field whitelist: the manager field and all internal process fields are deliberately excluded.</short_description>
+<size>md</size>
+<sp_column>c563fb5d9aee49d09af24ac1d11f3474</sp_column>
+<sp_widget>5e1769cf447e42689268467e23119707</sp_widget>
+<sys_class_name>sp_instance</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:50</sys_created_on>
+<sys_id>1cacb5ecf5fe414d98c56f9f71b70c7a</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_instance_1cacb5ecf5fe414d98c56f9f71b70c7a</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:50</sys_updated_on>
+<title/>
+<url/>
+<widget_parameters><![CDATA[{"my_claims_page":{"value":"x_2180676_claime_0_claimease_my_claims","displayValue":"x_2180676_claime_0_claimease_my_claims"}}]]></widget_parameters>
+</sp_instance>
+<sp_instance>
+<active>true</active>
+<advanced_placeholder_dimensions>false</advanced_placeholder_dimensions>
+<async_load>false</async_load>
+<async_load_device_type>desktop,tablet,mobile</async_load_device_type>
+<async_load_trigger>viewport</async_load_trigger>
+<class_name/>
+<color>default</color>
+<css/>
+<glyph/>
+<id/>
+<order>100</order>
+<placeholder_dimensions>{
+	"mobile": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"desktop": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"tablet": {
+		"height": "250px",
+		"width": "100%"
+	}
+}</placeholder_dimensions>
+<placeholder_dimensions_script><![CDATA[function evaluateConfig(options) { return {
+	"mobile": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"desktop": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"tablet": {
+		"height": "250px",
+		"width": "100%"
+	}
+}; }]]></placeholder_dimensions_script>
+<placeholder_template>&lt;!--
+	AngularJS template with configurable options.
+	Use the "options" object to control dynamic behavior.
+	Example: Display an element when max row count is 10:
+	&lt;div ng-if="options.maxRowCount === 10"&gt;&lt;/div&gt;
+	The "skeleton-container" class is used for loading placeholders.
+--&gt;
+	&lt;div class="skeleton-container"&gt;
+	&lt;!-- Header Skeleton --&gt;
+	&lt;div class="skeleton-box skeleton-header"&gt;&lt;/div&gt;
+	&lt;!-- Body Skeleton --&gt;
+	&lt;div class="skeleton-box skeleton-line"&gt;&lt;/div&gt;
+	&lt;div class="skeleton-box skeleton-line small"&gt;&lt;/div&gt;
+	&lt;div class="skeleton-box skeleton-line medium"&gt;&lt;/div&gt;
+&lt;/div&gt;</placeholder_template>
+<preserve_placeholder_size>false</preserve_placeholder_size>
+<roles/>
+<short_description>ClaimEase My Claims list. Search by claim number, filter by category, status and submission date; shows amount, status and manager/finance approval progress.</short_description>
+<size>md</size>
+<sp_column>9edbf2c3bbfd44729c451f62fbba5db6</sp_column>
+<sp_widget>8038a93b11484cb5b93e34150d9b0dca</sp_widget>
+<sys_class_name>sp_instance</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>3fe37f9d36f54e89bfc12112d6b72e0f</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_instance_3fe37f9d36f54e89bfc12112d6b72e0f</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<title/>
+<url/>
+<widget_parameters><![CDATA[{"title":{"value":"My reimbursement claims","displayValue":"My reimbursement claims"},"page_size":{"value":"15","displayValue":"15"},"detail_page":{"value":"x_2180676_claime_0_claimease_claim","displayValue":"x_2180676_claime_0_claimease_claim"},"submit_page":{"value":"x_2180676_claime_0_claimease_home","displayValue":"x_2180676_claime_0_claimease_home"}}]]></widget_parameters>
+</sp_instance>
+<sp_instance>
+<active>true</active>
+<advanced_placeholder_dimensions>false</advanced_placeholder_dimensions>
+<async_load>false</async_load>
+<async_load_device_type>desktop,tablet,mobile</async_load_device_type>
+<async_load_trigger>viewport</async_load_trigger>
+<class_name/>
+<color>default</color>
+<css/>
+<glyph/>
+<id/>
+<order>100</order>
+<placeholder_dimensions>{
+	"mobile": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"desktop": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"tablet": {
+		"height": "250px",
+		"width": "100%"
+	}
+}</placeholder_dimensions>
+<placeholder_dimensions_script><![CDATA[function evaluateConfig(options) { return {
+	"mobile": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"desktop": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"tablet": {
+		"height": "250px",
+		"width": "100%"
+	}
+}; }]]></placeholder_dimensions_script>
+<placeholder_template>&lt;!--
+	AngularJS template with configurable options.
+	Use the "options" object to control dynamic behavior.
+	Example: Display an element when max row count is 10:
+	&lt;div ng-if="options.maxRowCount === 10"&gt;&lt;/div&gt;
+	The "skeleton-container" class is used for loading placeholders.
+--&gt;
+	&lt;div class="skeleton-container"&gt;
+	&lt;!-- Header Skeleton --&gt;
+	&lt;div class="skeleton-box skeleton-header"&gt;&lt;/div&gt;
+	&lt;!-- Body Skeleton --&gt;
+	&lt;div class="skeleton-box skeleton-line"&gt;&lt;/div&gt;
+	&lt;div class="skeleton-box skeleton-line small"&gt;&lt;/div&gt;
+	&lt;div class="skeleton-box skeleton-line medium"&gt;&lt;/div&gt;
+&lt;/div&gt;</placeholder_template>
+<preserve_placeholder_size>false</preserve_placeholder_size>
+<roles/>
+<short_description>ClaimEase action panel: submit a claim, or open My Claims.</short_description>
+<size>md</size>
+<sp_column>6442e057c6a04c8a8de80ae2cf496b55</sp_column>
+<sp_widget>56e094105b1843dc9a8f08aabec04fc3</sp_widget>
+<sys_class_name>sp_instance</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>b74b8ea91d7249bd86924f62c1fb2d9c</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_instance_b74b8ea91d7249bd86924f62c1fb2d9c</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<title/>
+<url/>
+<widget_parameters><![CDATA[{"producer_name":{"value":"Submit a Reimbursement Claim","displayValue":"Submit a Reimbursement Claim"},"catalog_item_page":{"value":"sc_cat_item","displayValue":"sc_cat_item"},"my_claims_page":{"value":"x_2180676_claime_0_claimease_my_claims","displayValue":"x_2180676_claime_0_claimease_my_claims"}}]]></widget_parameters>
+</sp_instance>
+<sp_instance_menu>
+<active>true</active>
+<advanced_placeholder_dimensions>false</advanced_placeholder_dimensions>
+<async_load>false</async_load>
+<async_load_device_type>desktop,tablet,mobile</async_load_device_type>
+<async_load_trigger>viewport</async_load_trigger>
+<class_name/>
+<color>default</color>
+<css/>
+<glyph/>
+<id/>
+<order>100</order>
+<placeholder_dimensions>{
+	"mobile": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"desktop": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"tablet": {
+		"height": "250px",
+		"width": "100%"
+	}
+}</placeholder_dimensions>
+<placeholder_dimensions_script><![CDATA[function evaluateConfig(options) { return {
+	"mobile": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"desktop": {
+		"height": "250px",
+		"width": "100%"
+	},
+	"tablet": {
+		"height": "250px",
+		"width": "100%"
+	}
+}; }]]></placeholder_dimensions_script>
+<placeholder_template>&lt;!--
+	AngularJS template with configurable options.
+	Use the "options" object to control dynamic behavior.
+	Example: Display an element when max row count is 10:
+	&lt;div ng-if="options.maxRowCount === 10"&gt;&lt;/div&gt;
+	The "skeleton-container" class is used for loading placeholders.
+--&gt;
+	&lt;div class="skeleton-container"&gt;
+	&lt;!-- Header Skeleton --&gt;
+	&lt;div class="skeleton-box skeleton-header"&gt;&lt;/div&gt;
+	&lt;!-- Body Skeleton --&gt;
+	&lt;div class="skeleton-box skeleton-line"&gt;&lt;/div&gt;
+	&lt;div class="skeleton-box skeleton-line small"&gt;&lt;/div&gt;
+	&lt;div class="skeleton-box skeleton-line medium"&gt;&lt;/div&gt;
+&lt;/div&gt;</placeholder_template>
+<preserve_placeholder_size>false</preserve_placeholder_size>
+<roles/>
+<short_description>Main navigation for the ClaimEase employee portal.</short_description>
+<size>md</size>
+<sp_column/>
+<sp_widget>5ef595c1cb12020000f8d856634c9c6e</sp_widget>
+<sys_class_name>sp_instance_menu</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>d9511bb4733543649873a74abaf8490a</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase navigation</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_instance_menu_d9511bb4733543649873a74abaf8490a</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<title>ClaimEase navigation</title>
+<url/>
+<widget_parameters/>
+</sp_instance_menu>
+</xml>

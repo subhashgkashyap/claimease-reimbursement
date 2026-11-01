@@ -1,0 +1,11 @@
+# Credentials — never commit. sn.py reads this curl config at runtime.
+sn.hdr
+sn.pw
+sn.b64
+*.pem
+*.key
+
+# Working files from an export run
+inventory.json
+__pycache__/
+*.pyc

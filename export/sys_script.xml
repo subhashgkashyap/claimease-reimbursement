@@ -1,0 +1,913 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_script>
+<abort_action>false</abort_action>
+<access>package_private</access>
+<action_delete>false</action_delete>
+<action_insert>true</action_insert>
+<action_query>false</action_query>
+<action_update>false</action_update>
+<active>true</active>
+<add_message>false</add_message>
+<advanced>true</advanced>
+<change_fields>false</change_fields>
+<client_callable>false</client_callable>
+<collection>x_2180676_claime_0_claim</collection>
+<condition/>
+<description>Issues the claim number from the sys_number counter on insert, for every submission path. Replaces the unreachable global getNextObjNumberPadded dictionary default. Never overwrites a number that was supplied deliberately.</description>
+<execute_function>false</execute_function>
+<filter_condition table="x_2180676_claime_0_claim"/>
+<is_rest>false</is_rest>
+<message/>
+<name>ClaimEase - Assign Claim Number</name>
+<order>50</order>
+<priority>100</priority>
+<rest_method/>
+<rest_method_text/>
+<rest_service/>
+<rest_service_text/>
+<rest_variables/>
+<role_conditions/>
+<script><![CDATA[/**
+ * ClaimEase - Assign Claim Number  (before insert, order 50)
+ *
+ * PURPOSE
+ *   Issues the claim's `number` before anything else runs.
+ *
+ *   This replaces the conventional dictionary default
+ *   `javascript:getNextObjNumberPadded();`, which cannot work from a scoped
+ *   application: `getNextObjNumberPadded` is a method on the GLOBAL
+ *   `NumberManager` script include, and that include is `package_private`, so
+ *   the scope cannot reach it. Leaving the default in place produced
+ *   "getNextObjNumberPadded undefined, maybe missing global qualifier" on every
+ *   claim form load and left claims unnumbered.
+ *
+ *   Running as a business rule rather than a dictionary default has two
+ *   advantages:
+ *     - it covers EVERY insert path (portal, record producer, platform form,
+ *       Table API, server script, ATF) rather than only form default evaluation;
+ *     - it is explicit and testable.
+ *
+ *   Order 50 puts it ahead of Normalise Amount (100), Validate Claim (200) and
+ *   the Duplicate Guard (300), all of which log using the claim number.
+ *
+ *   Idempotent: an existing number is never overwritten, so an administrator or
+ *   a data import may supply its own.
+ *
+ * Thin by design: the logic lives in the ClaimEaseNumber script include.
+ */
+;(function executeRule() {
+    var existing = current.getValue('number')
+
+    // Respect a number that was supplied deliberately.
+    if (existing !== null && existing !== undefined && ('' + existing).replace(/^\s+|\s+$/g, '') !== '') {
+        return
+    }
+
+    current.setValue('number', new ClaimEaseNumber().getNext())
+})()
+]]></script>
+<sys_class_name>sys_script</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 09:32:20</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>61ac2a6720764a08b3e873059176d462</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Assign Claim Number</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_61ac2a6720764a08b3e873059176d462</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 09:32:20</sys_updated_on>
+<template/>
+<when>before</when>
+</sys_script>
+<sys_script>
+<abort_action>false</abort_action>
+<access>package_private</access>
+<action_delete>false</action_delete>
+<action_insert>true</action_insert>
+<action_query>false</action_query>
+<action_update>true</action_update>
+<active>true</active>
+<add_message>false</add_message>
+<advanced>true</advanced>
+<change_fields>false</change_fields>
+<client_callable>false</client_callable>
+<collection>x_2180676_claime_0_claim</collection>
+<condition/>
+<description>Applies the rolling-window duplicate rule to small claims entering submitted, after taking a per-employee database-enforced mutex so two simultaneous qualifying submissions cannot both pass. On a hit the claim is recorded as a duplicate and no approval process is started.</description>
+<execute_function>false</execute_function>
+<filter_condition table="x_2180676_claime_0_claim"/>
+<is_rest>false</is_rest>
+<message/>
+<name>ClaimEase - Duplicate Guard</name>
+<order>300</order>
+<priority>100</priority>
+<rest_method/>
+<rest_method_text/>
+<rest_service/>
+<rest_service_text/>
+<rest_variables/>
+<role_conditions/>
+<script><![CDATA[/**
+ * ClaimEase - Duplicate Guard  (before insert/update, order 300)
+ *
+ * PURPOSE
+ *   Applies the rolling-window duplicate rule at the moment a claim ENTERS the
+ *   `submitted` status (including an insert that arrives already submitted, as
+ *   the record producer does).
+ *
+ *   Because this is a business rule it applies to EVERY interface — form,
+ *   Service Portal, record producer, Table API, server script and flow. There
+ *   is no client-side duplicate check anywhere in ClaimEase.
+ *
+ * WHAT HAPPENS ON A HIT
+ *   The claim is NOT turned into an eligible claim: status becomes `duplicate`,
+ *   `duplicate_of` points at the earlier claim, `duplicate_check` is stamped and
+ *   `flow_started` is left false, so the "Start Approval Process" rule is a
+ *   no-op and no approval is ever requested. The employee gets a friendly
+ *   explanation (identifying the earlier claim only when they are allowed to
+ *   read it).
+ *
+ * CONCURRENCY
+ *   A per-employee named mutex is taken BEFORE the duplicate query. The mutex is
+ *   a lock row whose key is covered by a UNIQUE database index, so two
+ *   simultaneous qualifying submissions cannot both pass — the database rejects
+ *   one of the two acquires. The loser is asked to retry rather than being
+ *   allowed through. The lock is released by the "Release Submission Lock"
+ *   after-rule, once the claim row has committed (releasing earlier would
+ *   re-open the race). See the ClaimEaseLock script include for the full
+ *   rationale and the alternatives that were rejected.
+ *
+ * Thin by design: all logic lives in ClaimEaseDuplicateCheck / ClaimEaseLock.
+ */
+;(function executeRule() {
+    var config = new ClaimEaseConfig()
+    var duplicateCheck = new ClaimEaseDuplicateCheck()
+
+    // Insert detection must NOT use current.operation(): in the record-producer
+    // save path that call throws "Cannot convert null to an object", which
+    // previously aborted this rule and left claims unstamped. Comparing against
+    // `previous` is reliable on every insert path.
+    var isInsert = !previous || !previous.getValue('sys_id')
+    var statusNow = current.getValue('approval_status')
+    var statusBefore = !isInsert && previous ? previous.getValue('approval_status') : ''
+
+    // Only guard the transition INTO submitted.
+    if (statusNow !== 'submitted' || statusBefore === 'submitted') {
+        return
+    }
+
+    // The rule must never block an unrelated claim at or above the boundary.
+    var amountUsd = parseFloat(current.getValue('amount_usd'))
+    if (isNaN(amountUsd) || !config.isSmallClaim(amountUsd)) {
+        return
+    }
+
+    var requestedFor = current.getValue('requested_for')
+    // The claim sys_id is already assigned in a before-insert rule, so it is a
+    // stable, unique owner token for this submission attempt.
+    var ownerToken = current.getUniqueValue()
+
+    var lock = duplicateCheck.acquireSubmissionLock(requestedFor, ownerToken)
+    if (!lock.acquired) {
+        gs.error('[ClaimEase] Serialised submission refused: ' + lock.error)
+        gs.addErrorMessage(
+            'Another reimbursement claim for this employee is being submitted right now. ' +
+                'Please wait a moment and submit again.'
+        )
+        current.setAbortAction(true)
+        return
+    }
+
+    if (duplicateCheck.enforce(current)) {
+        // enforce() has already set approval_status = duplicate, duplicate_of,
+        // duplicate_check, rejection_reason and left flow_started false.
+        gs.addErrorMessage(current.getValue('rejection_reason'))
+    }
+})()
+]]></script>
+<sys_class_name>sys_script</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:57</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>3b83ec38ca264d6e86db08f8a17acc7d</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Duplicate Guard</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_3b83ec38ca264d6e86db08f8a17acc7d</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:57</sys_updated_on>
+<template/>
+<when>before</when>
+</sys_script>
+<sys_script>
+<abort_action>false</abort_action>
+<access>package_private</access>
+<action_delete>false</action_delete>
+<action_insert>true</action_insert>
+<action_query>false</action_query>
+<action_update>true</action_update>
+<active>true</active>
+<add_message>false</add_message>
+<advanced>true</advanced>
+<change_fields>false</change_fields>
+<client_callable>false</client_callable>
+<collection>x_2180676_claime_0_claim</collection>
+<condition/>
+<description>Forces submitted_by to the authenticated user on insert, sets submitted_on the first time the claim is submitted, refreshes last_status_update when approval_status changes, populates manager from the employee record with a fallback to the exception queue, and captures the manager and finance decision stamps.</description>
+<execute_function>false</execute_function>
+<filter_condition table="x_2180676_claime_0_claim"/>
+<is_rest>false</is_rest>
+<message/>
+<name>ClaimEase - Lifecycle Stamps</name>
+<order>400</order>
+<priority>100</priority>
+<rest_method/>
+<rest_method_text/>
+<rest_service/>
+<rest_service_text/>
+<rest_variables/>
+<role_conditions/>
+<script><![CDATA[/**
+ * ClaimEase - Lifecycle Stamps  (before insert/update, order 400)
+ *
+ * PURPOSE
+ *   Maintains the audit and process timestamps that the flow, the portal, the
+ *   notifications and the reports all rely on. Runs last of the before-rules
+ *   (order 400) so it stamps the values the earlier rules have settled on.
+ *
+ *   - `submitted_by`        forced to the authenticated user on insert, so the
+ *                           submitter can never be spoofed by any interface.
+ *   - `submitted_on`        set the FIRST time the claim becomes `submitted`,
+ *                           and only when empty. This is the reference instant
+ *                           for the rolling duplicate window, so it must never
+ *                           be rewritten by a later save.
+ *   - `last_status_update`  refreshed whenever `approval_status` changes.
+ *   - `manager`            populated from the requested_for employee's manager
+ *                           when empty. When the employee has no usable
+ *                           manager, the claim is marked for the fallback /
+ *                           exception queue instead of being left unapproved.
+ *   - decision stamps       `manager_decision_on`/`by` and
+ *                           `finance_decision_on`/`by` are captured when the
+ *                           matching approval field moves to approved/rejected.
+ *
+ * Thin by design: manager resolution lives in ClaimEaseValidator.
+ */
+;(function executeRule() {
+    var validator = new ClaimEaseValidator()
+
+    // See the Duplicate Guard rule: current.operation() is unreliable in the
+    // record-producer save path, so insert is detected via `previous`.
+    var isInsert = !previous || !previous.getValue('sys_id')
+    var now = new GlideDateTime().getValue()
+    var currentUser = gs.getUserID()
+
+    /* ---------- Submitter ---------- */
+    if (isInsert) {
+        // Authoritative: the submitter is always the authenticated user.
+        current.setValue('submitted_by', currentUser)
+    }
+
+    /* ---------- Status timestamps ---------- */
+    var statusNow = '' + (current.getValue('approval_status') || '')
+    var statusBefore = !isInsert && previous ? '' + (previous.getValue('approval_status') || '') : ''
+
+    if (statusNow === 'submitted' && !current.getValue('submitted_on')) {
+        // First submission only - this instant anchors the duplicate window.
+        current.setValue('submitted_on', now)
+    }
+
+    if (isInsert || statusNow !== statusBefore) {
+        current.setValue('last_status_update', now)
+    }
+
+    /* ---------- Manager ---------- */
+    if (!current.getValue('manager')) {
+        var resolved = validator.resolveManager(current.getValue('requested_for'))
+        if (resolved.managerSysId) {
+            current.setValue('manager', resolved.managerSysId)
+        } else if (!current.getValue('exception_reason')) {
+            // Never "no approval needed": record that the fallback approver group
+            // owns this claim so the flow routes it to the exception queue.
+            gs.info(
+                '[ClaimEase] No usable manager for this claim; routing to the fallback approver group. Reason: ' +
+                    resolved.error
+            )
+            current.setValue(
+                'exception_reason',
+                'No active manager on the employee record - routed to the fallback approver group.'
+            )
+        }
+    }
+
+    /* ---------- Approval decision stamps (audit) ---------- */
+    var decided = ['approved', 'rejected']
+
+    var managerNow = '' + (current.getValue('manager_approval') || '')
+    var managerBefore = !isInsert && previous ? '' + (previous.getValue('manager_approval') || '') : ''
+    if (managerNow !== managerBefore && decided.indexOf(managerNow) > -1) {
+        current.setValue('manager_decision_on', now)
+        current.setValue('manager_decision_by', currentUser)
+    }
+
+    var financeNow = '' + (current.getValue('finance_approval') || '')
+    var financeBefore = !isInsert && previous ? '' + (previous.getValue('finance_approval') || '') : ''
+    if (financeNow !== financeBefore && decided.indexOf(financeNow) > -1) {
+        current.setValue('finance_decision_on', now)
+        current.setValue('finance_decision_by', currentUser)
+    }
+})()
+]]></script>
+<sys_class_name>sys_script</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:57</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>ecb92134992a4b679b1ba61cb5fa7991</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Lifecycle Stamps</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_ecb92134992a4b679b1ba61cb5fa7991</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:57</sys_updated_on>
+<template/>
+<when>before</when>
+</sys_script>
+<sys_script>
+<abort_action>false</abort_action>
+<access>package_private</access>
+<action_delete>false</action_delete>
+<action_insert>true</action_insert>
+<action_query>false</action_query>
+<action_update>true</action_update>
+<active>true</active>
+<add_message>false</add_message>
+<advanced>true</advanced>
+<change_fields>false</change_fields>
+<client_callable>false</client_callable>
+<collection>x_2180676_claime_0_claim</collection>
+<condition/>
+<description>Converts the claim amount into the configured base currency and stores it in amount_usd, the only field used for threshold and duplicate evaluation. Aborts the save when conversion is impossible.</description>
+<execute_function>false</execute_function>
+<filter_condition table="x_2180676_claime_0_claim"/>
+<is_rest>false</is_rest>
+<message/>
+<name>ClaimEase - Normalise Amount</name>
+<order>100</order>
+<priority>100</priority>
+<rest_method/>
+<rest_method_text/>
+<rest_service/>
+<rest_service_text/>
+<rest_variables/>
+<role_conditions/>
+<script><![CDATA[/**
+ * ClaimEase - Normalise Amount  (before insert/update, order 100)
+ *
+ * PURPOSE
+ *   `amount` is a currency field and may be captured in any permitted currency.
+ *   Every downstream decision (approval routing and duplicate detection) uses
+ *   `amount_usd` instead, so this rule is the single place where the claim
+ *   amount is converted into the configured base currency.
+ *
+ *   It runs FIRST (order 100) because the validation, duplicate and lifecycle
+ *   rules all depend on a trustworthy `amount_usd`.
+ *
+ *   If conversion is not possible the save is aborted with a friendly message
+ *   and the technical reason is logged. A foreign-currency amount is never
+ *   silently treated as if it were already in the base currency.
+ *
+ * Thin by design: all logic lives in the ClaimEaseCurrency script include.
+ */
+;(function executeRule() {
+    var config = new ClaimEaseConfig()
+    var currency = new ClaimEaseCurrency()
+
+    // current.operation() throws "Cannot convert null to an object" in the
+    // record-producer save path, which previously aborted this rule and left
+    // amount_usd empty on every portal submission. Use `previous` instead.
+    var isInsert = !previous || !previous.getValue('sys_id')
+    var amountChanged = !previous || current.getValue('amount') !== previous.getValue('amount')
+
+    // Skip the (potentially FX-querying) conversion when nothing relevant moved
+    // and we already hold a normalised amount.
+    if (!isInsert && !amountChanged && current.getValue('amount_usd')) {
+        return
+    }
+
+    var result = currency.normalizeClaim(current)
+
+    if (!result.ok) {
+        gs.error(
+            '[ClaimEase] Could not normalise the amount on claim ' +
+                (current.getValue('number') || '(new record)') +
+                '. Reason: ' +
+                result.error
+        )
+        gs.addErrorMessage(
+            'We could not convert this claim amount into ' +
+                config.getBaseCurrency() +
+                ', so the claim has not been saved. Please re-enter the amount, or contact your ClaimEase ' +
+                'administrator so the exchange rates can be checked.'
+        )
+        current.setAbortAction(true)
+    }
+})()
+]]></script>
+<sys_class_name>sys_script</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:57</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>afe4441150fb4259a25f4947cdd15302</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Normalise Amount</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_afe4441150fb4259a25f4947cdd15302</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:57</sys_updated_on>
+<template/>
+<when>before</when>
+</sys_script>
+<sys_script>
+<abort_action>false</abort_action>
+<access>package_private</access>
+<action_delete>false</action_delete>
+<action_insert>false</action_insert>
+<action_query>false</action_query>
+<action_update>true</action_update>
+<active>true</active>
+<add_message>false</add_message>
+<advanced>true</advanced>
+<change_fields>false</change_fields>
+<client_callable>false</client_callable>
+<collection>x_2180676_claime_0_claim</collection>
+<condition/>
+<description>Rejects unauthorised changes to manager_approval and finance_approval, freezes amount, amount_usd and requested_for once the claim has left draft (admins excepted), and rejects invalid approval transitions.</description>
+<execute_function>false</execute_function>
+<filter_condition table="x_2180676_claime_0_claim"/>
+<is_rest>false</is_rest>
+<message/>
+<name>ClaimEase - Protect Approval Fields</name>
+<order>150</order>
+<priority>100</priority>
+<rest_method/>
+<rest_method_text/>
+<rest_service/>
+<rest_service_text/>
+<rest_variables/>
+<role_conditions/>
+<script><![CDATA[/**
+ * ClaimEase - Protect Approval Fields  (before update, order 150)
+ *
+ * PURPOSE
+ *   Server-side authorisation guard for the approval decision fields and for
+ *   the financial facts of a claim. This is the control that stops an employee
+ *   approving their own claim by any route — form, Service Portal, Table API or
+ *   a server script — because it sits in the save path rather than in the UI.
+ *
+ *   It runs at order 150: after "Normalise Amount" (100) and BEFORE "Validate
+ *   Claim" (200), so an unauthorised write is rejected before any other work is
+ *   done on it.
+ *
+ * WHAT IS GUARDED
+ *   1. `manager_approval`  - only the recorded manager, a ClaimEase admin, or
+ *      the approval automation may change it.
+ *   2. `finance_approval`  - only a member of the configured Finance group, a
+ *      holder of the `x_2180676_claime_0.finance_approver` role, a ClaimEase
+ *      admin, or the approval automation may change it.
+ *   3. `amount`, `amount_usd`, `requested_for` - frozen once the claim has left
+ *      `draft`, except for admins. These are the facts the approval decision
+ *      was based on, so they must not move underneath an approver.
+ *   4. Approval transitions - e.g. Finance cannot approve a claim the manager
+ *      has rejected, and no approval decision is accepted on a claim that is
+ *      `cancelled` or `duplicate`.
+ *
+ * AUTOMATION BYPASS (documented mechanism)
+ *   The approval flow records decisions on behalf of an approver, so it cannot
+ *   satisfy "you must BE the manager". The agreed bypass, implemented in
+ *   `ClaimEaseValidator.isApprovalAutomation()`, requires ALL THREE of:
+ *     a) `current.flow_started` is true - the approval process really is running;
+ *     b) the session scratchpad flag `x_2180676_claime_0.approval_automation`
+ *        is set to 'true' (the flow sets it immediately before the update and
+ *        clears it afterwards); and
+ *     c) the session holds a ClaimEase approval role.
+ *   The flag alone is never sufficient, so it cannot be forged by an employee.
+ *
+ * Thin by design: all authorisation logic lives in ClaimEaseValidator.
+ */
+;(function executeRule() {
+    var validator = new ClaimEaseValidator()
+
+    if (!previous) {
+        return
+    }
+
+    var isAdmin = validator.isClaimEaseAdmin()
+    var blocked = false
+
+    /* ---------- 1. Manager approval ---------- */
+    var managerChanged = current.getValue('manager_approval') !== previous.getValue('manager_approval')
+    if (managerChanged && !validator.canSetManagerApproval(current)) {
+        gs.error(
+            '[ClaimEase] Rejected an unauthorised manager_approval change on claim ' +
+                current.getValue('number') +
+                '.'
+        )
+        gs.addErrorMessage(
+            'Only the manager recorded on this claim can record the manager decision. ' +
+                'Please use your approval record, or contact your ClaimEase administrator.'
+        )
+        blocked = true
+    }
+
+    /* ---------- 2. Finance approval ---------- */
+    var financeChanged = current.getValue('finance_approval') !== previous.getValue('finance_approval')
+    if (financeChanged && !validator.canSetFinanceApproval(current)) {
+        gs.error(
+            '[ClaimEase] Rejected an unauthorised finance_approval change on claim ' +
+                current.getValue('number') +
+                '.'
+        )
+        gs.addErrorMessage(
+            'Only a member of the ClaimEase Finance approver group can record the finance decision. ' +
+                'Please contact your ClaimEase administrator if you need access.'
+        )
+        blocked = true
+    }
+
+    /* ---------- 3. Financial facts frozen after draft ---------- */
+    var hasLeftDraft = previous.getValue('approval_status') !== 'draft'
+    if (hasLeftDraft && !isAdmin) {
+        var frozen = [
+            { field: 'amount', label: 'claim amount' },
+            { field: 'amount_usd', label: 'normalised claim amount' },
+            { field: 'requested_for', label: 'employee the claim is for' },
+        ]
+        for (var i = 0; i < frozen.length; i++) {
+            if (current.getValue(frozen[i].field) !== previous.getValue(frozen[i].field)) {
+                gs.error(
+                    '[ClaimEase] Rejected a change to the protected field "' +
+                        frozen[i].field +
+                        '" on claim ' +
+                        current.getValue('number') +
+                        ' after it left draft.'
+                )
+                gs.addErrorMessage(
+                    'The ' +
+                        frozen[i].label +
+                        ' cannot be changed once the claim has been submitted. ' +
+                        'Please cancel this claim and raise a new one, or contact your ClaimEase administrator.'
+                )
+                blocked = true
+            }
+        }
+    }
+
+    /* ---------- 4. Transition validity ---------- */
+    var transitionErrors = validator.validateApprovalTransition(current, previous)
+    for (var j = 0; j < transitionErrors.length; j++) {
+        gs.addErrorMessage(transitionErrors[j])
+        blocked = true
+    }
+    if (transitionErrors.length) {
+        gs.error(
+            '[ClaimEase] Rejected ' +
+                transitionErrors.length +
+                ' invalid approval transition(s) on claim ' +
+                current.getValue('number') +
+                '.'
+        )
+    }
+
+    if (blocked) {
+        current.setAbortAction(true)
+    }
+})()
+]]></script>
+<sys_class_name>sys_script</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:57</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>d2cc5e19de944dddaab8d16df2b9e937</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Protect Approval Fields</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_d2cc5e19de944dddaab8d16df2b9e937</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:57</sys_updated_on>
+<template/>
+<when>before</when>
+</sys_script>
+<sys_script>
+<abort_action>false</abort_action>
+<access>package_private</access>
+<action_delete>false</action_delete>
+<action_insert>true</action_insert>
+<action_query>false</action_query>
+<action_update>true</action_update>
+<active>true</active>
+<add_message>false</add_message>
+<advanced>true</advanced>
+<change_fields>false</change_fields>
+<client_callable>false</client_callable>
+<collection>x_2180676_claime_0_claim</collection>
+<condition/>
+<description>Releases the per-employee submission mutex acquired by the Duplicate Guard, once the claim row has committed and is visible to other transactions. No-op when no lock is held.</description>
+<execute_function>false</execute_function>
+<filter_condition table="x_2180676_claime_0_claim"/>
+<is_rest>false</is_rest>
+<message/>
+<name>ClaimEase - Release Submission Lock</name>
+<order>1000</order>
+<priority>100</priority>
+<rest_method/>
+<rest_method_text/>
+<rest_service/>
+<rest_service_text/>
+<rest_variables/>
+<role_conditions/>
+<script><![CDATA[/**
+ * ClaimEase - Release Submission Lock  (after insert/update, order 1000)
+ *
+ * PURPOSE
+ *   Releases the per-employee submission mutex that the "Duplicate Guard"
+ *   before-rule acquired.
+ *
+ *   The release MUST happen here rather than at the end of the duplicate guard.
+ *   The guard runs before the claim row is written, so releasing there would let
+ *   a second transaction acquire the lock and run its duplicate query before the
+ *   first claim became visible — re-opening exactly the race the lock exists to
+ *   close. By the time an after-rule runs, the claim is committed and visible,
+ *   so it is safe to let the next submission through.
+ *
+ *   Runs at order 1000 so it is the last thing to happen on the save.
+ *
+ * SAFETY
+ *   - The lock is keyed by employee and owned by this claim's sys_id, so this
+ *     rule can only ever release a lock that this claim took.
+ *   - It is a harmless no-op when no lock is held (the common case: large
+ *     claims, draft saves, approval updates).
+ *   - If a transaction aborts between the guard and this rule, the lock's
+ *     `expires_on` lets the next acquirer reclaim it, so no employee can be
+ *     blocked indefinitely.
+ */
+;(function executeRule() {
+    var duplicateCheck = new ClaimEaseDuplicateCheck()
+    duplicateCheck.releaseSubmissionLock(current.getValue('requested_for'), current.getUniqueValue())
+})()
+]]></script>
+<sys_class_name>sys_script</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:57</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>1d7d6466d4df464982b8ffab8005d679</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Release Submission Lock</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_1d7d6466d4df464982b8ffab8005d679</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:57</sys_updated_on>
+<template/>
+<when>after</when>
+</sys_script>
+<sys_script>
+<abort_action>false</abort_action>
+<access>package_private</access>
+<action_delete>false</action_delete>
+<action_insert>true</action_insert>
+<action_query>false</action_query>
+<action_update>true</action_update>
+<active>true</active>
+<add_message>false</add_message>
+<advanced>true</advanced>
+<change_fields>false</change_fields>
+<client_callable>false</client_callable>
+<collection>x_2180676_claime_0_claim</collection>
+<condition/>
+<description>Sets flow_started true on a submitted, non-duplicate claim, in the same transaction as the save. This is the flag the Flow Designer approval flow triggers on, for both record creation and the draft-to-submitted update. A no-op when the claim is not submitted, is already started, or was blocked as a duplicate.</description>
+<execute_function>false</execute_function>
+<filter_condition table="x_2180676_claime_0_claim">approval_status=submitted<item goto="false" or="false" field="approval_status" endquery="false" value="submitted" operator="=" newquery="false"/>
+</filter_condition>
+<is_rest>false</is_rest>
+<message/>
+<name>ClaimEase - Start Approval Process</name>
+<order>500</order>
+<priority>100</priority>
+<rest_method/>
+<rest_method_text/>
+<rest_service/>
+<rest_service_text/>
+<rest_variables/>
+<role_conditions/>
+<script><![CDATA[/**
+ * ClaimEase - Start Approval Process  (before insert/update, order 500)
+ *
+ * PURPOSE
+ *   The SINGLE entry point into the approval process. Its only job is to set
+ *   `flow_started` to true on a claim that is genuinely ready for approval.
+ *
+ * WHY THIS IS NOW A *BEFORE* RULE  (defect fix)
+ * ---------------------------------------------------------------------------
+ *   It used to be an AFTER INSERT rule that re-read the committed row and
+ *   issued a SECOND update() purely so the approval flow could trigger on that
+ *   update. That indirection was fragile and it is exactly what broke when
+ *   admin-only field write ACLs were present: the second update's write to
+ *   `flow_started` was silently stripped, `flow_started` never became true, the
+ *   flow's trigger never fired, and the claim was stranded at `submitted`
+ *   (observed on CLM0001003).
+ *
+ *   Setting the flag in the BEFORE phase means `flow_started = true` is part of
+ *   the very same INSERT that the record producer performs. The claim row is
+ *   committed already carrying the flag, the flow's record trigger fires on the
+ *   CREATE, and the approval starts in the same transaction chain with no
+ *   dependence on a second update succeeding.
+ *
+ *   It is registered for insert AND update so that the later draft -> submitted
+ *   transition keeps working identically.
+ *
+ * ORDER 500
+ *   Runs after Normalise Amount (100), Protect Approval Fields (150), Validate
+ *   Claim (200), Duplicate Guard (300) and Lifecycle Stamps (400), so it sees
+ *   the FINAL approval_status and duplicate_of for this save. In particular a
+ *   claim that the Duplicate Guard has just turned into a `duplicate` is
+ *   correctly skipped.
+ *
+ * NO-OP CONDITIONS (all are required before anything happens)
+ *   - the claim is not `submitted`            -> nothing to approve;
+ *   - `flow_started` is already true          -> already running (idempotency);
+ *   - the claim was blocked as a duplicate    -> must never approve.
+ *
+ * IDEMPOTENCY / EXACTLY-ONCE
+ *   `flow_started` remains the idempotency guard and is still written in
+ *   exactly one place (here). It only ever transitions false -> true, once.
+ *   The flow's own eligibility guard (claim still `submitted` AND both
+ *   manager_approval and finance_approval still `not_requested`) is the second
+ *   line of defence, so even a re-fire of the trigger cannot request a second
+ *   round of approvals.
+ *
+ *   No recursion is possible: this is a before-rule using current.setValue, so
+ *   it performs no additional database write of its own.
+ */
+;(function executeRule() {
+    // Guard 1: only a submitted claim starts an approval.
+    if (current.getValue('approval_status') !== 'submitted') {
+        return
+    }
+    // Guard 2: idempotency — never restart an approval that is already running.
+    if (current.getValue('flow_started') === '1') {
+        return
+    }
+    // Guard 3: a claim blocked as a duplicate must never initiate approvals.
+    if (current.getValue('duplicate_of')) {
+        return
+    }
+
+    current.setValue('flow_started', true)
+
+    gs.info(
+        '[ClaimEase] Approval process armed for claim ' +
+            current.getValue('number') +
+            ' (flow_started set in the same transaction as the save; the approval flow triggers on this create/update).'
+    )
+})()
+]]></script>
+<sys_class_name>sys_script</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:57</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>1a03de8964ef4239a32fd08bf593b430</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Start Approval Process</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_1a03de8964ef4239a32fd08bf593b430</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:57</sys_updated_on>
+<template/>
+<when>before</when>
+</sys_script>
+<sys_script>
+<abort_action>false</abort_action>
+<access>package_private</access>
+<action_delete>false</action_delete>
+<action_insert>true</action_insert>
+<action_query>false</action_query>
+<action_update>true</action_update>
+<active>true</active>
+<add_message>false</add_message>
+<advanced>true</advanced>
+<change_fields>false</change_fields>
+<client_callable>false</client_callable>
+<collection>x_2180676_claime_0_claim</collection>
+<condition/>
+<description>Runs ClaimEaseValidator for every interface, adds friendly error messages and aborts the save when the claim is invalid. The receipt requirement is enforced on the transition into submitted, not on insert.</description>
+<execute_function>false</execute_function>
+<filter_condition table="x_2180676_claime_0_claim"/>
+<is_rest>false</is_rest>
+<message/>
+<name>ClaimEase - Validate Claim</name>
+<order>200</order>
+<priority>100</priority>
+<rest_method/>
+<rest_method_text/>
+<rest_service/>
+<rest_service_text/>
+<rest_variables/>
+<role_conditions/>
+<script><![CDATA[/**
+ * ClaimEase - Validate Claim  (before insert/update, order 200)
+ *
+ * PURPOSE
+ *   Enforces every ClaimEase submission rule server-side, for ALL interfaces:
+ *   form, Service Portal, record producer, Table API and server scripts. There
+ *   is no client-only validation in this application.
+ *
+ *   Runs after "Normalise Amount" (order 100) so it can trust `amount_usd`, and
+ *   before the duplicate guard (order 300) so an invalid claim never reaches
+ *   duplicate detection.
+ *
+ * RECEIPT CHECK
+ *   The receipt requirement is deliberately NOT evaluated on insert: an
+ *   attachment cannot exist before the record does. It is enforced on the
+ *   transition into `submitted`.
+ *
+ * Thin by design: all logic lives in the ClaimEaseValidator script include.
+ */
+;(function executeRule() {
+    var validator = new ClaimEaseValidator()
+
+    // See the Normalise Amount rule: insert is detected via `previous` because
+    // current.operation() is unreliable in the record-producer save path.
+    var isInsert = !previous || !previous.getValue('sys_id')
+    var statusNow = current.getValue('approval_status')
+    var statusBefore = !isInsert && previous ? previous.getValue('approval_status') : ''
+    var enteringSubmitted = statusNow === 'submitted' && statusBefore !== 'submitted'
+
+    var result = validator.validate(current, {
+        // Only on the draft -> submitted transition, where an attachment can exist.
+        checkReceipt: !isInsert && enteringSubmitted,
+    })
+
+    if (result.valid) {
+        return
+    }
+
+    for (var i = 0; i < result.errors.length; i++) {
+        gs.addErrorMessage(result.errors[i])
+    }
+    gs.info(
+        '[ClaimEase] Validation rejected a claim save (' +
+            result.errors.length +
+            ' issue(s)) for claim ' +
+            (current.getValue('number') || '(new record)') +
+            '.'
+    )
+    current.setAbortAction(true)
+})()
+]]></script>
+<sys_class_name>sys_script</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:57</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>3653f43e4f8e4654b7ff249566c3c5a6</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Validate Claim</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_script_3653f43e4f8e4654b7ff249566c3c5a6</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:57</sys_updated_on>
+<template/>
+<when>before</when>
+</sys_script>
+</xml>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_user_role_contains>
+<contains>bf338f149952420dbc0b14e884411cc0</contains>
+<role>9e76c92759524c58942ed901c28a4e3f</role>
+<sys_class_name>sys_user_role_contains</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:42</sys_created_on>
+<sys_id>16d857331aab4515ab7ea4e6f7628286</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.manager.x_2180676_claime_0.admin</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_user_role_contains_16d857331aab4515ab7ea4e6f7628286</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:42</sys_updated_on>
+</sys_user_role_contains>
+<sys_user_role_contains>
+<contains>403fa7357d6e43a8891fa050465889a8</contains>
+<role>bf338f149952420dbc0b14e884411cc0</role>
+<sys_class_name>sys_user_role_contains</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:42</sys_created_on>
+<sys_id>382c837a02d54305800be520682166f1</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.employee.x_2180676_claime_0.manager</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_user_role_contains_382c837a02d54305800be520682166f1</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:42</sys_updated_on>
+</sys_user_role_contains>
+<sys_user_role_contains>
+<contains>038be5dda6b14120991e6e23e069dbf4</contains>
+<role>9e76c92759524c58942ed901c28a4e3f</role>
+<sys_class_name>sys_user_role_contains</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:42</sys_created_on>
+<sys_id>4f3437e1b0ac45d982a6b4992c37aa71</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.finance_approver.x_2180676_claime_0.admin</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_user_role_contains_4f3437e1b0ac45d982a6b4992c37aa71</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:42</sys_updated_on>
+</sys_user_role_contains>
+<sys_user_role_contains>
+<contains>403fa7357d6e43a8891fa050465889a8</contains>
+<role>9e76c92759524c58942ed901c28a4e3f</role>
+<sys_class_name>sys_user_role_contains</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:42</sys_created_on>
+<sys_id>af23e5e8ae9b491980ef554462cf9ef5</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.employee.x_2180676_claime_0.admin</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_user_role_contains_af23e5e8ae9b491980ef554462cf9ef5</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:42</sys_updated_on>
+</sys_user_role_contains>
+<sys_user_role_contains>
+<contains>403fa7357d6e43a8891fa050465889a8</contains>
+<role>038be5dda6b14120991e6e23e069dbf4</role>
+<sys_class_name>sys_user_role_contains</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:42</sys_created_on>
+<sys_id>fd3cbc2994174b4b8cc860400f0c952f</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0.employee.x_2180676_claime_0.finance_approver</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_user_role_contains_fd3cbc2994174b4b8cc860400f0c952f</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:42</sys_updated_on>
+</sys_user_role_contains>
+</xml>

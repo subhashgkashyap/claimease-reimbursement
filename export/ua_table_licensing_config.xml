@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<ua_table_licensing_config>
+<is_fulfillment>false</is_fulfillment>
+<license_condition table="x_2180676_claime_0_claim"/>
+<license_model>none</license_model>
+<license_roles/>
+<name>x_2180676_claime_0_claim</name>
+<op_delete>true</op_delete>
+<op_insert>true</op_insert>
+<op_update>true</op_update>
+<owner_condition table="x_2180676_claime_0_claim"/>
+<sys_class_name>ua_table_licensing_config</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:35</sys_created_on>
+<sys_id>d9ec442ec304d3100d60f8ddd4013168</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>ua_table_licensing_config_d9ec442ec304d3100d60f8ddd4013168</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:35</sys_updated_on>
+</ua_table_licensing_config>
+<ua_table_licensing_config>
+<is_fulfillment>false</is_fulfillment>
+<license_condition table="x_2180676_claime_0_claim_lock"/>
+<license_model>none</license_model>
+<license_roles/>
+<name>x_2180676_claime_0_claim_lock</name>
+<op_delete>true</op_delete>
+<op_insert>true</op_insert>
+<op_update>true</op_update>
+<owner_condition table="x_2180676_claime_0_claim_lock"/>
+<sys_class_name>ua_table_licensing_config</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:03:53</sys_created_on>
+<sys_id>80511866c344d3100d60f8ddd40131a2</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim_lock</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>ua_table_licensing_config_80511866c344d3100d60f8ddd40131a2</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:03:53</sys_updated_on>
+</ua_table_licensing_config>
+</xml>

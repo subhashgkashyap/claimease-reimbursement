@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_ui_section>
+<caption>Decisions</caption>
+<header>false</header>
+<name>x_2180676_claime_0_claim</name>
+<roles/>
+<sys_class_name>sys_ui_section</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:41</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>738e9682912a4e6f97869fb95fb00f2c</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Decisions</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_ui_section_738e9682912a4e6f97869fb95fb00f2c</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:41</sys_updated_on>
+<sys_user/>
+<title>false</title>
+<view>Default view</view>
+<view_name/>
+</sys_ui_section>
+<sys_ui_section>
+<caption>Claim Details</caption>
+<header>false</header>
+<name>x_2180676_claime_0_claim</name>
+<roles/>
+<sys_class_name>sys_ui_section</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 14:03:26</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>7c6fab6f89d3434f8d0ecfe8c0f1e045</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Claim Details</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_ui_section_7c6fab6f89d3434f8d0ecfe8c0f1e045</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 14:03:26</sys_updated_on>
+<sys_user/>
+<title>false</title>
+<view>Default view</view>
+<view_name/>
+</sys_ui_section>
+<sys_ui_section>
+<caption>Claim</caption>
+<header>false</header>
+<name>x_2180676_claime_0_claim</name>
+<roles/>
+<sys_class_name>sys_ui_section</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:41</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>88f7651d2ff641628626bab0908d4817</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Claim</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_ui_section_88f7651d2ff641628626bab0908d4817</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:41</sys_updated_on>
+<sys_user/>
+<title>false</title>
+<view>Default view</view>
+<view_name/>
+</sys_ui_section>
+<sys_ui_section>
+<caption>Approval History</caption>
+<header>false</header>
+<name>x_2180676_claime_0_claim</name>
+<roles/>
+<sys_class_name>sys_ui_section</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:05:26</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>960c5a5f31af417ba4d0d626e35b970d</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Approval History</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_ui_section_960c5a5f31af417ba4d0d626e35b970d</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:05:26</sys_updated_on>
+<sys_user/>
+<title>false</title>
+<view>Default view</view>
+<view_name/>
+</sys_ui_section>
+<sys_ui_section>
+<caption>Duplicate and Process Control</caption>
+<header>false</header>
+<name>x_2180676_claime_0_claim</name>
+<roles/>
+<sys_class_name>sys_ui_section</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:41</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>f06d7e762fbd4a0aa325c1f3d7fbb330</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Duplicate and Process Control</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_ui_section_f06d7e762fbd4a0aa325c1f3d7fbb330</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:41</sys_updated_on>
+<sys_user/>
+<title>false</title>
+<view>Default view</view>
+<view_name/>
+</sys_ui_section>
+<sys_ui_section>
+<caption>Activity</caption>
+<header>false</header>
+<name>x_2180676_claime_0_claim</name>
+<roles/>
+<sys_class_name>sys_ui_section</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:42</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>f83a842585ea4780b180f4f93f0347c9</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Activity</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_ui_section_f83a842585ea4780b180f4f93f0347c9</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:42</sys_updated_on>
+<sys_user/>
+<title>false</title>
+<view>Default view</view>
+<view_name/>
+</sys_ui_section>
+</xml>

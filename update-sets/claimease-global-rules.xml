@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2026-11-01 17:06:08">
+<sys_remote_update_set action="INSERT_OR_UPDATE">
+<application display_value="Global">global</application>
+<application_name>Global</application_name>
+<application_scope>global</application_scope>
+<description>The two global-scope business rules that do not travel with the scoped application: ClaimEase - Enforce Receipt On Submitted, and ClaimEase - Restore Claim On Receipt.</description>
+<is_default>false</is_default>
+<name>ClaimEase - global business rules (receipt enforcement)</name>
+<release_date/>
+<remote_sys_id>4ffef3a13cfd4520b3cf0145e54a93e7</remote_sys_id>
+<state>loaded</state>
+<sys_class_name>sys_remote_update_set</sys_class_name>
+<sys_created_on>2026-11-01 17:06:08</sys_created_on>
+<sys_id>4ffef3a13cfd4520b3cf0145e54a93e7</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_on>2026-11-01 17:06:08</sys_updated_on>
+<update_set/>
+<update_source/>
+</sys_remote_update_set>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_script_00287ddfc308d3100d60f8ddd4013143</name>
+<payload>&lt;record_update table="sys_script"&gt;&lt;sys_script action="INSERT_OR_UPDATE"&gt;
+&lt;abort_action&gt;false&lt;/abort_action&gt;
+&lt;access&gt;package_private&lt;/access&gt;
+&lt;action_delete&gt;false&lt;/action_delete&gt;
+&lt;action_insert&gt;true&lt;/action_insert&gt;
+&lt;action_query&gt;false&lt;/action_query&gt;
+&lt;action_update&gt;false&lt;/action_update&gt;
+&lt;active&gt;true&lt;/active&gt;
+&lt;add_message&gt;false&lt;/add_message&gt;
+&lt;advanced&gt;true&lt;/advanced&gt;
+&lt;change_fields&gt;false&lt;/change_fields&gt;
+&lt;client_callable&gt;false&lt;/client_callable&gt;
+&lt;collection&gt;x_2180676_claime_0_claim&lt;/collection&gt;
+&lt;condition/&gt;
+&lt;description&gt;Enforces the receipt requirement on the insert-as-submitted path, which Validate Claim (order 200) deliberately skips. Returns a receiptless claim to draft and cancels any approvals already requested.&lt;/description&gt;
+&lt;execute_function&gt;false&lt;/execute_function&gt;
+&lt;filter_condition table="x_2180676_claime_0_claim"&gt;approval_statusINsubmitted,pending_manager,pending_finance&lt;item goto="false" or="false" field="approval_status" endquery="false" value="submitted,pending_manager,pending_finance" operator="IN" newquery="false"/&gt;
+&lt;/filter_condition&gt;
+&lt;is_rest&gt;false&lt;/is_rest&gt;
+&lt;message/&gt;
+&lt;name&gt;ClaimEase - Enforce Receipt On Submitted&lt;/name&gt;
+&lt;order&gt;2000&lt;/order&gt;
+&lt;priority&gt;100&lt;/priority&gt;
+&lt;rest_method/&gt;
+&lt;rest_method_text/&gt;
+&lt;rest_service/&gt;
+&lt;rest_service_text/&gt;
+&lt;rest_variables/&gt;
+&lt;role_conditions/&gt;
+&lt;script&gt;&lt;![CDATA[/**
+ * ClaimEase - Enforce Receipt On Submitted Insert  (async, after insert, order 2000)
+ *
+ * PURPOSE
+ *   Closes the one path on which the receipt requirement was not enforced.
+ *
+ *   "Validate Claim" (order 200) asks ClaimEaseValidator for the receipt check
+ *   only when `!isInsert &amp;&amp; enteringSubmitted`, because an attachment cannot
+ *   exist before the record does. That is correct for the draft -&gt; submitted
+ *   transition, but it leaves the INSERT-as-submitted path unchecked, and that
+ *   is the path the record producer uses: it sets approval_status = 'submitted'
+ *   in the insert itself and passes checkReceipt: false, relying on the catalog
+ *   item's `mandatory_attachment` flag.
+ *
+ *   `mandatory_attachment` is a client-side catalog control. It is enforced by
+ *   the portal widget, not by the save, so it is absent for a direct POST to
+ *   submit_producer, for the Table API, for server scripts and for flows. A
+ *   claim could therefore be submitted, routed and fully approved with no
+ *   receipt at all (reproduced on CLM0001069).
+ *
+ * WHY ASYNC RATHER THAN A SYNCHRONOUS AFTER-INSERT RULE
+ *   On the record producer path the attachment is copied onto the claim AFTER
+ *   the row is inserted. A synchronous after-insert rule can therefore run
+ *   before the receipt has landed and would wrongly reject legitimate portal
+ *   submissions. An async rule runs once the transaction has committed, by
+ *   which time the attachment is present, so a genuine portal claim with a
+ *   receipt is untouched.
+ *
+ * WHAT IT DOES ON A MISS
+ *   The claim is returned to `draft` and `flow_started` is cleared, so it is no
+ *   longer an eligible claim and the approval flow's own eligibility guard
+ *   (claim still `submitted`) stops any run that had already begun. Approval
+ *   records the flow may already have requested are cancelled, so no approver
+ *   is left holding a decision on a claim that is no longer live. The reason is
+ *   recorded on `exception_reason` so the employee can attach the receipt and
+ *   submit again.
+ *
+ *   It deliberately does NOT touch manager_approval or finance_approval: those
+ *   fields are guarded by "Protect Approval Fields", and the claim has not been
+ *   decided yet, so there is nothing to undo on them.
+ *
+ * FAIL CLOSED
+ *   ClaimEaseValidator.hasAttachment() returns false when it cannot prove an
+ *   attachment exists. A claim is therefore returned to draft when the receipt
+ *   cannot be confirmed, rather than being left approvable on an unproven one.
+ */
+(function executeRule(current, previous) {
+    var config = new x_2180676_claime_0.ClaimEaseConfig()
+
+    if (!config.requireReceipt()) {
+        return
+    }
+    // The approval flow moves the claim off `submitted` within seconds of the
+    // insert, and this rule runs after the transaction has committed, so the
+    // status is usually `pending_manager` by now. Check the whole set of live
+    // states rather than `submitted` alone, or the rule silently never fires.
+    var LIVE_STATES = ['submitted', 'pending_manager', 'pending_finance']
+    var statusNow = '' + (current.getValue('approval_status') || '')
+    gs.info('[ClaimEase] Receipt check running for claim ' + current.getValue('number') + ' (status ' + statusNow + ').')
+    if (LIVE_STATES.indexOf(statusNow) === -1) {
+        return
+    }
+
+    var claimSysId = current.getUniqueValue()
+    var validator = new x_2180676_claime_0.ClaimEaseValidator()
+
+    if (validator.hasAttachment(claimSysId)) {
+        return
+    }
+
+    gs.error(
+        '[ClaimEase] Claim ' +
+            current.getValue('number') +
+            ' was inserted already submitted with no receipt attached. Returning it to draft so it cannot be approved.'
+    )
+
+    // Cancel anything the approval flow already requested for this claim.
+    var cancelled = 0
+    try {
+        var approvals = new GlideRecord('sysapproval_approver')
+        approvals.addQuery('source_table', 'x_2180676_claime_0_claim')
+        approvals.addQuery('document_id', claimSysId)
+        approvals.addQuery('state', 'IN', 'requested,not_requested')
+        approvals.query()
+        while (approvals.next()) {
+            approvals.setValue('state', 'cancelled')
+            if (approvals.update()) {
+                cancelled++
+            }
+        }
+    } catch (e) {
+        gs.error('[ClaimEase] Could not cancel approvals for a receiptless claim: ' + e)
+    }
+
+    var claim = new GlideRecord('x_2180676_claime_0_claim')
+    if (!claim.get(claimSysId)) {
+        return
+    }
+    claim.setValue('approval_status', 'draft')
+    claim.setValue('flow_started', false)
+    claim.setValue('submitted_on', '')
+
+    // The approval decision fields must come back with the claim. Leaving
+    // manager_approval at 'requested' on a draft is wrong on its own terms, and
+    // it also stops the claim ever re-entering approval: the approval flow is
+    // triggered by approval_status = submitted on create OR update, but its
+    // first step does not re-ask an approver whose decision is already
+    // 'requested'. A claim restored after its receipt arrives would therefore
+    // look pending for ever with no approval task (observed on CLM0001089).
+    claim.setValue('manager_approval', 'not_requested')
+    claim.setValue('finance_approval', 'not_requested')
+    claim.setValue(
+        'exception_reason',
+        'Returned to draft: no receipt or supporting document was attached when this claim was submitted.'
+    )
+
+    // WHY setWorkflow(false)
+    //   This is the application correcting its own record, not a user acting on
+    //   it. "Protect Approval Fields" (order 150) allows manager_approval to be
+    //   written only by the recorded manager, a ClaimEase admin or the approval
+    //   automation, so an employee's own portal submission would be refused
+    //   here and the revert would fail outright - leaving a receiptless claim
+    //   approvable, which is the very thing this rule exists to prevent.
+    //   Suppressing the rule chain for this system write avoids fighting that
+    //   guard. It grants the user nothing: this path runs only inside this
+    //   rule, only for a claim submitted with no receipt, and it only ever
+    //   moves the claim backwards, away from approval.
+    claim.setWorkflow(false)
+    claim.update()
+
+    gs.info(
+        '[ClaimEase] Claim ' +
+            current.getValue('number') +
+            ' returned to draft for a missing receipt (' +
+            cancelled +
+            ' pending approval(s) cancelled).'
+    )
+})(current, previous)
+]]&gt;&lt;/script&gt;
+&lt;sys_class_name&gt;sys_script&lt;/sys_class_name&gt;
+&lt;sys_created_by&gt;claude.user&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-10-25 20:28:32&lt;/sys_created_on&gt;
+&lt;sys_domain&gt;global&lt;/sys_domain&gt;
+&lt;sys_domain_path&gt;/&lt;/sys_domain_path&gt;
+&lt;sys_id&gt;00287ddfc308d3100d60f8ddd4013143&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;3&lt;/sys_mod_count&gt;
+&lt;sys_name&gt;ClaimEase - Enforce Receipt On Submitted&lt;/sys_name&gt;
+&lt;sys_overrides/&gt;
+&lt;sys_package&gt;global&lt;/sys_package&gt;
+&lt;sys_policy/&gt;
+&lt;sys_scope&gt;global&lt;/sys_scope&gt;
+&lt;sys_update_name&gt;sys_script_00287ddfc308d3100d60f8ddd4013143&lt;/sys_update_name&gt;
+&lt;sys_updated_by&gt;claude.user&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-11-01 16:07:28&lt;/sys_updated_on&gt;
+&lt;template/&gt;
+&lt;when&gt;async_always&lt;/when&gt;
+&lt;/sys_script&gt;&lt;/record_update&gt;</payload>
+<remote_update_set display_value="ClaimEase - global business rules (receipt enforcement)">4ffef3a13cfd4520b3cf0145e54a93e7</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_on>2026-11-01 17:06:08</sys_created_on>
+<sys_id>36173ae5939c45ae9ae35e513c4aad44</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_on>2026-11-01 17:06:08</sys_updated_on>
+<table>sys_script</table>
+<target_name>ClaimEase - Enforce Receipt On Submitted</target_name>
+<type>Business Rule</type>
+<update_domain>global</update_domain>
+<update_guid>00287ddfc308d3100d60f8ddd4013143</update_guid>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_script_ab8fbca9c35457500d60f8ddd401314a</name>
+<payload>&lt;record_update table="sys_script"&gt;&lt;sys_script action="INSERT_OR_UPDATE"&gt;
+&lt;abort_action&gt;false&lt;/abort_action&gt;
+&lt;access&gt;package_private&lt;/access&gt;
+&lt;action_delete&gt;false&lt;/action_delete&gt;
+&lt;action_insert&gt;true&lt;/action_insert&gt;
+&lt;action_query&gt;false&lt;/action_query&gt;
+&lt;action_update&gt;false&lt;/action_update&gt;
+&lt;active&gt;true&lt;/active&gt;
+&lt;add_message&gt;false&lt;/add_message&gt;
+&lt;advanced&gt;true&lt;/advanced&gt;
+&lt;change_fields&gt;false&lt;/change_fields&gt;
+&lt;client_callable&gt;false&lt;/client_callable&gt;
+&lt;collection&gt;sys_attachment&lt;/collection&gt;
+&lt;condition/&gt;
+&lt;description&gt;Returns a claim to submitted when its receipt arrives after the async receipt-enforcement rule had already sent it back to draft.&lt;/description&gt;
+&lt;execute_function&gt;false&lt;/execute_function&gt;
+&lt;filter_condition table="sys_attachment"&gt;table_name=x_2180676_claime_0_claim^EQ&lt;item goto="false" or="false" field="table_name" endquery="false" value="x_2180676_claime_0_claim" operator="=" newquery="false"/&gt;
+&lt;item goto="false" or="false" field="" endquery="true" value="" operator="=" newquery="false"/&gt;
+&lt;/filter_condition&gt;
+&lt;is_rest&gt;false&lt;/is_rest&gt;
+&lt;message/&gt;
+&lt;name&gt;ClaimEase - Restore Claim On Receipt&lt;/name&gt;
+&lt;order&gt;2000&lt;/order&gt;
+&lt;priority&gt;100&lt;/priority&gt;
+&lt;rest_method/&gt;
+&lt;rest_method_text/&gt;
+&lt;rest_service/&gt;
+&lt;rest_service_text/&gt;
+&lt;rest_variables/&gt;
+&lt;role_conditions/&gt;
+&lt;script&gt;&lt;![CDATA[/**
+ * ClaimEase - Restore Claim On Receipt  (sys_attachment, after insert, order 2000)
+ *
+ * PURPOSE
+ *   Closes the false-positive half of the receipt guarantee.
+ *
+ *   "ClaimEase - Enforce Receipt On Submitted" (async, order 2000) returns a
+ *   claim to draft when it is submitted with no attachment. That is correct and
+ *   must stay immediate: a receiptless claim has to become un-approvable at
+ *   once, which is the point of the Defect 1 fix. It is also correct for the
+ *   Service Portal, where the widget copies the receipt onto the claim inside
+ *   the same request, so the async rule sees it.
+ *
+ *   It is NOT correct when a claim is inserted as `submitted` and the receipt
+ *   is uploaded in a SECOND request moments later - how an integration, a
+ *   server script or a mobile client submits. The async rule fires in the gap,
+ *   finds nothing attached, and reverts a perfectly good claim. Reproduced on
+ *   CLM0001080: inserted 14:05:35, receipt available 14:05:37, claim still
+ *   returned to draft with its requested manager approval cancelled, and
+ *   nothing to put it back.
+ *
+ *   When the receipt finally arrives, this rule returns the claim to
+ *   `submitted` so it re-enters approval. The existing before-update rules then
+ *   do their normal work: "Validate Claim" re-checks the receipt (now present),
+ *   "Lifecycle Stamps" re-stamps `submitted_on`, and "Start Approval Process"
+ *   re-arms the flow.
+ *
+ * HOW A REVERTED CLAIM IS RECOGNISED
+ *   NOT by the enforcement rule's `exception_reason` marker. The approval flow
+ *   writes its own exception text when it notices its approvals were cancelled,
+ *   and that write lands AFTER the marker, overwriting it (observed on
+ *   CLM0001089). The marker is therefore not durable.
+ *
+ *   The structural evidence is durable. A claim the enforcement rule pulled
+ *   back is a draft with no `submitted_on`, `flow_started` false, and at least
+ *   one CANCELLED approval that the rule itself cancelled. A draft the employee
+ *   simply saved has never had an approval record at all, so it is left alone -
+ *   submitting it stays their decision.
+ *
+ * NO LOOP
+ *   The update re-fires the async enforcement rule, which now finds the
+ *   attachment and returns early. A later attachment finds the claim no longer
+ *   in draft and does nothing.
+ *
+ * HOW THE APPROVAL IS RE-ARMED
+ *   Nothing here asks for approval. The flow's trigger is already
+ *   `record_create_or_update` on the claim table with the condition
+ *   `approval_status=submitted` and strategy `unique_changes`, so simply
+ *   returning the claim to `submitted` re-triggers it. That works only because
+ *   the enforcement rule now resets `manager_approval` and `finance_approval`
+ *   to 'not_requested' when it pulls the claim back; the flow does not re-ask
+ *   an approver whose decision still reads 'requested'. Verified on CLM0001090,
+ *   which received a fresh `requested` approval for its manager one second
+ *   after its receipt arrived.
+ */
+;(function executeRule(current, previous) {
+    var CLAIM_TABLE = 'x_2180676_claime_0_claim'
+
+    if (('' + current.getValue('table_name')) !== CLAIM_TABLE) {
+        return
+    }
+
+    var claimSysId = '' + (current.getValue('table_sys_id') || '')
+    if (!claimSysId) {
+        return
+    }
+
+    var claim = new GlideRecord(CLAIM_TABLE)
+    if (!claim.get(claimSysId)) {
+        return
+    }
+
+    // Only a claim that was submitted and then pulled back, never a saved draft.
+    if (('' + claim.getValue('approval_status')) !== 'draft') {
+        return
+    }
+    if (('' + (claim.getValue('submitted_on') || '')) !== '') {
+        return
+    }
+    if (claim.getValue('flow_started') == true || ('' + claim.getValue('flow_started')) === 'true') {
+        return
+    }
+
+    var cancelled = new GlideRecord('sysapproval_approver')
+    cancelled.addQuery('source_table', CLAIM_TABLE)
+    cancelled.addQuery('document_id', claimSysId)
+    cancelled.addQuery('state', 'cancelled')
+    cancelled.setLimit(1)
+    cancelled.query()
+    if (!cancelled.hasNext()) {
+        return
+    }
+
+    claim.setValue('approval_status', 'submitted')
+    claim.setValue('exception_reason', '')
+    claim.update()
+
+    gs.info(
+        '[ClaimEase] Claim ' +
+            claim.getValue('number') +
+            ' was returned to submitted because its receipt arrived after the enforcement rule had run.'
+    )
+})(current, previous)
+]]&gt;&lt;/script&gt;
+&lt;sys_class_name&gt;sys_script&lt;/sys_class_name&gt;
+&lt;sys_created_by&gt;claude.user&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-11-01 16:07:43&lt;/sys_created_on&gt;
+&lt;sys_domain&gt;global&lt;/sys_domain&gt;
+&lt;sys_domain_path&gt;/&lt;/sys_domain_path&gt;
+&lt;sys_id&gt;ab8fbca9c35457500d60f8ddd401314a&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_name&gt;ClaimEase - Restore Claim On Receipt&lt;/sys_name&gt;
+&lt;sys_overrides/&gt;
+&lt;sys_package&gt;global&lt;/sys_package&gt;
+&lt;sys_policy/&gt;
+&lt;sys_scope&gt;global&lt;/sys_scope&gt;
+&lt;sys_update_name&gt;sys_script_ab8fbca9c35457500d60f8ddd401314a&lt;/sys_update_name&gt;
+&lt;sys_updated_by&gt;claude.user&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-11-01 16:07:43&lt;/sys_updated_on&gt;
+&lt;template/&gt;
+&lt;when&gt;after&lt;/when&gt;
+&lt;/sys_script&gt;&lt;/record_update&gt;</payload>
+<remote_update_set display_value="ClaimEase - global business rules (receipt enforcement)">4ffef3a13cfd4520b3cf0145e54a93e7</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_on>2026-11-01 17:06:08</sys_created_on>
+<sys_id>12277a4b79494133bf60856ccafd4790</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_on>2026-11-01 17:06:08</sys_updated_on>
+<table>sys_script</table>
+<target_name>ClaimEase - Restore Claim On Receipt</target_name>
+<type>Business Rule</type>
+<update_domain>global</update_domain>
+<update_guid>ab8fbca9c35457500d60f8ddd401314a</update_guid>
+</sys_update_xml>
+</unload>

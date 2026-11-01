@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_relationship>
+<advanced>false</advanced>
+<apply_to/>
+<basic_apply_to>x_2180676_claime_0_claim</basic_apply_to>
+<basic_query_from>sysapproval_approver</basic_query_from>
+<insert_callback/>
+<name>ClaimEase Approval History</name>
+<query_from/>
+<query_with><![CDATA[(function refineQuery(current, parent) {
+    current.addQuery('source_table', parent.getTableName());
+    current.addQuery('document_id', parent.sys_id);
+})(current, parent);]]></query_with>
+<reference_field/>
+<related_list/>
+<simple_reference>false</simple_reference>
+<sys_class_name>sys_relationship</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 04:44:40</sys_created_on>
+<sys_id>fa01caa801674441886dc3ce76d1e2f4</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase Approval History</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_relationship_fa01caa801674441886dc3ce76d1e2f4</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 04:44:40</sys_updated_on>
+</sys_relationship>
+</xml>

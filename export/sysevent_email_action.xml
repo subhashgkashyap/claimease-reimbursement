@@ -1,0 +1,998 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sysevent_email_action>
+<action_insert>false</action_insert>
+<action_update>false</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim"/>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Asks the recorded manager - or the members of the fallback approver group when the employee has no usable manager - to action the Manager approval. Event-driven on x_2180676_claime_0.mgr.approval.request, which the approval flow fires once per claim with the resolved recipients in parm1, so no group sys_id is hardcoded and no field change can trigger it.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name>x_2180676_claime_0.mgr.approval.request</event_name>
+<event_parm_1>true</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>event</generation_type>
+<importance/>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello,</p>
+<p>A reimbursement claim submitted by <strong>${requested_for.name}</strong> is waiting for your <strong>Manager approval</strong>. Please approve or reject it from your approval record, adding a comment so the employee understands the decision.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Record Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">Open the claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Manager Approval Requested</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields/>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase: your approval is needed for claim ${number}</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:04</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>14d3dd2c6a144894988d8943cad56ef9</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Manager Approval Requested</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_14d3dd2c6a144894988d8943cad56ef9</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:04</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+<sysevent_email_action>
+<action_insert>false</action_insert>
+<action_update>true</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim">manager_approvalCHANGESTOrejected<item goto="false" or="false" field="manager_approval" endquery="false" value="rejected" operator="CHANGESTO" newquery="false"/>
+</condition>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Tells the employee that the manager rejected their claim, including the recorded rejection reason. Anti-spam: fires only on manager_approvalCHANGESTOrejected.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name/>
+<event_parm_1>false</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>engine</generation_type>
+<importance/>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello ${requested_for.first_name},</p>
+<p>Your manager has <strong>rejected</strong> reimbursement claim <strong>${number}</strong>. The reason recorded by the approver is shown below. This claim will not be sent to Finance.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Portal Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">View your claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Manager Rejected</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields>requested_for</recipient_fields>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase: claim ${number} rejected by your manager</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:04</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>3c4f9b41589f41f6a23bf557de146ecb</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Manager Rejected</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_3c4f9b41589f41f6a23bf557de146ecb</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:04</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+<sysevent_email_action>
+<action_insert>false</action_insert>
+<action_update>true</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim">approval_statusCHANGESTOcancelled<item goto="false" or="false" field="approval_status" endquery="false" value="cancelled" operator="CHANGESTO" newquery="false"/>
+</condition>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Confirms to the employee that their claim has been cancelled and will not be approved or reimbursed. Anti-spam: fires only on approval_statusCHANGESTOcancelled.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name/>
+<event_parm_1>false</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>engine</generation_type>
+<importance/>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello ${requested_for.first_name},</p>
+<p>Reimbursement claim <strong>${number}</strong> has been <strong>cancelled</strong>. It will not be approved or reimbursed. If you still need to claim this expense, please submit a new claim.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Portal Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">View your claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Claim Cancelled</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields>requested_for</recipient_fields>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase: claim ${number} cancelled</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:04</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>451591e21fd54336a76bcab78c7afab0</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Claim Cancelled</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_451591e21fd54336a76bcab78c7afab0</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:04</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+<sysevent_email_action>
+<action_insert>false</action_insert>
+<action_update>true</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim">approval_statusCHANGESTOapproved<item goto="false" or="false" field="approval_status" endquery="false" value="approved" operator="CHANGESTO" newquery="false"/>
+</condition>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Tells the employee that every required approval has been granted and the claim is fully approved. Anti-spam: fires only on approval_statusCHANGESTOapproved, which the approval flow writes exactly once and only when every required stage has a recorded approval.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name/>
+<event_parm_1>false</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>engine</generation_type>
+<importance/>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello ${requested_for.first_name},</p>
+<p>Good news - reimbursement claim <strong>${number}</strong> is now <strong>fully approved</strong>. Every approval required for this claim has been granted.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Portal Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">View your claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Claim Fully Approved</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields>requested_for</recipient_fields>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase: claim ${number} is fully approved</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:04</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>54e12945bae248e583a3fe2935b8756d</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Claim Fully Approved</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_54e12945bae248e583a3fe2935b8756d</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:04</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+<sysevent_email_action>
+<action_insert>false</action_insert>
+<action_update>true</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim">manager_approvalCHANGESTOapproved<item goto="false" or="false" field="manager_approval" endquery="false" value="approved" operator="CHANGESTO" newquery="false"/>
+</condition>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Tells the employee that the manager approved their claim, with the approver comments. Anti-spam: fires only on manager_approvalCHANGESTOapproved, so the later Finance decision, the decision audit stamps and every other update are silent.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name/>
+<event_parm_1>false</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>engine</generation_type>
+<importance/>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello ${requested_for.first_name},</p>
+<p>Your manager has <strong>approved</strong> reimbursement claim <strong>${number}</strong>. Any approval stage still outstanding is shown below.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Portal Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">View your claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Manager Approved</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields>requested_for</recipient_fields>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase: claim ${number} approved by your manager</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:04</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>5f64bac0b4be4dfe9f9e8109a09c78a1</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Manager Approved</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_5f64bac0b4be4dfe9f9e8109a09c78a1</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:04</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+<sysevent_email_action>
+<action_insert>false</action_insert>
+<action_update>true</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim">finance_approvalCHANGESTOrejected<item goto="false" or="false" field="finance_approval" endquery="false" value="rejected" operator="CHANGESTO" newquery="false"/>
+</condition>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Tells the employee that Finance rejected their claim, including the recorded rejection reason. Anti-spam: fires only on finance_approvalCHANGESTOrejected.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name/>
+<event_parm_1>false</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>engine</generation_type>
+<importance/>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello ${requested_for.first_name},</p>
+<p>Finance has <strong>rejected</strong> reimbursement claim <strong>${number}</strong>. The reason recorded by the approver is shown below.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Portal Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">View your claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Finance Rejected</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields>requested_for</recipient_fields>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase: claim ${number} rejected by Finance</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:04</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>72d3657429e34700a1b85a24427f7d46</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Finance Rejected</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_72d3657429e34700a1b85a24427f7d46</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:04</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+<sysevent_email_action>
+<action_insert>false</action_insert>
+<action_update>false</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim"/>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Asks the members of the configured Finance approver group to action the Finance approval. Event-driven on x_2180676_claime_0.fin.approval.request, which the approval flow fires once per claim with the group members in parm1, so the Finance group sys_id is never hardcoded in a recipient list.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name>x_2180676_claime_0.fin.approval.request</event_name>
+<event_parm_1>true</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>event</generation_type>
+<importance/>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello,</p>
+<p>A reimbursement claim submitted by <strong>${requested_for.name}</strong> is waiting for <strong>Finance approval</strong>. Please approve or reject it from your approval record, adding a comment so the employee understands the decision.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Record Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">Open the claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Finance Approval Requested</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields/>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase: Finance approval needed for claim ${number}</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:04</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>85d5cf96feb24e77861b2480893f1117</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Finance Approval Requested</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_85d5cf96feb24e77861b2480893f1117</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:04</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+<sysevent_email_action>
+<action_insert>false</action_insert>
+<action_update>true</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim">finance_approvalCHANGESTOapproved<item goto="false" or="false" field="finance_approval" endquery="false" value="approved" operator="CHANGESTO" newquery="false"/>
+</condition>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Tells the employee that Finance approved their claim, with the approver comments. Anti-spam: fires only on finance_approvalCHANGESTOapproved.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name/>
+<event_parm_1>false</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>engine</generation_type>
+<importance/>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello ${requested_for.first_name},</p>
+<p>Finance has <strong>approved</strong> reimbursement claim <strong>${number}</strong>.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Portal Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">View your claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Finance Approved</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields>requested_for</recipient_fields>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase: claim ${number} approved by Finance</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:04</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>986798fa43fd4f229e098394016d0e79</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Finance Approved</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_986798fa43fd4f229e098394016d0e79</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:04</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+<sysevent_email_action>
+<action_insert>false</action_insert>
+<action_update>false</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim"/>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Alerts the ClaimEase fallback / administrator group that the configured Finance approver group is missing or has no active members, so no approval could be requested and the claim has been left pending rather than auto-approved. Event-driven on x_2180676_claime_0.no.finance.approver with the group members in parm1.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name>x_2180676_claime_0.no.finance.approver</event_name>
+<event_parm_1>true</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>event</generation_type>
+<importance>high</importance>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello ClaimEase administrators,</p>
+<p>Reimbursement claim <strong>${number}</strong> could not be routed for approval because the configured Finance approver group is missing or has no active members. No approval has been requested and the claim has <strong>not</strong> been auto-approved - it is waiting for you.</p>
+<p>Please check the <code>x_2180676_claime_0.finance_group</code> property and the membership of that group, then re-submit the claim.</p>
+<p><strong>Recorded exception:</strong> ${exception_reason}</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Record Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">Open the claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Support: No Finance Approver</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields/>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase action needed: no Finance approver for claim ${number}</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:04</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>a073bc787a884ce7a9de3f177607ec21</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Support: No Finance Approver</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_a073bc787a884ce7a9de3f177607ec21</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:04</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+<sysevent_email_action>
+<action_insert>true</action_insert>
+<action_update>true</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim">approval_statusCHANGESTOduplicate<item goto="false" or="false" field="approval_status" endquery="false" value="duplicate" operator="CHANGESTO" newquery="false"/>
+</condition>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Tells the employee that their claim was blocked by duplicate validation and recorded as a duplicate instead of going for approval, including the explanation written to rejection_reason. Anti-spam: fires only on approval_statusCHANGESTOduplicate - on insert when the Duplicate Guard blocks it, or on update when the approval flow re-validation blocks it.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name/>
+<event_parm_1>false</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>engine</generation_type>
+<importance/>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello ${requested_for.first_name},</p>
+<p>Reimbursement claim <strong>${number}</strong> has been recorded as a <strong>duplicate</strong> and has NOT been sent for approval. The explanation is shown below.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Portal Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">View your claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Claim Marked Duplicate</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields>requested_for</recipient_fields>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase: claim ${number} recorded as a duplicate</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:05</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>acb94fff2d084510b3fee5efa4de775b</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Claim Marked Duplicate</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_acb94fff2d084510b3fee5efa4de775b</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:05</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+<sysevent_email_action>
+<action_insert>true</action_insert>
+<action_update>true</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim">approval_statusCHANGESTOsubmitted<item goto="false" or="false" field="approval_status" endquery="false" value="submitted" operator="CHANGESTO" newquery="false"/>
+</condition>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Confirms to the employee that their reimbursement claim was submitted successfully. Anti-spam: fires only on the transition into submitted (approval_statusCHANGESTOsubmitted), so a later re-save or any other update cannot resend it.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name/>
+<event_parm_1>false</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>engine</generation_type>
+<importance/>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello ${requested_for.first_name},</p>
+<p>Your reimbursement claim <strong>${number}</strong> has been submitted successfully and is now being routed for approval. You will receive an email at each decision.</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Portal Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">View your claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase. Please contact your ClaimEase administrator if anything looks wrong.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Claim Submitted</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields>requested_for</recipient_fields>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase: claim ${number} submitted</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:05</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>d0becf3e4dea47898db1eaa372c30125</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Claim Submitted</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_d0becf3e4dea47898db1eaa372c30125</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:05</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+<sysevent_email_action>
+<action_insert>false</action_insert>
+<action_update>false</action_update>
+<active>true</active>
+<advanced_condition/>
+<affected_field_on_event/>
+<category>21244d7c02f84155b3a62356e7a294a8</category>
+<collection>x_2180676_claime_0_claim</collection>
+<condition table="x_2180676_claime_0_claim"/>
+<content_type>text/html</content_type>
+<default_digest>false</default_digest>
+<default_interval/>
+<description>Alerts the ClaimEase fallback / administrator group that an employee has no usable manager, so the Manager approval was routed to that group - or, when the group itself has no active members, that no approval could be requested and the claim has been left pending rather than auto-approved. Event-driven on x_2180676_claime_0.no.manager with the group members in parm1.</description>
+<digest_from/>
+<digest_html/>
+<digest_reply_to/>
+<digest_separator_html><![CDATA[<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>]]></digest_separator_html>
+<digest_separator_text><![CDATA[--------------------------------------------------------------------------------
+]]></digest_separator_text>
+<digest_subject/>
+<digest_template/>
+<digest_text/>
+<digest_type>single</digest_type>
+<digestable>false</digestable>
+<enable_dynamic_translation>false</enable_dynamic_translation>
+<event_name>x_2180676_claime_0.no.manager</event_name>
+<event_parm_1>true</event_parm_1>
+<event_parm_2>false</event_parm_2>
+<exclude_delegates>true</exclude_delegates>
+<force_delivery>false</force_delivery>
+<from/>
+<generation_type>event</generation_type>
+<importance/>
+<include_attachments>false</include_attachments>
+<item>event.parm1</item>
+<item_table/>
+<mandatory>false</mandatory>
+<message/>
+<message_html><![CDATA[<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;line-height:1.5;">
+<p>Hello ClaimEase administrators,</p>
+<p>The employee on reimbursement claim <strong>${number}</strong> has no usable manager on their user record, so the Manager approval could not be routed to a manager. The claim has <strong>not</strong> been auto-approved. Please either correct the manager on the employee record, or action the Manager approval yourselves.</p>
+<p><strong>Recorded exception:</strong> ${exception_reason}</p>
+<div style="margin:18px 0;">${mail_script:ClaimEase Claim Details}</div>
+<p style="margin:22px 0 0;"><a href="${mail_script:ClaimEase Claim Record Link}" style="display:inline-block;padding:10px 18px;background-color:#0b6bcb;color:#ffffff;text-decoration:none;border-radius:4px;font-weight:bold;">Open the claim</a></p>
+<p style="margin:24px 0 0;color:#666666;font-size:12px;">Sent by ClaimEase.</p>
+</div>]]></message_html>
+<message_list/>
+<message_text/>
+<name>ClaimEase - Support: No Manager Configur</name>
+<omit_watermark>false</omit_watermark>
+<order>100</order>
+<push_message_only>false</push_message_only>
+<recipient_fields/>
+<recipient_groups/>
+<recipient_users/>
+<reply_to/>
+<send_self>false</send_self>
+<sms_alternate/>
+<style/>
+<subject>ClaimEase action needed: no manager configured for claim ${number}</subject>
+<subscribable>false</subscribable>
+<sys_class_name>sysevent_email_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:35:05</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>f717bdf95097442985d0886e742465dc</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Support: No Manager Configur</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sysevent_email_action_f717bdf95097442985d0886e742465dc</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:35:05</sys_updated_on>
+<sys_version>2</sys_version>
+<template/>
+<type>email</type>
+<weight>0</weight>
+</sysevent_email_action>
+</xml>

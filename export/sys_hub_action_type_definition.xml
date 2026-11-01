@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_hub_action_type_definition>
+<access>public</access>
+<acls/>
+<action_status/>
+<action_template/>
+<active>true</active>
+<annotation/>
+<attributes>{}</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category>ClaimEase Approvals</category>
+<compiler_build>glide-brazil-08-25-2026__patch1-09-21-2026_10-05-2026_1244.zip</compiler_build>
+<copied_from/>
+<copied_from_name/>
+<description>Evaluates in one server-side pass whether a submitted claim is still eligible for approval, re-validates the duplicate rule, resolves the Manager and Finance approvers (with the fallback approver group), and selects the parallel or sequential path using ClaimEaseConfig.isParallelPath. Performs no writes and never auto-approves.</description>
+<flow_priority/>
+<ih_action>false</ih_action>
+<internal_name>claimease__evaluate_approval_routing</internal_name>
+<label_cache>[{"name":"{{action.claim}}","label":"action➛Claim","type":"action","ref":"x_2180676_claime_0_claim","reference_display":"Claim","base_type":"reference","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].__step_status__}}","label":"step➛Evaluate approval routing➛Step Status","type":"step","ref":"","reference_display":"","base_type":"object","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].used_fallback}}","label":"step➛Evaluate approval routing➛Used Fallback","type":"step","ref":"","reference_display":"Used Fallback","base_type":"boolean","parent_table_name":"","column_name":"used_fallback","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].parallel_path}}","label":"step➛Evaluate approval routing➛Parallel Path","type":"step","ref":"","reference_display":"Parallel Path","base_type":"boolean","parent_table_name":"","column_name":"parallel_path","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].claim_number}}","label":"step➛Evaluate approval routing➛Claim Number","type":"step","ref":"","reference_display":"Claim Number","base_type":"string","parent_table_name":"","column_name":"claim_number","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].duplicate_message}}","label":"step➛Evaluate approval routing➛Duplicate Message","type":"step","ref":"","reference_display":"Duplicate Message","base_type":"string","parent_table_name":"","column_name":"duplicate_message","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].duplicate_of}}","label":"step➛Evaluate approval routing➛Duplicate Of","type":"step","ref":"","reference_display":"Duplicate Of","base_type":"string","parent_table_name":"","column_name":"duplicate_of","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].exception_reason}}","label":"step➛Evaluate approval routing➛Exception Reason","type":"step","ref":"","reference_display":"Exception Reason","base_type":"string","parent_table_name":"","column_name":"exception_reason","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].finance_group}}","label":"step➛Evaluate approval routing➛Finance Group","type":"step","ref":"","reference_display":"Finance Group","base_type":"string","parent_table_name":"","column_name":"finance_group","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].finance_policy}}","label":"step➛Evaluate approval routing➛Finance Policy","type":"step","ref":"","reference_display":"Finance Policy","base_type":"string","parent_table_name":"","column_name":"finance_policy","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].finance_recipients}}","label":"step➛Evaluate approval routing➛Finance Recipients","type":"step","ref":"","reference_display":"Finance Recipients","base_type":"string","parent_table_name":"","column_name":"finance_recipients","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].manager_approver_users}}","label":"step➛Evaluate approval routing➛Manager Approver Users","type":"step","ref":"","reference_display":"Manager Approver Users","base_type":"string","parent_table_name":"","column_name":"manager_approver_users","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].manager_recipients}}","label":"step➛Evaluate approval routing➛Manager Recipients","type":"step","ref":"","reference_display":"Manager Recipients","base_type":"string","parent_table_name":"","column_name":"manager_recipients","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].routing}}","label":"step➛Evaluate approval routing➛Routing","type":"step","ref":"","reference_display":"Routing","base_type":"string","parent_table_name":"","column_name":"routing","choices":null,"attributes":{}},{"name":"{{step[1780dde0-b2e1-460f-a4f1-3000db2f1ef7].support_recipients}}","label":"step➛Evaluate approval routing➛Support Recipients","type":"step","ref":"","reference_display":"Support Recipients","base_type":"string","parent_table_name":"","column_name":"support_recipients","choices":null,"attributes":{}}]</label_cache>
+<latest_snapshot>1f0f467ec38497100d60f8ddd4013133</latest_snapshot>
+<master_snapshot>ce56c66ac30417100d60f8ddd40131a2</master_snapshot>
+<master_snapshot_digest/>
+<name>ClaimEase - Evaluate Approval Routing</name>
+<natlang/>
+<outputs/>
+<pre_compiled>false</pre_compiled>
+<state>published</state>
+<sys_class_name>sys_hub_action_type_definition</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:34:47</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>898e3d17a08c405ea16e25dfce478fec</sys_id>
+<sys_mod_count>19</sys_mod_count>
+<sys_name>ClaimEase - Evaluate Approval Routing</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_hub_action_type_definition_898e3d17a08c405ea16e25dfce478fec</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-24 08:51:44</sys_updated_on>
+<system_level>false</system_level>
+<type/>
+</sys_hub_action_type_definition>
+<sys_hub_action_type_definition>
+<access>public</access>
+<acls/>
+<action_status/>
+<action_template/>
+<active>true</active>
+<annotation/>
+<attributes>{}</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category>ClaimEase Approvals</category>
+<compiler_build>glide-brazil-08-25-2026__patch1-09-21-2026_10-05-2026_1244.zip</compiler_build>
+<copied_from/>
+<copied_from_name/>
+<description>Reads the recorded decision for one ClaimEase approval stage from the native sysapproval_approver table: approver, timestamp, comments and approved/rejected. Returns an empty decision when no decision exists, so an unknown outcome can never be mistaken for an approval.</description>
+<flow_priority/>
+<ih_action>false</ih_action>
+<internal_name>claimease__read_approval_decision</internal_name>
+<label_cache>[{"name":"{{action.claim}}","label":"action➛Claim","type":"action","ref":"x_2180676_claime_0_claim","reference_display":"Claim","base_type":"reference","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.stage}}","label":"action➛Approval stage","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.approverUsers}}","label":"action➛Candidate approver user sys_ids","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.approverGroup}}","label":"action➛Approver group sys_id","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{step[7cf29d42-c240-4a2c-a9a0-eb8e51104da0].__step_status__}}","label":"step➛Read recorded approval decision➛Step Status","type":"step","ref":"","reference_display":"","base_type":"object","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{step[7cf29d42-c240-4a2c-a9a0-eb8e51104da0].decided_on}}","label":"step➛Read recorded approval decision➛Decided On","type":"step","ref":"","reference_display":"Decided On","base_type":"glide_date_time","parent_table_name":"","column_name":"decided_on","choices":null,"attributes":{}},{"name":"{{step[7cf29d42-c240-4a2c-a9a0-eb8e51104da0].approver}}","label":"step➛Read recorded approval decision➛Approver","type":"step","ref":"","reference_display":"Approver","base_type":"string","parent_table_name":"","column_name":"approver","choices":null,"attributes":{}},{"name":"{{step[7cf29d42-c240-4a2c-a9a0-eb8e51104da0].comments}}","label":"step➛Read recorded approval decision➛Comments","type":"step","ref":"","reference_display":"Comments","base_type":"string","parent_table_name":"","column_name":"comments","choices":null,"attributes":{}},{"name":"{{step[7cf29d42-c240-4a2c-a9a0-eb8e51104da0].decision}}","label":"step➛Read recorded approval decision➛Decision","type":"step","ref":"","reference_display":"Decision","base_type":"string","parent_table_name":"","column_name":"decision","choices":null,"attributes":{}}]</label_cache>
+<latest_snapshot>8c1fc67ec38497100d60f8ddd4013136</latest_snapshot>
+<master_snapshot>db568a6ac30417100d60f8ddd401316d</master_snapshot>
+<master_snapshot_digest/>
+<name>ClaimEase - Read Approval Decision</name>
+<natlang/>
+<outputs/>
+<pre_compiled>false</pre_compiled>
+<state>published</state>
+<sys_class_name>sys_hub_action_type_definition</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:34:49</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>d2837e32584a40fd855841700304b382</sys_id>
+<sys_mod_count>11</sys_mod_count>
+<sys_name>ClaimEase - Read Approval Decision</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_hub_action_type_definition_d2837e32584a40fd855841700304b382</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-24 08:51:47</sys_updated_on>
+<system_level>false</system_level>
+<type/>
+</sys_hub_action_type_definition>
+<sys_hub_action_type_definition>
+<access>public</access>
+<acls/>
+<action_status/>
+<action_template/>
+<active>true</active>
+<annotation/>
+<attributes>{}</attributes>
+<authored_on_release_version>-1</authored_on_release_version>
+<callable_by_client_api>false</callable_by_client_api>
+<category>ClaimEase Approvals</category>
+<compiler_build>glide-brazil-08-25-2026__patch1-09-21-2026_10-05-2026_1244.zip</compiler_build>
+<copied_from/>
+<copied_from_name/>
+<description>The single claim writer used by the ClaimEase approval automation. Writes manager_approval / finance_approval, approval_status, approver comments, the decision audit stamps, rejection_reason, exception_reason and duplicate_of, applying the documented approval-automation session-flag bypass required by the Protect Approval Fields business rule.</description>
+<flow_priority/>
+<ih_action>false</ih_action>
+<internal_name>claimease__record_claim_approval</internal_name>
+<label_cache>[{"name":"{{action.claim}}","label":"action➛Claim","type":"action","ref":"x_2180676_claime_0_claim","reference_display":"Claim","base_type":"reference","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.stage}}","label":"action➛Approval stage","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.stageValue}}","label":"action➛Approval value","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.approvalStatus}}","label":"action➛New approval_status","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.comments}}","label":"action➛Approver comments","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.approver}}","label":"action➛Approver sys_user sys_id","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.decisionOn}}","label":"action➛Decision timestamp","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.stageLabel}}","label":"action➛Stage label used in composed messages","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.rejectionReason}}","label":"action➛Rejection reason","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.exceptionReason}}","label":"action➛Exception reason","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{action.duplicateOf}}","label":"action➛Duplicate of claim sys_id","type":"action","ref":"","reference_display":"","base_type":"string","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{step[0696eae5-7749-4e55-b0a2-e9e2f91c1aa3].__step_status__}}","label":"step➛Write claim approval fields➛Step Status","type":"step","ref":"","reference_display":"","base_type":"object","parent_table_name":"","column_name":"","choices":null,"attributes":{}},{"name":"{{step[0696eae5-7749-4e55-b0a2-e9e2f91c1aa3].ok}}","label":"step➛Write claim approval fields➛Ok","type":"step","ref":"","reference_display":"Ok","base_type":"boolean","parent_table_name":"","column_name":"ok","choices":null,"attributes":{}},{"name":"{{step[0696eae5-7749-4e55-b0a2-e9e2f91c1aa3].message}}","label":"step➛Write claim approval fields➛Message","type":"step","ref":"","reference_display":"Message","base_type":"string","parent_table_name":"","column_name":"message","choices":null,"attributes":{}}]</label_cache>
+<latest_snapshot>820f827ec38497100d60f8ddd40131e5</latest_snapshot>
+<master_snapshot>3056066ac30417100d60f8ddd40131d8</master_snapshot>
+<master_snapshot_digest/>
+<name>ClaimEase - Record Claim Approval</name>
+<natlang/>
+<outputs/>
+<pre_compiled>false</pre_compiled>
+<state>published</state>
+<sys_class_name>sys_hub_action_type_definition</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:34:44</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>43436d209b0a45f2aac176df54544164</sys_id>
+<sys_mod_count>17</sys_mod_count>
+<sys_name>ClaimEase - Record Claim Approval</sys_name>
+<sys_overrides/>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_hub_action_type_definition_43436d209b0a45f2aac176df54544164</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-24 08:51:40</sys_updated_on>
+<system_level>false</system_level>
+<type/>
+</sys_hub_action_type_definition>
+</xml>

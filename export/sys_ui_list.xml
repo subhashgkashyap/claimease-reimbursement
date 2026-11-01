@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_ui_list>
+<average_value>false</average_value>
+<element/>
+<max_value>false</max_value>
+<min_value>false</min_value>
+<name>sys_user</name>
+<parent/>
+<position/>
+<relationship/>
+<sum>false</sum>
+<sys_class_name>sys_ui_list</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:46:17</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>890bd4eac384d3100d60f8ddd40131c8</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:46:17</sys_updated_on>
+<sys_user>6816f79cc0a8016401c5a33be04be441</sys_user>
+<view>Default view</view>
+<view_name/>
+</sys_ui_list>
+<sys_ui_list>
+<average_value>false</average_value>
+<element/>
+<max_value>false</max_value>
+<min_value>false</min_value>
+<name>x_2180676_claime_0_claim</name>
+<parent/>
+<position/>
+<relationship/>
+<sum>false</sum>
+<sys_class_name>sys_ui_list</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 12:40:19</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>75c9b52ec38017100d60f8ddd401319b</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_ui_list_x_2180676_claime_0_claim_null</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 12:40:19</sys_updated_on>
+<sys_user/>
+<view>Default view</view>
+<view_name/>
+</sys_ui_list>
+<sys_ui_list>
+<average_value>false</average_value>
+<element/>
+<max_value>false</max_value>
+<min_value>false</min_value>
+<name>x_2180676_claime_0_claim</name>
+<parent/>
+<position/>
+<relationship/>
+<sum>false</sum>
+<sys_class_name>sys_ui_list</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-25 20:29:07</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>d448bd13c348d3100d60f8ddd4013159</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name/>
+<sys_package/>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name/>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-25 20:29:07</sys_updated_on>
+<sys_user>6816f79cc0a8016401c5a33be04be441</sys_user>
+<view>Default view</view>
+<view_name/>
+</sys_ui_list>
+</xml>

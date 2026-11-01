@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sys_security_acl>
+<active>true</active>
+<admin_overrides>true</admin_overrides>
+<advanced>false</advanced>
+<applies_to table="x_2180676_claime_0_claim"/>
+<condition table="x_2180676_claime_0_claim"/>
+<controlled_by_refs/>
+<decision_type>deny</decision_type>
+<description>Denies read on reimbursement claims to any caller without a ClaimEase role, closing the Table API and URL-guessing paths before the allow rules are considered.</description>
+<local_or_existing>Existing</local_or_existing>
+<name>x_2180676_claime_0_claim</name>
+<operation>read</operation>
+<script/>
+<security_attribute/>
+<sys_class_name>sys_security_acl</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:04:54</sys_created_on>
+<sys_id>00afb5f0e2df43e4b429a8c240fd2743</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_security_acl_00afb5f0e2df43e4b429a8c240fd2743</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:04:54</sys_updated_on>
+<type>record</type>
+</sys_security_acl>
+<sys_security_acl>
+<active>true</active>
+<admin_overrides>true</admin_overrides>
+<advanced>false</advanced>
+<applies_to table="x_2180676_claime_0_claim"/>
+<condition table="x_2180676_claime_0_claim"/>
+<controlled_by_refs/>
+<decision_type>allow</decision_type>
+<description>Allows any ClaimEase user to raise a reimbursement claim. Delegated submission for another employee is refused server-side by ClaimEaseValidator unless policy permits it.</description>
+<local_or_existing>Existing</local_or_existing>
+<name>x_2180676_claime_0_claim</name>
+<operation>create</operation>
+<script/>
+<security_attribute/>
+<sys_class_name>sys_security_acl</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:04:54</sys_created_on>
+<sys_id>22fe77a962d54f6f8c813c675bb3c008</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_security_acl_22fe77a962d54f6f8c813c675bb3c008</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:04:54</sys_updated_on>
+<type>record</type>
+</sys_security_acl>
+<sys_security_acl>
+<active>true</active>
+<admin_overrides>true</admin_overrides>
+<advanced>true</advanced>
+<applies_to table="x_2180676_claime_0_claim"/>
+<condition table="x_2180676_claime_0_claim"/>
+<controlled_by_refs/>
+<decision_type>allow</decision_type>
+<description>Allows an employee to read only their own claims, the recorded manager to read claims awaiting their decision, and Finance approvers and administrators to read claims for review.</description>
+<local_or_existing>Existing</local_or_existing>
+<name>x_2180676_claime_0_claim</name>
+<operation>read</operation>
+<script><![CDATA[
+(function aclReadClaim() {
+    var me = gs.getUserID();
+
+    // Administrators and Finance reviewers legitimately see other employees' claims.
+    if (gs.hasRole('admin') || gs.hasRole('x_2180676_claime_0.admin')) {
+        return true;
+    }
+    if (gs.hasRole('x_2180676_claime_0.finance_approver')) {
+        return true;
+    }
+
+    // The claimant and the submitter.
+    if (current.getValue('requested_for') == me) {
+        return true;
+    }
+    if (current.getValue('submitted_by') == me) {
+        return true;
+    }
+
+    // The approving manager recorded on this specific claim.
+    if (current.getValue('manager') == me) {
+        return true;
+    }
+
+    return false;
+})();
+]]></script>
+<security_attribute/>
+<sys_class_name>sys_security_acl</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:04:54</sys_created_on>
+<sys_id>25db352cd26b4e628cc9038065bcf013</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_security_acl_25db352cd26b4e628cc9038065bcf013</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:04:54</sys_updated_on>
+<type>record</type>
+</sys_security_acl>
+<sys_security_acl>
+<active>true</active>
+<admin_overrides>true</admin_overrides>
+<advanced>true</advanced>
+<applies_to table="x_2180676_claime_0_claim"/>
+<condition table="x_2180676_claime_0_claim"/>
+<controlled_by_refs/>
+<decision_type>allow</decision_type>
+<description>Allows the claimant to edit only their own draft claim, and the recorded manager or a Finance approver to act on a claim under review. Field-level ACLs further restrict which fields each may change.</description>
+<local_or_existing>Existing</local_or_existing>
+<name>x_2180676_claime_0_claim</name>
+<operation>write</operation>
+<script><![CDATA[
+(function aclWriteClaim() {
+    var me = gs.getUserID();
+
+    if (gs.hasRole('admin') || gs.hasRole('x_2180676_claime_0.admin')) {
+        return true;
+    }
+
+    var status = current.getValue('approval_status');
+
+    // The approving manager and Finance reviewers act on claims under review.
+    // Field-level ACLs below restrict WHICH fields they may actually change.
+    if (current.getValue('manager') == me) {
+        return true;
+    }
+    if (gs.hasRole('x_2180676_claime_0.finance_approver')) {
+        return true;
+    }
+
+    // The claimant may only edit their own claim while it is still a draft.
+    var isOwner = (current.getValue('requested_for') == me) ||
+                  (current.getValue('submitted_by') == me);
+    if (isOwner && status == 'draft') {
+        return true;
+    }
+
+    return false;
+})();
+]]></script>
+<security_attribute/>
+<sys_class_name>sys_security_acl</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:04:55</sys_created_on>
+<sys_id>8450ab8f1aee4305965950782717ac84</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_security_acl_8450ab8f1aee4305965950782717ac84</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:04:55</sys_updated_on>
+<type>record</type>
+</sys_security_acl>
+<sys_security_acl>
+<active>true</active>
+<admin_overrides>true</admin_overrides>
+<advanced>false</advanced>
+<applies_to table="x_2180676_claime_0_claim"/>
+<condition table="x_2180676_claime_0_claim"/>
+<controlled_by_refs/>
+<decision_type>allow</decision_type>
+<description>Restricts deletion of reimbursement claims to ClaimEase administrators, preserving the audit trail. Claims are normally cancelled, not deleted.</description>
+<local_or_existing>Existing</local_or_existing>
+<name>x_2180676_claime_0_claim</name>
+<operation>delete</operation>
+<script/>
+<security_attribute/>
+<sys_class_name>sys_security_acl</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:04:55</sys_created_on>
+<sys_id>c9afbda18d684366a65485dfc2875147</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_security_acl_c9afbda18d684366a65485dfc2875147</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:04:55</sys_updated_on>
+<type>record</type>
+</sys_security_acl>
+<sys_security_acl>
+<active>true</active>
+<admin_overrides>true</admin_overrides>
+<advanced>false</advanced>
+<applies_to table="x_2180676_claime_0_claim.finance_approval"/>
+<condition table="x_2180676_claime_0_claim.finance_approval"/>
+<controlled_by_refs/>
+<decision_type>allow</decision_type>
+<description>Only a Finance approver (or an administrator) may record the Finance approval decision. The Manager-first sequence for larger claims is enforced by the approval automation and the Protect Approval Fields business rule.</description>
+<local_or_existing>Existing</local_or_existing>
+<name>x_2180676_claime_0_claim.finance_approval</name>
+<operation>write</operation>
+<script/>
+<security_attribute/>
+<sys_class_name>sys_security_acl</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:04:54</sys_created_on>
+<sys_id>66554836606d40f4baeef81430c535bd</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim.finance_approval</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_security_acl_66554836606d40f4baeef81430c535bd</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:04:54</sys_updated_on>
+<type>record</type>
+</sys_security_acl>
+<sys_security_acl>
+<active>true</active>
+<admin_overrides>true</admin_overrides>
+<advanced>false</advanced>
+<applies_to table="x_2180676_claime_0_claim.finance_comments"/>
+<condition table="x_2180676_claime_0_claim.finance_comments"/>
+<controlled_by_refs/>
+<decision_type>allow</decision_type>
+<description>Only a Finance approver (or an administrator) may add Finance review comments.</description>
+<local_or_existing>Existing</local_or_existing>
+<name>x_2180676_claime_0_claim.finance_comments</name>
+<operation>write</operation>
+<script/>
+<security_attribute/>
+<sys_class_name>sys_security_acl</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:04:55</sys_created_on>
+<sys_id>f1b02ad90e8c4664a38e2732d119f5f3</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim.finance_comments</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_security_acl_f1b02ad90e8c4664a38e2732d119f5f3</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:04:55</sys_updated_on>
+<type>record</type>
+</sys_security_acl>
+<sys_security_acl>
+<active>true</active>
+<admin_overrides>true</admin_overrides>
+<advanced>true</advanced>
+<applies_to table="x_2180676_claime_0_claim.manager_approval"/>
+<condition table="x_2180676_claime_0_claim.manager_approval"/>
+<controlled_by_refs/>
+<decision_type>allow</decision_type>
+<description>Only the manager recorded on the claim (or an administrator) may record the manager approval decision.</description>
+<local_or_existing>Existing</local_or_existing>
+<name>x_2180676_claime_0_claim.manager_approval</name>
+<operation>write</operation>
+<script><![CDATA[
+(function aclWriteManagerApproval() {
+    if (gs.hasRole('admin') || gs.hasRole('x_2180676_claime_0.admin')) {
+        return true;
+    }
+    return current.getValue('manager') == gs.getUserID();
+})();
+]]></script>
+<security_attribute/>
+<sys_class_name>sys_security_acl</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:04:54</sys_created_on>
+<sys_id>10eb52ec16a6489699d2cc2cd2072190</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim.manager_approval</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_security_acl_10eb52ec16a6489699d2cc2cd2072190</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:04:54</sys_updated_on>
+<type>record</type>
+</sys_security_acl>
+<sys_security_acl>
+<active>true</active>
+<admin_overrides>true</admin_overrides>
+<advanced>true</advanced>
+<applies_to table="x_2180676_claime_0_claim.manager_comments"/>
+<condition table="x_2180676_claime_0_claim.manager_comments"/>
+<controlled_by_refs/>
+<decision_type>allow</decision_type>
+<description>Only the recorded manager (or an administrator) may add manager approval comments.</description>
+<local_or_existing>Existing</local_or_existing>
+<name>x_2180676_claime_0_claim.manager_comments</name>
+<operation>write</operation>
+<script><![CDATA[
+(function aclWriteManagerComments() {
+    if (gs.hasRole('admin') || gs.hasRole('x_2180676_claime_0.admin')) {
+        return true;
+    }
+    return current.getValue('manager') == gs.getUserID();
+})();
+]]></script>
+<security_attribute/>
+<sys_class_name>sys_security_acl</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:04:55</sys_created_on>
+<sys_id>be423f11fa824293ab1dc11b891f0752</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim.manager_comments</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_security_acl_be423f11fa824293ab1dc11b891f0752</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:04:55</sys_updated_on>
+<type>record</type>
+</sys_security_acl>
+<sys_security_acl>
+<active>true</active>
+<admin_overrides>true</admin_overrides>
+<advanced>false</advanced>
+<applies_to table="x_2180676_claime_0_claim.requested_for"/>
+<condition table="x_2180676_claime_0_claim.requested_for"/>
+<controlled_by_refs/>
+<decision_type>allow</decision_type>
+<description>Restricts changes of claim ownership to ClaimEase administrators, so an approver cannot reassign a claim to another employee as part of a decision.</description>
+<local_or_existing>Existing</local_or_existing>
+<name>x_2180676_claime_0_claim.requested_for</name>
+<operation>write</operation>
+<script/>
+<security_attribute/>
+<sys_class_name>sys_security_acl</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 13:04:55</sys_created_on>
+<sys_id>8caf5952d4ae413a8dfbe22c7dae3d5e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>x_2180676_claime_0_claim.requested_for</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sys_security_acl_8caf5952d4ae413a8dfbe22c7dae3d5e</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 13:04:55</sys_updated_on>
+<type>record</type>
+</sys_security_acl>
+</xml>

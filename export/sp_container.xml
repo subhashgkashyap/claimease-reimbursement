@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sp_container>
+<aria_label/>
+<background_color/>
+<background_image/>
+<background_style>default</background_style>
+<bootstrap_alt>false</bootstrap_alt>
+<class_name/>
+<container_class_name/>
+<name>ClaimEase home - main</name>
+<order>100</order>
+<semantic_tag>main</semantic_tag>
+<sp_page>82c7627ebe2c41879a93bf9b1a35c736</sp_page>
+<subheader>false</subheader>
+<sys_class_name>sp_container</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:50</sys_created_on>
+<sys_id>a05b7d93866648fc90de72714c31da93</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase home - main</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_container_a05b7d93866648fc90de72714c31da93</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:50</sys_updated_on>
+<title/>
+<width>container</width>
+</sp_container>
+<sp_container>
+<aria_label/>
+<background_color/>
+<background_image/>
+<background_style>default</background_style>
+<bootstrap_alt>false</bootstrap_alt>
+<class_name/>
+<container_class_name/>
+<name>Claim detail - main</name>
+<order>100</order>
+<semantic_tag>main</semantic_tag>
+<sp_page>c90898812a534012830d4be200141659</sp_page>
+<subheader>false</subheader>
+<sys_class_name>sp_container</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:50</sys_created_on>
+<sys_id>c13960769ff141fdaf460fba650d377e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Claim detail - main</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_container_c13960769ff141fdaf460fba650d377e</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:50</sys_updated_on>
+<title/>
+<width>container</width>
+</sp_container>
+<sp_container>
+<aria_label/>
+<background_color/>
+<background_image/>
+<background_style>default</background_style>
+<bootstrap_alt>false</bootstrap_alt>
+<class_name/>
+<container_class_name/>
+<name>My claims - main</name>
+<order>100</order>
+<semantic_tag>main</semantic_tag>
+<sp_page>7c47eca74a39443fa02d5b0a5d5de04a</sp_page>
+<subheader>false</subheader>
+<sys_class_name>sp_container</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:50</sys_created_on>
+<sys_id>e3a30c7eb02c43e3a32c51589afd630e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>My claims - main</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_container_e3a30c7eb02c43e3a32c51589afd630e</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:50</sys_updated_on>
+<title/>
+<width>container</width>
+</sp_container>
+</xml>

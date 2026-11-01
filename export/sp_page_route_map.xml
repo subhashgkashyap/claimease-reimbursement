@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sp_page_route_map>
+<active>true</active>
+<order>10</order>
+<portals>21a0f9b170a64c7bbd23afa2db726952</portals>
+<roles/>
+<route_from_page>ed5f8ec347730200ba13a5554ee49046</route_from_page>
+<route_to_page>c90898812a534012830d4be200141659</route_to_page>
+<short_description>ClaimEase - send the generic Service Portal form page to the curated claim detail page, so employees never see the raw claim form (which would expose the manager field).</short_description>
+<sys_class_name>sp_page_route_map</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>240b3e9ff17240a4af1ba092dbdbdeba</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ed5f8ec347730200ba13a5554ee49046</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_page_route_map_240b3e9ff17240a4af1ba092dbdbdeba</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+</sp_page_route_map>
+<sp_page_route_map>
+<active>true</active>
+<order>10</order>
+<portals>81b75d3147032100ba13a5554ee4902b</portals>
+<roles/>
+<route_from_page>ed5f8ec347730200ba13a5554ee49046</route_from_page>
+<route_to_page>c90898812a534012830d4be200141659</route_to_page>
+<short_description>ClaimEase - in the stock Service Portal, send the generic record-producer form page to the curated ClaimEase claim detail page so a submitted claim shows its details instead of the raw form. Scoped to the Service Portal only.</short_description>
+<sys_class_name>sp_page_route_map</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-24 08:51:08</sys_created_on>
+<sys_id>7d1b3de3dc3a46b5925d0306cd160e8b</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ed5f8ec347730200ba13a5554ee49046</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_page_route_map_7d1b3de3dc3a46b5925d0306cd160e8b</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-24 08:51:08</sys_updated_on>
+</sp_page_route_map>
+<sp_page_route_map>
+<active>true</active>
+<order>20</order>
+<portals>21a0f9b170a64c7bbd23afa2db726952</portals>
+<roles/>
+<route_from_page>84af292247132100ba13a5554ee4909e</route_from_page>
+<route_to_page>c90898812a534012830d4be200141659</route_to_page>
+<short_description>ClaimEase - send the generic Service Portal ticket page to the curated claim detail page, for the same reason as the form page redirect.</short_description>
+<sys_class_name>sp_page_route_map</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>e1fcabf6b7874ded9adc3a1c6060f437</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>84af292247132100ba13a5554ee4909e</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_page_route_map_e1fcabf6b7874ded9adc3a1c6060f437</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+</sp_page_route_map>
+</xml>

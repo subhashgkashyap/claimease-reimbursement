@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<catalog_ui_policy_action>
+<catalog_item>cddae28d1e274080b300d7f1376dff89</catalog_item>
+<catalog_variable>IO:0267209b8903423d9900e4c2714b9b69</catalog_variable>
+<cleared>false</cleared>
+<disabled>ignore</disabled>
+<field/>
+<field_message>Please tell us what this expense was for, so your approver has enough to go on.</field_message>
+<field_message_type>info</field_message_type>
+<mandatory>true</mandatory>
+<order>100</order>
+<sys_class_name>catalog_ui_policy_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:48</sys_created_on>
+<sys_id>35a2ccb5b9ac433d9082bcdf200457b3</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>claim_details</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>catalog_ui_policy_action_35a2ccb5b9ac433d9082bcdf200457b3</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:48</sys_updated_on>
+<table/>
+<ui_policy>d28f803fe88b465885605344654e506b</ui_policy>
+<value/>
+<value_action>ignore</value_action>
+<variable>claim_details</variable>
+<variable_set/>
+<visible>ignore</visible>
+</catalog_ui_policy_action>
+<catalog_ui_policy_action>
+<catalog_item>cddae28d1e274080b300d7f1376dff89</catalog_item>
+<catalog_variable>IO:8a63e1fecfe2491a9028249dcb413dcd</catalog_variable>
+<cleared>false</cleared>
+<disabled>true</disabled>
+<field/>
+<field_message/>
+<field_message_type>none</field_message_type>
+<mandatory>ignore</mandatory>
+<order>100</order>
+<sys_class_name>catalog_ui_policy_action</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:48</sys_created_on>
+<sys_id>f8e8debf82ea4286926a6e4d59e0f519</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>requested_for_employee</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>catalog_ui_policy_action_f8e8debf82ea4286926a6e4d59e0f519</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:48</sys_updated_on>
+<table/>
+<ui_policy>bf7775a7b13b4c69ab8168e260ab4def</ui_policy>
+<value/>
+<value_action>ignore</value_action>
+<variable>requested_for_employee</variable>
+<variable_set/>
+<visible>ignore</visible>
+</catalog_ui_policy_action>
+</xml>

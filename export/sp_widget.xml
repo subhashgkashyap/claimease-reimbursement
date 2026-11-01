@@ -1,0 +1,1127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+<sp_widget>
+<category>custom</category>
+<client_script><![CDATA[/**
+ * ClaimEase - Claim detail widget client controller
+ *
+ * Read-only view: there is no client-side state to manage and nothing is sent
+ * back to the server. The controller exists so the template has an explicit `c`
+ * and so a refresh helper is available if the page ever needs one.
+ */
+api.controller = function () {
+    var c = this;
+
+    /** Re-reads the claim. Ownership is re-verified server-side every time. */
+    c.reload = function () {
+        c.server.update();
+    };
+};
+]]></client_script>
+<controller_as>c</controller_as>
+<css>/*
+ * ClaimEase - Claim detail widget styles
+ * Theme SCSS variables only: no raw hex, no !important, no inline styles.
+ */
+.claimease-claim-detail {
+    .claimease-detail-heading {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+
+        .label {
+            margin-left: 8px;
+        }
+    }
+
+    .claimease-detail-summary {
+        color: $text-secondary;
+        font-size: 110%;
+        margin-bottom: 16px;
+    }
+
+    .claimease-detail-list {
+        margin-bottom: 0;
+
+        dd {
+            margin-bottom: 8px;
+        }
+    }
+
+    .claimease-detail-text {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .claimease-progress {
+        .claimease-step {
+            margin-bottom: 12px;
+        }
+
+        .claimease-step-name {
+            color: $text-tertiary;
+            display: block;
+            font-size: 90%;
+            margin-bottom: 4px;
+        }
+
+        .claimease-step-hint {
+            font-size: 85%;
+            margin-top: 4px;
+        }
+    }
+
+    .claimease-feedback {
+        margin-bottom: 0;
+        margin-top: 8px;
+    }
+
+    .claimease-file-meta {
+        display: block;
+        margin-top: 2px;
+    }
+}
+</css>
+<data_table>sp_instance</data_table>
+<demo_data/>
+<description>Employee-facing detail view of one reimbursement claim: curated field whitelist (manager and internal process fields are deliberately excluded), approval progress, attachments, rejection reason and finance comments. Ownership is verified server-side.</description>
+<docs/>
+<field_list/>
+<has_preview>false</has_preview>
+<id>x_2180676_claime_0_claim_detail</id>
+<internal>false</internal>
+<link><![CDATA[function link(scope, element, attrs, controller) {
+}]]></link>
+<name>ClaimEase - Claim detail</name>
+<option_schema>[{"name":"my_claims_page","label":"My Claims page id (back link)","type":"string","section":"Behavior","default_value":"x_2180676_claime_0_claimease_my_claims"}]</option_schema>
+<public>false</public>
+<roles/>
+<script><![CDATA[/**
+ * ClaimEase - Claim detail widget server script
+ * ============================================================================
+ * SECURITY CONTRACT
+ *
+ *   1. The table is a constant: this widget can only ever read a reimbursement
+ *      claim, whatever `table` the URL happens to carry.
+ *   2. The claim is read with GlideRecordSecure (read ACLs apply) AND
+ *      `requested_for` must equal gs.getUserID(). If either check fails the
+ *      widget returns NOTHING about the record — just a neutral message — so a
+ *      guessed sys_id cannot confirm the existence of another employee's claim.
+ *   3. Only the whitelisted fields below are returned. Deliberately NOT
+ *      returned: `manager` (the manager is not visible in the portal),
+ *      `submitted_by`, `amount_usd`, `flow_started`, `duplicate_check`,
+ *      `manager_comments`, `manager_decision_by/on`, `finance_decision_by/on`,
+ *      `exception_reason`, and anything from the internal
+ *      `x_2180676_claime_0_claim_lock` table.
+ *   4. Attachments are listed only for the claim the caller owns, straight from
+ *      `sys_attachment` (table_name + table_sys_id). No file content is copied
+ *      anywhere; the links point at the platform's own attachment endpoint, and
+ *      read protection on those records is enforced by the ACLs.
+ */
+(function () {
+    var CLAIM_TABLE = 'x_2180676_claime_0_claim';
+    var SYS_ID = /^[0-9a-f]{32}$/i;
+
+    var STATUS_CLASS = {
+        draft: 'label-default',
+        submitted: 'label-info',
+        pending_manager: 'label-warning',
+        pending_finance: 'label-warning',
+        approved: 'label-success',
+        rejected: 'label-danger',
+        duplicate: 'label-warning',
+        cancelled: 'label-default'
+    };
+
+    var STEP_CLASS = {
+        not_requested: 'label-default',
+        requested: 'label-info',
+        approved: 'label-success',
+        rejected: 'label-danger'
+    };
+
+    /** Plain-language explanation of each approval step state. */
+    var STEP_HINT = {
+        not_requested: gs.getMessage('Not requested yet'),
+        requested: gs.getMessage('Waiting for a decision'),
+        approved: gs.getMessage('Approved'),
+        rejected: gs.getMessage('Rejected')
+    };
+
+    data.myClaimsPageId = options.my_claims_page || 'x_2180676_claime_0_claimease_my_claims';
+    data.claim = null;
+    data.attachments = [];
+    data.available = false;
+    data.message = '';
+
+    // The sys_id may arrive from the URL or from the client; either way it is
+    // only ever used as a sys_id, and ownership is checked below.
+    var requestedSysId = '' + ($sp.getParameter('sys_id') || (input && input.sys_id) || '');
+    requestedSysId = requestedSysId.replace(/^\s+|\s+$/g, '');
+
+    if (!SYS_ID.test(requestedSysId)) {
+        data.message = gs.getMessage('No claim was selected. Open a claim from the My claims page.');
+        return;
+    }
+
+    var ownerSysId = gs.getUserID() + '';
+
+    try {
+        var claim = new GlideRecordSecure(CLAIM_TABLE);
+        // Both terms matter: the owner term is the application rule, the ACLs
+        // behind GlideRecordSecure are the platform rule.
+        claim.addQuery('sys_id', requestedSysId);
+        claim.addQuery('requested_for', ownerSysId);
+        claim.setLimit(1);
+        claim.query();
+
+        if (!claim.next()) {
+            // Deliberately neutral: the same message whether the claim does not
+            // exist or belongs to somebody else.
+            data.message = gs.getMessage('That claim is not available to you.');
+            gs.info('[ClaimEase] Claim detail refused a request for a claim the caller does not own.');
+            return;
+        }
+
+        var status = claim.getValue('approval_status') + '';
+        var managerStep = claim.getValue('manager_approval') + '';
+        var financeStep = claim.getValue('finance_approval') + '';
+
+        data.claim = {
+            sys_id: claim.getUniqueValue() + '',
+            number: claim.getValue('number') + '',
+            short_description: claim.getValue('short_description') + '',
+            description: claim.getValue('description') + '',
+            category: claim.getDisplayValue('category') + '',
+            // Display value carries the claim's own currency: no currency code
+            // is hardcoded in the portal.
+            amount: claim.getDisplayValue('amount') + '',
+            expense_date: claim.getDisplayValue('expense_date') + '',
+            requested_for: claim.getDisplayValue('requested_for') + '',
+            submitted_on: claim.getDisplayValue('submitted_on') + '',
+            last_status_update: claim.getDisplayValue('last_status_update') + '',
+            status: claim.getDisplayValue('approval_status') + '',
+            statusValue: status,
+            statusClass: STATUS_CLASS[status] || 'label-default',
+            managerApproval: claim.getDisplayValue('manager_approval') + '',
+            managerApprovalClass: STEP_CLASS[managerStep] || 'label-default',
+            managerApprovalHint: STEP_HINT[managerStep] || '',
+            financeApproval: claim.getDisplayValue('finance_approval') + '',
+            financeApprovalClass: STEP_CLASS[financeStep] || 'label-default',
+            financeApprovalHint: STEP_HINT[financeStep] || '',
+            rejection_reason: claim.getValue('rejection_reason') + '',
+            finance_comments: claim.getValue('finance_comments') + '',
+            duplicate_of: claim.getDisplayValue('duplicate_of') + ''
+        };
+
+        // Normalise the "null" strings GlideRecord can hand back.
+        tidy(data.claim, [
+            'short_description',
+            'description',
+            'rejection_reason',
+            'finance_comments',
+            'duplicate_of',
+            'submitted_on',
+            'last_status_update'
+        ]);
+
+        data.available = true;
+        data.attachments = attachmentsFor(data.claim.sys_id);
+    } catch (e) {
+        gs.error('[ClaimEase] Claim detail could not read the claim: ' + e);
+        data.claim = null;
+        data.available = false;
+        data.message = gs.getMessage('We could not load this claim right now. Please try again.');
+    }
+
+    /**
+     * Attachments that belong to THIS claim, listed as metadata only.
+     * No file content is read or copied: the browser downloads through the
+     * platform's own endpoint, where the attachment read ACLs apply.
+     */
+    function attachmentsFor(claimSysId) {
+        var files = [];
+        try {
+            var attachments = new GlideRecord('sys_attachment');
+            attachments.addQuery('table_name', CLAIM_TABLE);
+            attachments.addQuery('table_sys_id', claimSysId);
+            attachments.orderByDesc('sys_created_on');
+            attachments.setLimit(50);
+            attachments.query();
+            while (attachments.next()) {
+                files.push({
+                    sys_id: attachments.getUniqueValue() + '',
+                    file_name: attachments.getValue('file_name') + '',
+                    content_type: attachments.getValue('content_type') + '',
+                    size: attachments.getDisplayValue('size_bytes') + '',
+                    created_on: attachments.getDisplayValue('sys_created_on') + '',
+                    url: '/sys_attachment.do?sys_id=' + attachments.getUniqueValue()
+                });
+            }
+        } catch (e) {
+            gs.error('[ClaimEase] Claim detail could not list the claim attachments: ' + e);
+        }
+        return files;
+    }
+
+    function tidy(target, fields) {
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            if (target[key] === 'null' || target[key] === 'undefined') {
+                target[key] = '';
+            }
+        }
+    }
+})();
+]]></script>
+<servicenow>false</servicenow>
+<sys_class_name>sp_widget</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>5e1769cf447e42689268467e23119707</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Claim detail</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_widget_5e1769cf447e42689268467e23119707</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<template><![CDATA[<!--
+  ClaimEase - Claim detail template (AngularJS / Bootstrap 3)
+
+  Renders only what the server returned. There is no `manager` field, no
+  internal process field and no approver identity anywhere in this template,
+  because the server never sends them.
+-->
+<div class="claimease-claim-detail">
+
+  <!-- Nothing to show: neutral message, no record data -->
+  <div class="panel panel-default" ng-if="!c.data.available">
+    <div class="panel-body text-center text-muted">
+      <i class="fa fa-folder-open-o fa-2x" aria-hidden="true"></i>
+      <p>{{c.data.message}}</p>
+      <a class="btn btn-default" ng-href="?id={{c.data.myClaimsPageId}}">${Back to my claims}</a>
+    </div>
+  </div>
+
+  <div ng-if="c.data.available">
+    <!-- Header -->
+    <div class="panel panel-default">
+      <div class="panel-heading claimease-detail-heading">
+        <h2 class="h4 panel-title">
+          {{c.data.claim.number}}
+          <span class="label" ng-class="c.data.claim.statusClass" ng-bind="c.data.claim.status"></span>
+        </h2>
+        <a class="btn btn-link btn-sm" ng-href="?id={{c.data.myClaimsPageId}}">${Back to my claims}</a>
+      </div>
+      <div class="panel-body">
+        <p class="claimease-detail-summary">{{c.data.claim.short_description}}</p>
+
+        <dl class="dl-horizontal claimease-detail-list">
+          <dt>${Requested for}</dt>
+          <dd>{{c.data.claim.requested_for}}</dd>
+
+          <dt>${Category}</dt>
+          <dd>{{c.data.claim.category}}</dd>
+
+          <dt>${Claim amount}</dt>
+          <dd>{{c.data.claim.amount}}</dd>
+
+          <dt>${Expense date}</dt>
+          <dd>{{c.data.claim.expense_date}}</dd>
+
+          <dt>${Submitted}</dt>
+          <dd>{{c.data.claim.submitted_on || '-'}}</dd>
+
+          <dt>${Last updated}</dt>
+          <dd>{{c.data.claim.last_status_update || '-'}}</dd>
+
+          <dt ng-if="c.data.claim.description">${Business justification}</dt>
+          <dd ng-if="c.data.claim.description" class="claimease-detail-text">{{c.data.claim.description}}</dd>
+
+          <dt ng-if="c.data.claim.duplicate_of">${Duplicate of}</dt>
+          <dd ng-if="c.data.claim.duplicate_of">{{c.data.claim.duplicate_of}}</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Approval progress -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="h5 panel-title">${Approval progress}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="row claimease-progress">
+          <div class="col-sm-6">
+            <div class="claimease-step">
+              <span class="claimease-step-name">${Manager approval}</span>
+              <span class="label" ng-class="c.data.claim.managerApprovalClass"
+                    ng-bind="c.data.claim.managerApproval"></span>
+              <div class="text-muted claimease-step-hint">{{c.data.claim.managerApprovalHint}}</div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="claimease-step">
+              <span class="claimease-step-name">${Finance approval}</span>
+              <span class="label" ng-class="c.data.claim.financeApprovalClass"
+                    ng-bind="c.data.claim.financeApproval"></span>
+              <div class="text-muted claimease-step-hint">{{c.data.claim.financeApprovalHint}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-danger claimease-feedback" ng-if="c.data.claim.rejection_reason">
+          <strong>${Why this claim was not approved}</strong>
+          <p class="claimease-detail-text">{{c.data.claim.rejection_reason}}</p>
+        </div>
+
+        <div class="alert alert-info claimease-feedback" ng-if="c.data.claim.finance_comments">
+          <strong>${Finance comments}</strong>
+          <p class="claimease-detail-text">{{c.data.claim.finance_comments}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attachments -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="h5 panel-title">${Receipts and supporting documents}</h3>
+      </div>
+      <ul class="list-group" ng-if="c.data.attachments.length">
+        <li class="list-group-item" ng-repeat="file in c.data.attachments track by file.sys_id">
+          <a ng-href="{{file.url}}" target="_blank" rel="noopener">
+            <i class="fa fa-paperclip" aria-hidden="true"></i> {{file.file_name}}
+          </a>
+          <small class="text-muted claimease-file-meta">{{file.size}} &bull; {{file.created_on}}</small>
+        </li>
+      </ul>
+      <div class="panel-body text-muted" ng-if="!c.data.attachments.length">
+        ${No receipts or supporting documents are attached to this claim.}
+      </div>
+    </div>
+  </div>
+</div>
+]]></template>
+</sp_widget>
+<sp_widget>
+<category>custom</category>
+<client_script><![CDATA[/**
+ * ClaimEase - "My Claims" widget client controller
+ *
+ * The controller only moves filter state and the requested page number to the
+ * server. It performs no filtering of its own: the authoritative query (and in
+ * particular the "only my claims" rule) lives in the server script.
+ */
+api.controller = function () {
+    var c = this;
+
+    c.loading = false;
+
+    /** Working copy of the filters, so the form can be edited then applied. */
+    c.form = angular.copy(c.data.filters || {});
+
+    c.applyFilters = function () {
+        c.data.filters = angular.copy(c.form);
+        c.data.page = 1;
+        refresh();
+    };
+
+    c.clearFilters = function () {
+        c.form = { number: '', category: '', status: '', submittedFrom: '', submittedTo: '' };
+        c.data.filters = angular.copy(c.form);
+        c.data.page = 1;
+        refresh();
+    };
+
+    c.goToPage = function (page) {
+        if (page < 1 || page > c.data.totalPages || page === c.data.page) {
+            return;
+        }
+        c.data.page = page;
+        refresh();
+    };
+
+    c.pages = function () {
+        var pages = [];
+        for (var i = 1; i <= (c.data.totalPages || 1); i++) {
+            pages.push(i);
+        }
+        return pages;
+    };
+
+    c.claimUrl = function (claim) {
+        return '?id=' + c.data.detailPageId + '&sys_id=' + claim.sys_id;
+    };
+
+    /**
+     * c.server.update() posts the whole of c.data, which is why the filters and
+     * the page number are assigned onto c.data before it is called.
+     */
+    function refresh() {
+        c.loading = true;
+        c.server.update().then(function () {
+            c.loading = false;
+            // Re-sync the form with whatever the server actually accepted, so a
+            // rejected filter value disappears from the controls too.
+            c.form = angular.copy(c.data.filters || {});
+        });
+    }
+};
+]]></client_script>
+<controller_as>c</controller_as>
+<css>/*
+ * ClaimEase - "My Claims" widget styles
+ * Theme SCSS variables only: no raw hex, no !important, no inline styles.
+ */
+.claimease-my-claims {
+    .claimease-filters {
+        border-bottom: 1px solid $panel-border-color;
+        padding-bottom: 0;
+    }
+
+    .claimease-filter-actions {
+        margin-bottom: 8px;
+
+        .btn {
+            margin-right: 8px;
+        }
+    }
+
+    .claimease-table {
+        margin-bottom: 0;
+
+        th,
+        td {
+            vertical-align: middle;
+        }
+
+        tbody th {
+            font-weight: normal;
+        }
+    }
+
+    .claimease-summary {
+        font-size: 90%;
+    }
+
+    .claimease-amount {
+        white-space: nowrap;
+    }
+
+    .claimease-flags {
+        font-size: 85%;
+        margin-top: 4px;
+
+        span {
+            display: block;
+        }
+    }
+
+    .claimease-progress {
+        .claimease-step {
+            display: block;
+            margin-bottom: 4px;
+            white-space: nowrap;
+        }
+
+        .claimease-step-label {
+            color: $text-tertiary;
+            display: inline-block;
+            font-size: 85%;
+            min-width: 60px;
+        }
+    }
+
+    .claimease-count {
+        display: inline-block;
+        margin-left: 12px;
+    }
+}
+</css>
+<data_table>sp_instance</data_table>
+<demo_data/>
+<description>Searchable, filterable list of the reimbursement claims the signed-in employee submitted. The requested_for = current user filter is enforced in the server script and cannot be influenced by client input.</description>
+<docs/>
+<field_list/>
+<has_preview>false</has_preview>
+<id>x_2180676_claime_0_my_claims</id>
+<internal>false</internal>
+<link><![CDATA[function link(scope, element, attrs, controller) {
+}]]></link>
+<name>ClaimEase - My Claims</name>
+<option_schema>[{"name":"title","label":"Panel title","type":"string","section":"Presentation","default_value":"My reimbursement claims"},{"name":"page_size","label":"Claims per page","type":"integer","section":"Data","default_value":15},{"name":"detail_page","label":"Claim detail page id","type":"string","section":"Behavior","default_value":"x_2180676_claime_0_claimease_claim"},{"name":"submit_page","label":"Landing page id (for the \"submit a claim\" link)","type":"string","section":"Behavior","default_value":"x_2180676_claime_0_claimease_home"}]</option_schema>
+<public>false</public>
+<roles/>
+<script><![CDATA[/**
+ * ClaimEase - "My Claims" widget server script
+ * ============================================================================
+ * SECURITY CONTRACT (read this before changing anything below)
+ *
+ *   1. The table is a constant here. It is never taken from an option or from
+ *      input, so this widget can only ever read reimbursement claims.
+ *   2. `requested_for` is ALWAYS the authenticated user, resolved with
+ *      gs.getUserID() on the server. It is never read from input, so no
+ *      crafted payload can widen the result set to another employee's claims.
+ *   3. Client-supplied filters are additive only, and are sanitised:
+ *        - the claim-number search is passed as a bound CONTAINS term, not as
+ *          an encoded query, so it cannot inject query operators;
+ *        - category and status must appear in the table's own choice list;
+ *        - dates must match yyyy-MM-dd.
+ *   4. Rows are read with GlideRecordSecure, so the read ACLs (owned by the
+ *      security agent) apply on top of the explicit owner filter.
+ *   5. Only whitelisted fields are copied into `data`. `manager`,
+ *      `submitted_by`, `amount_usd`, `flow_started`, `duplicate_check`,
+ *      `manager_comments`, the approver identity/decision fields and the
+ *      internal lock table are never read or returned.
+ */
+(function () {
+    var CLAIM_TABLE = 'x_2180676_claime_0_claim';
+    var MAX_SEARCH_LENGTH = 40;
+    var ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+    /** Status -> Bootstrap label class. Each value carries its own meaning. */
+    var STATUS_CLASS = {
+        draft: 'label-default',
+        submitted: 'label-info',
+        pending_manager: 'label-warning',
+        pending_finance: 'label-warning',
+        approved: 'label-success',
+        rejected: 'label-danger',
+        duplicate: 'label-warning',
+        cancelled: 'label-default'
+    };
+
+    /** Approval step -> Bootstrap label class. */
+    var STEP_CLASS = {
+        not_requested: 'label-default',
+        requested: 'label-info',
+        approved: 'label-success',
+        rejected: 'label-danger'
+    };
+
+    /* ---------------------------------------------------------------- *
+     * Presentation options and the authoritative owner
+     * ---------------------------------------------------------------- */
+    data.title = options.title || gs.getMessage('My reimbursement claims');
+    data.detailPageId = options.detail_page || 'x_2180676_claime_0_claimease_claim';
+    data.submitPageId = options.submit_page || 'x_2180676_claime_0_claimease_home';
+    data.pageSize = positiveInt(options.page_size, 15);
+
+    // THE owner filter. Server-side, every time, for every caller.
+    var ownerSysId = gs.getUserID() + '';
+
+    /* ---------------------------------------------------------------- *
+     * Choice lists for the filter controls (from the table's own choices)
+     * ---------------------------------------------------------------- */
+    data.categoryChoices = choicesFor('category');
+    data.statusChoices = choicesFor('approval_status');
+
+    /* ---------------------------------------------------------------- *
+     * Sanitise the client-supplied filters
+     * ---------------------------------------------------------------- */
+    var submitted = (input && input.filters) ? input.filters : {};
+    var filters = {
+        number: text(submitted.number, MAX_SEARCH_LENGTH),
+        category: fromChoices(submitted.category, data.categoryChoices),
+        status: fromChoices(submitted.status, data.statusChoices),
+        submittedFrom: isoDate(submitted.submittedFrom),
+        submittedTo: isoDate(submitted.submittedTo)
+    };
+    data.filters = filters;
+    data.hasFilters = !!(filters.number || filters.category || filters.status || filters.submittedFrom || filters.submittedTo);
+
+    /* ---------------------------------------------------------------- *
+     * Count, then fetch exactly one page
+     * ---------------------------------------------------------------- */
+    data.rowCount = 0;
+    try {
+        var counter = new GlideAggregate(CLAIM_TABLE);
+        applyQuery(counter);
+        counter.addAggregate('COUNT');
+        counter.query();
+        if (counter.next()) {
+            data.rowCount = parseInt(counter.getAggregate('COUNT'), 10) || 0;
+        }
+    } catch (e) {
+        gs.error('[ClaimEase] My Claims could not count the employee\'s claims: ' + e);
+    }
+
+    data.totalPages = Math.max(1, Math.ceil(data.rowCount / data.pageSize));
+    var page = positiveInt(input && input.page, 1);
+    if (page > data.totalPages) {
+        page = data.totalPages;
+    }
+    data.page = page;
+
+    data.claims = [];
+    try {
+        var claims = new GlideRecordSecure(CLAIM_TABLE);
+        applyQuery(claims);
+        // Newest submission first; created date breaks the tie for drafts that
+        // have no submitted_on yet.
+        claims.orderByDesc('submitted_on');
+        claims.orderByDesc('sys_created_on');
+        // chooseWindow (not setLimit) is what makes page 2 actually be page 2.
+        claims.chooseWindow((page - 1) * data.pageSize, page * data.pageSize);
+        claims.query();
+
+        while (claims.next()) {
+            var status = claims.getValue('approval_status') + '';
+            var managerStep = claims.getValue('manager_approval') + '';
+            var financeStep = claims.getValue('finance_approval') + '';
+
+            data.claims.push({
+                sys_id: claims.getUniqueValue() + '',
+                number: claims.getValue('number') + '',
+                short_description: claims.getValue('short_description') + '',
+                category: claims.getDisplayValue('category') + '',
+                // Display value carries the claim's own currency, so no
+                // currency code is hardcoded anywhere in the portal.
+                amount: claims.getDisplayValue('amount') + '',
+                expense_date: claims.getDisplayValue('expense_date') + '',
+                submitted_on: claims.getDisplayValue('submitted_on') + '',
+                last_status_update: claims.getDisplayValue('last_status_update') + '',
+                status: claims.getDisplayValue('approval_status') + '',
+                statusClass: STATUS_CLASS[status] || 'label-default',
+                managerApproval: claims.getDisplayValue('manager_approval') + '',
+                managerApprovalClass: STEP_CLASS[managerStep] || 'label-default',
+                financeApproval: claims.getDisplayValue('finance_approval') + '',
+                financeApprovalClass: STEP_CLASS[financeStep] || 'label-default',
+                // Flags only: the full text is shown on the claim detail page.
+                hasRejectionReason: !gs.nil(claims.getValue('rejection_reason')),
+                hasFinanceComments: !gs.nil(claims.getValue('finance_comments'))
+            });
+        }
+    } catch (e) {
+        gs.error('[ClaimEase] My Claims could not read the employee\'s claims: ' + e);
+        data.claims = [];
+    }
+
+    data.windowStart = data.rowCount === 0 ? 0 : (page - 1) * data.pageSize + 1;
+    data.windowEnd = Math.min(page * data.pageSize, data.rowCount);
+
+    /* ================================================================ *
+     * Helpers
+     * ================================================================ */
+
+    /**
+     * Applies the owner filter plus the sanitised client filters.
+     * The owner term is added FIRST and unconditionally.
+     */
+    function applyQuery(gr) {
+        gr.addQuery('requested_for', ownerSysId);
+
+        if (filters.number) {
+            // Bound query term: the value is data, never query syntax.
+            gr.addQuery('number', 'CONTAINS', filters.number);
+        }
+        if (filters.category) {
+            gr.addQuery('category', filters.category);
+        }
+        if (filters.status) {
+            gr.addQuery('approval_status', filters.status);
+        }
+        // submitted_on is a date-time stored in UTC; the whole local day is
+        // covered by using the day's start and end boundaries.
+        if (filters.submittedFrom) {
+            gr.addQuery('submitted_on', '>=', filters.submittedFrom + ' 00:00:00');
+        }
+        if (filters.submittedTo) {
+            gr.addQuery('submitted_on', '<=', filters.submittedTo + ' 23:59:59');
+        }
+    }
+
+    /** Active choices for a field on the claim table, in sequence order. */
+    function choicesFor(element) {
+        var out = [];
+        var seen = {};
+        try {
+            var choice = new GlideRecord('sys_choice');
+            choice.addQuery('name', CLAIM_TABLE);
+            choice.addQuery('element', element);
+            choice.addQuery('inactive', '!=', true);
+            choice.orderBy('sequence');
+            choice.setLimit(100);
+            choice.query();
+            while (choice.next()) {
+                var value = choice.getValue('value') + '';
+                if (!value || seen[value]) {
+                    continue;
+                }
+                seen[value] = true;
+                out.push({ value: value, label: choice.getValue('label') + '' });
+            }
+        } catch (e) {
+            gs.error('[ClaimEase] My Claims could not read the choice list for "' + element + '": ' + e);
+        }
+        return out;
+    }
+
+    /** Trimmed, length-capped free text. */
+    function text(value, maxLength) {
+        if (value === null || value === undefined) {
+            return '';
+        }
+        var cleaned = ('' + value).replace(/^\s+|\s+$/g, '');
+        return cleaned.length > maxLength ? cleaned.substring(0, maxLength) : cleaned;
+    }
+
+    /** Allow-list check: the value must be one of the table's own choices. */
+    function fromChoices(value, choices) {
+        var candidate = text(value, 60);
+        if (!candidate) {
+            return '';
+        }
+        for (var i = 0; i < choices.length; i++) {
+            if (choices[i].value === candidate) {
+                return candidate;
+            }
+        }
+        gs.info('[ClaimEase] My Claims ignored an unrecognised filter value submitted by the client.');
+        return '';
+    }
+
+    /** Accepts yyyy-MM-dd and nothing else. */
+    function isoDate(value) {
+        var candidate = text(value, 10);
+        return ISO_DATE.test(candidate) ? candidate : '';
+    }
+
+    function positiveInt(value, fallback) {
+        var parsed = parseInt(value, 10);
+        if (isNaN(parsed) || parsed < 1) {
+            return fallback;
+        }
+        return parsed;
+    }
+})();
+]]></script>
+<servicenow>false</servicenow>
+<sys_class_name>sp_widget</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>8038a93b11484cb5b93e34150d9b0dca</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - My Claims</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_widget_8038a93b11484cb5b93e34150d9b0dca</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<template><![CDATA[<!--
+  ClaimEase - "My Claims" template (AngularJS / Bootstrap 3)
+
+  Shows only the claims the server returned for the signed-in employee. Every
+  status-bearing value is rendered with the class the server computed for that
+  specific value, so the meaning is visible and not a flat grey badge.
+-->
+<div class="panel panel-default claimease-my-claims">
+  <div class="panel-heading">
+    <h2 class="h4 panel-title">{{c.data.title}}</h2>
+  </div>
+
+  <!-- Search and filter -->
+  <div class="panel-body claimease-filters">
+    <form name="claimFilters" ng-submit="c.applyFilters()" novalidate>
+      <div class="row">
+        <div class="col-md-3 col-sm-6">
+          <div class="form-group">
+            <label for="claimease-number">${Claim number}</label>
+            <input type="text" id="claimease-number" name="number" class="form-control"
+                   ng-model="c.form.number" placeholder="${e.g. CLM0001001}" />
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="form-group">
+            <label for="claimease-category">${Category}</label>
+            <select id="claimease-category" name="category" class="form-control" ng-model="c.form.category">
+              <option value="">${All categories}</option>
+              <option ng-repeat="choice in c.data.categoryChoices track by choice.value"
+                      value="{{choice.value}}">{{choice.label}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="form-group">
+            <label for="claimease-status">${Status}</label>
+            <select id="claimease-status" name="status" class="form-control" ng-model="c.form.status">
+              <option value="">${All statuses}</option>
+              <option ng-repeat="choice in c.data.statusChoices track by choice.value"
+                      value="{{choice.value}}">{{choice.label}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="form-group">
+            <label for="claimease-from">${Submitted from}</label>
+            <input type="date" id="claimease-from" name="submittedFrom" class="form-control"
+                   ng-model="c.form.submittedFrom" />
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="form-group">
+            <label for="claimease-to">${Submitted to}</label>
+            <input type="date" id="claimease-to" name="submittedTo" class="form-control"
+                   ng-model="c.form.submittedTo" />
+          </div>
+        </div>
+      </div>
+      <div class="claimease-filter-actions">
+        <button type="submit" class="btn btn-primary" ng-disabled="c.loading">${Search}</button>
+        <button type="button" class="btn btn-default" ng-click="c.clearFilters()" ng-disabled="c.loading">${Clear}</button>
+        <a class="btn btn-link" ng-href="?id={{c.data.submitPageId}}">${Submit a new claim}</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading -->
+  <div class="panel-body text-muted" ng-if="c.loading">
+    <i class="fa fa-spinner fa-spin" aria-hidden="true"></i> ${Loading your claims}...
+  </div>
+
+  <!-- Claims -->
+  <div class="table-responsive" ng-if="!c.loading && c.data.claims.length">
+    <table class="table table-striped claimease-table">
+      <caption class="sr-only">{{c.data.title}}</caption>
+      <thead>
+        <tr>
+          <th scope="col">${Claim}</th>
+          <th scope="col">${Category}</th>
+          <th scope="col">${Amount}</th>
+          <th scope="col">${Expense date}</th>
+          <th scope="col">${Submitted}</th>
+          <th scope="col">${Status}</th>
+          <th scope="col">${Approval progress}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="claim in c.data.claims track by claim.sys_id">
+          <th scope="row">
+            <a ng-href="{{c.claimUrl(claim)}}">{{claim.number}}</a>
+            <div class="text-muted claimease-summary">{{claim.short_description}}</div>
+          </th>
+          <td>{{claim.category}}</td>
+          <td class="claimease-amount">{{claim.amount}}</td>
+          <td>{{claim.expense_date}}</td>
+          <td>{{claim.submitted_on || '-'}}</td>
+          <td>
+            <span class="label" ng-class="claim.statusClass" ng-bind="claim.status"></span>
+            <div class="claimease-flags">
+              <span class="text-danger" ng-if="claim.hasRejectionReason">
+                <i class="fa fa-exclamation-circle" aria-hidden="true"></i> ${Reason given}
+              </span>
+              <span class="text-muted" ng-if="claim.hasFinanceComments">
+                <i class="fa fa-comment-o" aria-hidden="true"></i> ${Finance comments}
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="claimease-progress">
+              <span class="claimease-step">
+                <span class="claimease-step-label">${Manager}</span>
+                <span class="label" ng-class="claim.managerApprovalClass" ng-bind="claim.managerApproval"></span>
+              </span>
+              <span class="claimease-step">
+                <span class="claimease-step-label">${Finance}</span>
+                <span class="label" ng-class="claim.financeApprovalClass" ng-bind="claim.financeApproval"></span>
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Empty states -->
+  <div class="panel-body text-center text-muted" ng-if="!c.loading && !c.data.claims.length">
+    <i class="fa fa-inbox fa-2x" aria-hidden="true"></i>
+    <p ng-if="c.data.hasFilters">${No claims of yours match that search. Try clearing the filters.}</p>
+    <p ng-if="!c.data.hasFilters">${You have not submitted any reimbursement claims yet.}</p>
+    <a class="btn btn-primary" ng-href="?id={{c.data.submitPageId}}">${Submit a reimbursement claim}</a>
+  </div>
+
+  <!-- Pagination -->
+  <nav class="panel-footer" ng-if="!c.loading && c.data.totalPages > 1" aria-label="${Pagination}">
+    <div class="btn-group">
+      <button type="button" class="btn btn-default" ng-click="c.goToPage(c.data.page - 1)"
+              ng-disabled="c.data.page === 1" aria-label="${Previous page}">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="btn btn-default" ng-repeat="page in c.pages() track by page"
+              ng-class="{active: page === c.data.page}" ng-click="c.goToPage(page)"
+              ng-attr-aria-current="{{page === c.data.page ? 'page' : undefined}}">{{page}}</button>
+      <button type="button" class="btn btn-default" ng-click="c.goToPage(c.data.page + 1)"
+              ng-disabled="c.data.page === c.data.totalPages" aria-label="${Next page}">
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+    <span class="claimease-count text-muted">
+      ${Showing} {{c.data.windowStart}} - {{c.data.windowEnd}} ${of} {{c.data.rowCount}}
+    </span>
+  </nav>
+</div>
+]]></template>
+</sp_widget>
+<sp_widget>
+<category>custom</category>
+<client_script><![CDATA[/**
+ * ClaimEase - Landing widget client controller
+ *
+ * There is no client-side behaviour to add: the template binds directly to the
+ * links the server script produced. The controller exists so the widget has an
+ * explicit, documented `c` controller rather than relying on an implicit one.
+ */
+api.controller = function () {
+    var c = this;
+
+    /** True when the record producer could be resolved server-side. */
+    c.canSubmit = function () {
+        return !!(c.data && c.data.submitUrl);
+    };
+};
+]]></client_script>
+<controller_as>c</controller_as>
+<css>/*
+ * ClaimEase - Landing widget styles
+ * Theme SCSS variables only: no raw hex, no !important, no inline styles.
+ */
+.claimease-actions {
+    .claimease-lead {
+        color: $text-secondary;
+        margin-bottom: 16px;
+    }
+
+    .claimease-action-row {
+        margin-bottom: 8px;
+    }
+
+    .claimease-action {
+        margin-bottom: 8px;
+        white-space: normal;
+
+        i {
+            margin-right: 6px;
+        }
+    }
+
+    .claimease-tips {
+        margin: 8px 0 0 0;
+        padding-left: 20px;
+        color: $text-tertiary;
+
+        li {
+            margin-bottom: 4px;
+        }
+    }
+}
+</css>
+<data_table>sp_instance</data_table>
+<demo_data/>
+<description>ClaimEase landing panel. Deep-links to the "Submit a Reimbursement Claim" record producer on the out-of-the-box catalog item page, and to the My Claims page. Reads no claim data.</description>
+<docs/>
+<field_list/>
+<has_preview>false</has_preview>
+<id>x_2180676_claime_0_claim_actions</id>
+<internal>false</internal>
+<link><![CDATA[function link(scope, element, attrs, controller) {
+}]]></link>
+<name>ClaimEase - Submit or track a claim</name>
+<option_schema>[{"name":"producer_name","label":"Record producer name","type":"string","section":"Data","default_value":"Submit a Reimbursement Claim"},{"name":"catalog_item_page","label":"Catalog item page id","type":"string","section":"Behavior","default_value":"sc_cat_item"},{"name":"my_claims_page","label":"My Claims page id","type":"string","section":"Behavior","default_value":"x_2180676_claime_0_claimease_my_claims"}]</option_schema>
+<public>false</public>
+<roles/>
+<script><![CDATA[/**
+ * ClaimEase - Landing widget server script
+ *
+ * Reads NO claim data. The only record it touches is the record producer
+ * definition, so that the "Submit a claim" link does not have to hardcode a
+ * sys_id. Every value handed to the client is a page id or a catalog item
+ * sys_id — never anything about an employee or a claim.
+ */
+(function () {
+    data.producerName = options.producer_name || 'Submit a Reimbursement Claim';
+    data.catalogItemPageId = options.catalog_item_page || 'sc_cat_item';
+    data.myClaimsPageId = options.my_claims_page || 'x_2180676_claime_0_claimease_my_claims';
+
+    data.producerSysId = '';
+    data.submitUrl = '';
+    data.myClaimsUrl = '?id=' + data.myClaimsPageId;
+
+    try {
+        var producer = new GlideRecord('sc_cat_item_producer');
+        producer.addQuery('name', data.producerName);
+        producer.addQuery('active', true);
+        producer.setLimit(1);
+        producer.query();
+        if (producer.next()) {
+            data.producerSysId = producer.getUniqueValue() + '';
+            data.submitUrl = '?id=' + data.catalogItemPageId + '&sys_id=' + data.producerSysId;
+        } else {
+            gs.error(
+                '[ClaimEase] The portal landing widget could not find an active record producer named "' +
+                    data.producerName +
+                    '".'
+            );
+        }
+    } catch (e) {
+        gs.error('[ClaimEase] The portal landing widget could not read the record producer definition: ' + e);
+    }
+})();
+]]></script>
+<servicenow>false</servicenow>
+<sys_class_name>sp_widget</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-10-23 05:30:51</sys_created_on>
+<sys_id>56e094105b1843dc9a8f08aabec04fc3</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ClaimEase - Submit or track a claim</sys_name>
+<sys_package>b1cb0c6ac304d3100d60f8ddd4013149</sys_package>
+<sys_policy/>
+<sys_scope>b1cb0c6ac304d3100d60f8ddd4013149</sys_scope>
+<sys_update_name>sp_widget_56e094105b1843dc9a8f08aabec04fc3</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-10-23 05:30:51</sys_updated_on>
+<template><![CDATA[<!--
+  ClaimEase - Landing widget template (AngularJS / Bootstrap 3)
+  Two clear actions: submit a claim, or track the claims you already submitted.
+-->
+<div class="panel panel-default claimease-actions">
+  <div class="panel-heading">
+    <h2 class="h4 panel-title">${Reimbursement claims}</h2>
+  </div>
+  <div class="panel-body">
+    <p class="claimease-lead">
+      ${Paid for something yourself? Claim it back here. Tell us what you spent and when, attach your receipt, and we will send your claim for approval straight away.}
+    </p>
+
+    <div class="row claimease-action-row">
+      <div class="col-sm-6 col-xs-12">
+        <a ng-if="c.data.submitUrl" ng-href="{{c.data.submitUrl}}" class="btn btn-primary btn-block claimease-action">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+          <span>${Submit a reimbursement claim}</span>
+        </a>
+        <div class="alert alert-warning" ng-if="!c.data.submitUrl">
+          ${The claim submission form is not available right now. Please contact your ClaimEase administrator.}
+        </div>
+      </div>
+      <div class="col-sm-6 col-xs-12">
+        <a ng-href="{{c.data.myClaimsUrl}}" class="btn btn-default btn-block claimease-action">
+          <i class="fa fa-list-ul" aria-hidden="true"></i>
+          <span>${My claims}</span>
+        </a>
+      </div>
+    </div>
+
+    <ul class="claimease-tips">
+      <li>${Attach the receipt or supporting document before you submit - claims need it.}</li>
+      <li>${Use the date you actually incurred the expense, not today's date.}</li>
+      <li>${Claims are submitted for you only. If a claim is needed for somebody else, contact your ClaimEase administrator.}</li>
+      <li>${Track approval progress, approver feedback and finance comments on the My claims page.}</li>
+    </ul>
+  </div>
+</div>
+]]></template>
+</sp_widget>
+</xml>
